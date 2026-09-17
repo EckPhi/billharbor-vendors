@@ -11,7 +11,7 @@ an unreviewed source.
 | pytest | `9.1.1` | MIT | Test runner for synthetic catalog, manifest and connector fixtures only; no runtime dependency or network flow. | Run the preceding frozen test environment; no runtime or persistent-state impact. |
 | actions/checkout | `v7.0.1` (`3d3c42e…`) | MIT | Checks out the catalog and exact private BillHarbor commit. The second checkout receives a fine-grained read-only token through GitHub Secrets. | Pin the preceding reviewed release commit; revoke the token to disable cross-repository CI. |
 | astral-sh/setup-uv | `v10.1.0` (`bec219d…`) with uv `0.7.19` | MIT / Apache-2.0 or MIT | Installs pinned uv and may cache packages in GitHub Actions. Synthetic code/packages only; no vendor data. | Pin the preceding reviewed versions; the catalog lock remains authoritative. |
-| actions/upload-artifact | `v4.6.2` (`ea165f8…`) | MIT | Retains locally built wheels and checksums for 14 days. No secrets, sessions or documents are included. | Remove evidence upload or pin the preceding reviewed release. |
+| actions/upload-artifact | `v6.0.0` (`b7c566a…`) | MIT | Node-24 artifact action retaining locally built wheels and checksums for 14 days. No secrets, sessions or documents are included. | Remove evidence upload or pin the preceding reviewed release. |
 
 `uv.lock` freezes the development/test environment. During local cross-repository
 work it resolves BillHarbor from the sibling checkout so one authoritative schema
