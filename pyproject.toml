@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling>=1.27,<2"]
+requires = ["hatchling==1.32.0"]
 build-backend = "hatchling.build"
 
 [project]
@@ -9,7 +9,15 @@ description = "Reviewed vendor connector catalog for BillHarbor"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Proprietary" }
-dependencies = ["billharbor>=0.1,<0.2"]
+dependencies = ["billharbor==0.1.0"]
+
+[dependency-groups]
+test = ["pytest==9.1.1"]
+
+[tool.uv.sources]
+# Development-only cross-repository conformance. Published catalog artifacts must
+# resolve BillHarbor from an immutable released artifact and verify its digest.
+billharbor = { path = "../billharbor" }
 
 [tool.hatch.build.targets.wheel]
 packages = [
@@ -25,4 +33,3 @@ packages = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "vendors"]
-

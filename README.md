@@ -3,9 +3,12 @@
 Separately versioned vendor definitions and connector packages for BillHarbor.
 Initial targets: Amazon Business and oekostrom.at.
 
-Status: design only. No live-verified connector, runtime package or schema yet.
+Status: D1 packaged catalog and fixture-only connectors implemented for synthetic
+conformance; no live-verified connector, vendor access or deployment yet.
 
 - [Vendor-definition specification](docs/vendor-definition.md)
+- [Dependency decisions](docs/dependencies.md)
+- [CI/CD](docs/ci-cd.md)
 - [Next steps](NEXT_STEPS.md)
 - [BillHarbor engine and integration design](../billharbor/README.md)
 

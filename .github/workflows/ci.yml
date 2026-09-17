@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    name: Frozen catalog boundary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require an immutable BillHarbor ref
+        env:
+          BILLHARBOR_REF: ${{ vars.BILLHARBOR_REF }}
+        run: '[[ "$BILLHARBOR_REF" =~ ^[0-9a-f]{40}$ ]]'
+
+      - name: Check out catalog
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: billharbor-vendors
+
+      - name: Check out pinned private BillHarbor source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: EckPhi/billharbor
+          ref: ${{ vars.BILLHARBOR_REF }}
+          token: ${{ secrets.BILLHARBOR_READ_TOKEN }}
+          path: billharbor
+          persist-credentials: false
+
+      - name: Verify checked-out BillHarbor revision
+        env:
+          BILLHARBOR_REF: ${{ vars.BILLHARBOR_REF }}
+        run: test "$(git -C billharbor rev-parse HEAD)" = "$BILLHARBOR_REF"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.7.19"
+          python-version: "3.13"
+          enable-cache: true
+          cache-dependency-glob: billharbor-vendors/uv.lock
+
+      - name: Test frozen catalog
+        working-directory: billharbor-vendors
+        run: uv run --frozen --group test pytest -q
+
+      - name: Build both wheels
+        env:
+          DIST_DIR: ${{ runner.temp }}/dists
+        run: |
+          uv build --wheel --out-dir "$DIST_DIR" billharbor
+          uv build --wheel --out-dir "$DIST_DIR" billharbor-vendors
+
+      - name: Verify wheel-only compatibility
+        env:
+          DIST_DIR: ${{ runner.temp }}/dists
+        run: |
+          uv run --no-project --isolated \
+            --with "$DIST_DIR"/billharbor-*.whl \
+            --with "$DIST_DIR"/billharbor_vendors-*.whl \
+            python - <<'PY'
+          from importlib.resources import files
+          from billharbor.validation import validate_manifest
+
+          data = files("billharbor_vendors").joinpath("data/amazon_business_de.toml").read_bytes()
+          assert validate_manifest(data)["status"] == "design_only"
+          PY
+          sha256sum "$DIST_DIR"/*.whl > "$DIST_DIR"/SHA256SUMS
+
+      - name: Upload build evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: billharbor-catalog-wheels
+          path: ${{ runner.temp }}/dists/
+          if-no-files-found: error
+          retention-days: 14
