@@ -9,6 +9,9 @@ Status: design only. No live-verified connector, runtime package or schema yet.
 - [Next steps](NEXT_STEPS.md)
 - [BillHarbor engine and integration design](../billharbor/README.md)
 
+Frozen design-only manifest fixtures live under `vendors/`. Empty network origins
+and `requires_verification` fields make them ineligible for live runs.
+
 Each future vendor package contains TOML metadata, small typed Python connectors,
 operator instructions and invented fixtures. Credentials, account bindings,
 browser sessions and downloaded documents never belong in this repository.

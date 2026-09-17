@@ -1,0 +1,99 @@
+schema = "vendor-definition/1"
+id = "amazon_business_de"
+display_name = "Amazon Business Germany"
+vendor_site = "https://www.amazon.de/business"
+version = "0.1.0"
+status = "design_only"
+entrypoint = "amazon_business_de.connector:Connector"
+sdk = ">=1,<2"
+maintainer = "BillHarbor catalog maintainers"
+license = "Apache-2.0"
+
+[compatibility]
+sdk = ">=1,<2"
+engine = ">=0.1,<0.2"
+python = ">=3.11"
+wire_adapters = ["document-delivery/1"]
+
+[coverage]
+countries = ["DE"]
+locales = ["de-DE"]
+timezone = "Europe/Berlin"
+account_types = ["business"]
+document_kinds = ["invoice", "credit_note"]
+known_exclusions = ["Account and API eligibility are unverified"]
+
+[transport]
+preferred = "api"
+supported = ["api"]
+selection_rules = "Use the official buyer API only after eligibility and document coverage are verified; never fall back to browser implicitly"
+
+[network]
+origins = []
+redirect_origins = []
+unresolved = ["Exact origins require verified onboarding evidence"]
+methods = ["GET", "POST"]
+redirect_policy = "No redirects unless the exact origin is reviewed"
+
+[authentication]
+mode = "oauth"
+secret_fields = []
+session_scope = "marketplace"
+manual_challenges = []
+
+[account_hierarchy]
+scope_kind = "legal_entity"
+enumeration = "Requires verified API evidence"
+selection = "Explicit legal-entity selection is required"
+
+[discovery]
+scope_kind = "marketplace"
+date_basis = "requires_verification"
+date_inclusivity = "requires_verification"
+pagination = "requires_verification"
+ordering = "requires_verification"
+empty_result_semantics = "requires_verification"
+
+[document_identity]
+native_id = "requires_verification"
+scope = "Account, legal entity, type and issuer as required"
+revision_policy = "conflict_on_changed_bytes"
+encoding = "Versioned digest of an unambiguous typed tuple"
+
+[download]
+formats = ["application/pdf", "application/zip", "application/gzip"]
+mechanism = "Bounded report polling and expiring URL resolution"
+validation = "Validate status, MIME, signature, archives and byte limits"
+original_policy = "Preserve vendor originals"
+
+[metadata]
+observations = ["invoice_number", "issue_date", "gross_amount", "currency", "issuer_name"]
+provenance = "Each observation retains field path and observation time"
+issuer_evidence = "Marketplace branding does not establish legal issuer"
+
+[limits]
+concurrent_sessions_per_account = 1
+maximum_documents_per_page = 100
+maximum_requests = 100
+maximum_pages = 25
+maximum_documents = 500
+maximum_document_bytes = 20971520
+maximum_total_bytes = 104857600
+maximum_execution_seconds = 300
+
+[interaction]
+detectors = ["onboarding_required", "access_denied", "credential_expired"]
+pause_policy = "Return a bounded interaction outcome"
+permitted_human_actions = ["Complete official onboarding outside execution"]
+maximum_wait_seconds = 900
+
+[diagnostics]
+capture_default = "off"
+safe_counters = ["requests", "pages", "discovered", "downloaded", "rejected"]
+
+[verification]
+fixture_set = "tests/fixtures/synthetic_catalog.json"
+live_verified = false
+known_gaps = ["Eligibility", "API fields", "origins", "date semantics", "native identity"]
+drift_indicators = ["Unknown response shape", "Missing continuation"]
+recovery_instructions = "Stop safely for reviewed API evidence"

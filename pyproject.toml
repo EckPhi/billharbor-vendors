@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "billharbor-vendors"
+version = "0.1.0"
+description = "Reviewed vendor connector catalog for BillHarbor"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+dependencies = ["billharbor>=0.1,<0.2"]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+  "src/billharbor_vendors",
+  "vendors/amazon_business_de/src/amazon_business_de",
+  "vendors/oekostrom_at/src/oekostrom_at",
+]
+
+[tool.hatch.build.targets.wheel.force-include]
+"catalog.toml" = "billharbor_vendors/data/catalog.toml"
+"vendors/amazon_business_de/vendor.toml" = "billharbor_vendors/data/amazon_business_de.toml"
+"vendors/oekostrom_at/vendor.toml" = "billharbor_vendors/data/oekostrom_at.toml"
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "vendors"]
+

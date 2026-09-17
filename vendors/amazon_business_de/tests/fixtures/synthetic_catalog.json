@@ -1,0 +1,39 @@
+{
+  "synthetic": true,
+  "connector_id": "amazon_business_de",
+  "scopes": [
+    {"kind": "organization", "id": "entity_demo_de"}
+  ],
+  "documents": [
+    {
+      "native_id": "document_demo_amazon_001",
+      "scope_id": "entity_demo_de",
+      "document_kind": "invoice",
+      "issue_date": "2026-01-15",
+      "issuer_reference": "invented_marketplace_seller",
+      "filename": "synthetic-amazon-invoice.pdf",
+      "media_type": "application/pdf",
+      "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBub24tZmluYW5jaWFsIGZpeHR1cmUKJSVFT0YK",
+      "observed_at": "2026-01-16T10:00:00Z",
+      "observations": [
+        {"field": "gross_amount", "value_type": "decimal", "value": "12.34", "source": "vendor_api", "source_path": "fixture.documents[0].amount"},
+        {"field": "currency", "value_type": "currency", "value": "EUR", "source": "vendor_api", "source_path": "fixture.documents[0].currency"}
+      ]
+    },
+    {
+      "native_id": "document_demo_amazon_002",
+      "scope_id": "entity_demo_de",
+      "document_kind": "credit_note",
+      "issue_date": "2026-01-20",
+      "issuer_reference": "invented_marketplace_seller",
+      "filename": "synthetic-amazon-credit-note.pdf",
+      "media_type": "application/pdf",
+      "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBjcmVkaXQgbm90ZSBmaXh0dXJlCiUlRU9GCg==",
+      "observed_at": "2026-01-21T10:00:00Z",
+      "observations": [
+        {"field": "gross_amount", "value_type": "decimal", "value": "-3.21", "source": "vendor_api", "source_path": "fixture.documents[1].amount"},
+        {"field": "currency", "value_type": "currency", "value": "EUR", "source": "vendor_api", "source_path": "fixture.documents[1].currency"}
+      ]
+    }
+  ]
+}
