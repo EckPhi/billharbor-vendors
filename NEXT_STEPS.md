@@ -105,3 +105,18 @@ commands pass. No workflow has run remotely; changes are uncommitted/unpushed an
 the GitHub variable/secret have not been configured. Do not create a release tag
 until BillHarbor's current D1 changes are reviewed, committed and pushed, then set
 the variable to that exact commit.
+
+## Publication blocker — 2026-09-17
+
+Catalog changes are committed and pushed through
+`2b9f92a624a3af250bd31f1c9d7e4db4f4bbb201`. Repository variable
+`BILLHARBOR_REF` is correctly pinned to released BillHarbor commit
+`99bb2e5146f25e87471ec4ccbcd0d59a1597b445`. Remote catalog CI correctly fails
+closed at the private sibling checkout because required secret
+`BILLHARBOR_READ_TOKEN` is absent. Do not substitute a broad operator token.
+A `DOCKERHUB_TOKEN` secret exists in this catalog repository but is unrelated and
+must not be used for source checkout.
+
+No catalog `v0.1.0` tag or GitHub Release was created. After a fine-grained token
+with contents-read access only to `EckPhi/billharbor` is stored under the required
+secret name, rerun CI. Tag and release the catalog only after that run passes.
