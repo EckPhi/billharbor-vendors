@@ -156,3 +156,18 @@ matching a clean local rebuild. The engine CI and release workflows passed.
 not read or copied. Next pin `BILLHARBOR_REF` to the above commit, publish this
 catalog candidate, require green remote CI, then tag `v0.2.0`. No live vendor,
 receiver, accounting, or application-deployment gate is opened by this release.
+
+## v0.2.0 publication — 2026-09-21
+
+Catalog commit `94d63cc1ecd11dd0fb837ca1a29c9415246e8cfa` was pushed to
+`main` after `BILLHARBOR_REF` was pinned to released engine commit
+`a69e7e59277183153232b6c57f1b7276d14751c4`. Remote cross-repository CI
+passed. Annotated `v0.2.0` resolves to the catalog commit, and its release
+workflow passed, publishing the catalog wheel with SHA-256
+`840f48c73b351631538ba98b06d79b4795fd3fd0dd39013d23cedbf9d6878439`.
+The published `BILLHARBOR-SDK` record contains the pinned engine commit and its
+verified wheel digest
+`734b5abce8b93ebf4077a1b94515e1074235597d7ec113b9522e3caccd7a988f`.
+No live connector, vendor authentication, receiver operation, or application
+deployment occurred. Future catalog changes must retain immutable engine pinning
+and rerun cross-repository CI before a new tag.

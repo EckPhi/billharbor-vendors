@@ -42,7 +42,8 @@ The reviewed BillHarbor `v0.2.0` release is commit
 `a69e7e59277183153232b6c57f1b7276d14751c4`; GitHub reports its published
 wheel SHA-256 as
 `734b5abce8b93ebf4077a1b94515e1074235597d7ec113b9522e3caccd7a988f`.
-A clean local rebuild reproduced that digest. The local catalog candidate SHA-256 is
+A clean local rebuild reproduced that digest. The released catalog wheel SHA-256 is
 `840f48c73b351631538ba98b06d79b4795fd3fd0dd39013d23cedbf9d6878439`
-for billharbor-vendors 0.2.0; it remains candidate evidence until the catalog
-release workflow independently rebuilds and publishes the wheel.
+for billharbor-vendors 0.2.0; the catalog release workflow independently rebuilt
+and published that matching wheel. Its `BILLHARBOR-SDK` provenance record pins
+the engine commit and wheel digest above.
