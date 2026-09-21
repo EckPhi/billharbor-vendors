@@ -8,3 +8,4 @@ class Connector(SyntheticConnector):
     connector_id = "oekostrom_at"
     transport = "browser"
     document_kinds = (DocumentKind.INVOICE, DocumentKind.SETTLEMENT)
+    supports_interaction = True

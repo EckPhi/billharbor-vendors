@@ -3,8 +3,9 @@
 Separately versioned vendor definitions and connector packages for BillHarbor.
 Initial targets: Amazon Business and oekostrom.at.
 
-Status: D1 packaged catalog and fixture-only connectors implemented for synthetic
-conformance; no live-verified connector, vendor access or deployment yet.
+Status: local v0.2 connector-SDK migration and packaged synthetic fixtures are
+implemented for conformance; no live-verified connector, vendor access or
+deployment yet.
 
 - [Vendor-definition specification](docs/vendor-definition.md)
 - [Dependency decisions](docs/dependencies.md)

@@ -66,7 +66,7 @@ jobs:
           uv run --no-project --isolated \
             --with "$DIST_DIR"/billharbor-*.whl \
             --with "$DIST_DIR"/billharbor_vendors-*.whl \
-            python -c 'from importlib.resources import files; from billharbor.validation import validate_manifest; validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_at.toml").read_bytes())'
+            python -c 'from importlib.resources import files; from billharbor.validation import validate_manifest; from amazon_business_de.connector import Connector as A; from oekostrom_at.connector import Connector as O; validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_at.toml").read_bytes()); A(); O()'
           sha256sum "$DIST_DIR"/billharbor_vendors-*.whl > "$DIST_DIR"/SHA256SUMS
           ENGINE_DIGEST=$(sha256sum "$DIST_DIR"/billharbor-*.whl | cut -d ' ' -f 1)
           printf 'repository=EckPhi/billharbor\ncommit=%s\nwheel_sha256=%s\n' "$BILLHARBOR_REF" "$ENGINE_DIGEST" > "$DIST_DIR"/BILLHARBOR-SDK

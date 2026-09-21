@@ -120,3 +120,39 @@ must not be used for source checkout.
 No catalog `v0.1.0` tag or GitHub Release was created. After a fine-grained token
 with contents-read access only to `EckPhi/billharbor` is stored under the required
 secret name, rerun CI. Tag and release the catalog only after that run passes.
+
+## Local connector v2 migration — 2026-09-18
+
+The operator approved a major connector boundary correction. The local catalog is
+now version 0.2.0 and requires BillHarbor 0.2.0, `vendor-definition/2` and
+`billharbor-connector/2`. Both design-only connectors publish decoded synthetic
+original bytes through the engine-owned context capability instead of discarding
+them. Their invented fixture JSON is packaged as catalog data, so installed-wheel
+entrypoints can initialize without a source checkout. Both vendor changelogs and
+engine compatibility ranges were updated; neither package claims live support.
+
+All 10 catalog tests pass, including both connectors running through BillHarbor's
+durable engine into pending outbox events with exact stored-byte verification.
+Both 0.2.0 wheels build and install together in isolation; default installed
+connector construction finds the packaged fixtures. The local uncommitted catalog
+wheel SHA-256 is
+`840f48c73b351631538ba98b06d79b4795fd3fd0dd39013d23cedbf9d6878439`.
+The pre-existing local edit to `docs/dependencies.md` was preserved and not
+overwritten. Candidate hashes are not release pins.
+
+Before publication, review/commit/push BillHarbor 0.2.0, update the catalog's
+`BILLHARBOR_REF` to that exact commit, update dependency provenance for the
+released 0.2.0 wheel, configure the still-missing fine-grained
+`BILLHARBOR_READ_TOKEN`, obtain green remote CI, then deliberately tag the catalog
+v0.2.0. No remote secret, release, live access or deployment was performed.
+
+## v0.2.0 release preparation — 2026-09-21
+
+BillHarbor `v0.2.0` is released at commit
+`a69e7e59277183153232b6c57f1b7276d14751c4`. Its published wheel SHA-256 is
+`734b5abce8b93ebf4077a1b94515e1074235597d7ec113b9522e3caccd7a988f`,
+matching a clean local rebuild. The engine CI and release workflows passed.
+`BILLHARBOR_READ_TOKEN` is now configured in the catalog repository; its value was
+not read or copied. Next pin `BILLHARBOR_REF` to the above commit, publish this
+catalog candidate, require green remote CI, then tag `v0.2.0`. No live vendor,
+receiver, accounting, or application-deployment gate is opened by this release.

@@ -3,17 +3,18 @@
 from __future__ import annotations
 
 import base64
-import hashlib
 import json
 from datetime import date, datetime
+from importlib.resources import files
 from pathlib import Path
 from typing import Any, Mapping
 
 from billharbor.sdk import (
-    ArtifactPublication, ConnectorCapabilities, ConnectorContext, DiscoveryPage,
+    ArtifactPublication, ConnectorCapabilities, DiscoveryPage,
     DocumentKind, DocumentReference, Observation, ObservationField,
     ObservationSource, ObservationValueType, Scope, ScopeKind, SessionState,
 )
+from billharbor.sdk.v2 import ConnectorContext
 
 
 class SyntheticConnector:
@@ -22,9 +23,13 @@ class SyntheticConnector:
     connector_id: str
     transport: str
     document_kinds: tuple[DocumentKind, ...]
+    supports_interaction: bool = False
 
-    def __init__(self, fixture_path: Path, *, page_size: int = 100) -> None:
-        with fixture_path.open(encoding="utf-8") as handle:
+    def __init__(self, fixture_path: Path | None = None, *, page_size: int = 100) -> None:
+        fixture = fixture_path or files("billharbor_vendors").joinpath(
+            "data", "fixtures", f"{self.connector_id}.json"
+        )
+        with fixture.open(encoding="utf-8") as handle:
             self._fixture: dict[str, Any] = json.load(handle)
         if self._fixture.get("synthetic") is not True:
             raise ValueError("connector accepts only explicitly synthetic fixture data")
@@ -40,7 +45,7 @@ class SyntheticConnector:
             connector_id=self.connector_id,
             transports=(self.transport,),
             document_kinds=self.document_kinds,
-            supports_interaction=True,
+            supports_interaction=self.supports_interaction,
         )
 
     async def check_session(self, context: ConnectorContext) -> SessionState:
@@ -87,10 +92,10 @@ class SyntheticConnector:
         if item is None:
             raise LookupError("synthetic document reference was not discovered")
         content = base64.b64decode(item["content_base64"], validate=True)
-        return ArtifactPublication(
+        return await context.publish_artifact(
             artifact_id=f"fixture_{reference.source_document_id}",
             filename=item["filename"], media_type=item["media_type"],
-            byte_size=len(content), sha256=hashlib.sha256(content).hexdigest(),
+            content=content,
         )
 
     async def close(self) -> None:

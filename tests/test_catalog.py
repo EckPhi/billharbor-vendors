@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from importlib.metadata import version
 import tomllib
 from pathlib import Path
 
@@ -14,12 +15,19 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_catalog_contains_two_valid_design_only_manifests() -> None:
     manifests = validate_catalog(ROOT)
+    with (ROOT / "catalog.toml").open("rb") as handle:
+        catalog = tomllib.load(handle)
     assert {manifest["id"] for manifest in manifests} == {
         "amazon_business_de",
         "oekostrom_at",
     }
     assert {manifest["status"] for manifest in manifests} == {"design_only"}
     assert all(manifest["verification"]["live_verified"] is False for manifest in manifests)
+    assert all(manifest["schema"] == "vendor-definition/2" for manifest in manifests)
+    assert all(manifest["sdk"] == ">=2,<3" for manifest in manifests)
+    assert all(manifest["compatibility"]["engine"] == ">=0.2,<0.3" for manifest in manifests)
+    assert {manifest["version"] for manifest in manifests} == {version("billharbor-vendors")}
+    assert catalog["version"] == version("billharbor-vendors")
 
 
 def test_non_design_manifest_cannot_omit_reviewed_origins() -> None:

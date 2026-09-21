@@ -70,9 +70,13 @@ jobs:
             python - <<'PY'
           from importlib.resources import files
           from billharbor.validation import validate_manifest
+          from amazon_business_de.connector import Connector as AmazonConnector
+          from oekostrom_at.connector import Connector as OekostromConnector
 
           data = files("billharbor_vendors").joinpath("data/amazon_business_de.toml").read_bytes()
           assert validate_manifest(data)["status"] == "design_only"
+          assert AmazonConnector().capabilities().connector_id == "amazon_business_de"
+          assert OekostromConnector().capabilities().connector_id == "oekostrom_at"
           PY
           sha256sum "$DIST_DIR"/*.whl > "$DIST_DIR"/SHA256SUMS
 

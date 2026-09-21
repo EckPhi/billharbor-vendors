@@ -26,7 +26,7 @@ wheels = [
 
 [[package]]
 name = "billharbor"
-version = "0.1.0"
+version = "0.2.0"
 source = { directory = "../billharbor" }
 dependencies = [
     { name = "jsonschema", extra = ["format-nongpl"] },
@@ -37,7 +37,7 @@ requires-dist = [{ name = "jsonschema", extras = ["format-nongpl"], specifier = 
 
 [[package]]
 name = "billharbor-vendors"
-version = "0.1.0"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "billharbor" },

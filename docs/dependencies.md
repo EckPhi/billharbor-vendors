@@ -20,3 +20,29 @@ catalog release. Before publishing the catalog, replace or override it with an
 independently released BillHarbor `0.1.0` artifact, record that artifact's SHA-256
 and verify the wheel contains the frozen schemas. Catalog installation must occur
 during image construction; no runtime Git or package installation is permitted.
+
+BillHarbor `v0.1.0` is released at commit
+`99bb2e5146f25e87471ec4ccbcd0d59a1597b445`. Its published wheel
+`billharbor-0.1.0-py3-none-any.whl` has SHA-256
+`c66548b576c21b7e2c30de1cba2fe4ebc5fbdfe72c443e54b345e5ba23d406e5`.
+GitHub reports the same digest, and a clean local rebuild reproduced it exactly.
+The catalog candidate wheel built against that release has SHA-256
+`5be0a755a54baa0b9549ffe6d1afd57e19af2216d01a513a5e477bd382027523`.
+
+## Local 0.2.0 candidate — 2026-09-18
+
+The local catalog now targets BillHarbor `0.2.0` and connector SDK v2 so original
+bytes cross the engine-owned artifact publication capability. BillHarbor remains
+Apache-2.0 while this catalog distribution's package metadata remains Proprietary;
+data flow remains synthetic fixture bytes into local durable test
+storage with no network, credentials or live vendor data. Rollback is the paired
+catalog/BillHarbor 0.1.0 release; do not mix a v2 catalog with the v1 engine.
+
+The reviewed BillHarbor `v0.2.0` release is commit
+`a69e7e59277183153232b6c57f1b7276d14751c4`; GitHub reports its published
+wheel SHA-256 as
+`734b5abce8b93ebf4077a1b94515e1074235597d7ec113b9522e3caccd7a988f`.
+A clean local rebuild reproduced that digest. The local catalog candidate SHA-256 is
+`840f48c73b351631538ba98b06d79b4795fd3fd0dd39013d23cedbf9d6878439`
+for billharbor-vendors 0.2.0; it remains candidate evidence until the catalog
+release workflow independently rebuilds and publishes the wheel.

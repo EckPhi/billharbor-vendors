@@ -1,17 +1,17 @@
-schema = "vendor-definition/1"
+schema = "vendor-definition/2"
 id = "amazon_business_de"
 display_name = "Amazon Business Germany"
 vendor_site = "https://www.amazon.de/business"
-version = "0.1.0"
+version = "0.2.0"
 status = "design_only"
 entrypoint = "amazon_business_de.connector:Connector"
-sdk = ">=1,<2"
+sdk = ">=2,<3"
 maintainer = "BillHarbor catalog maintainers"
 license = "Apache-2.0"
 
 [compatibility]
-sdk = ">=1,<2"
-engine = ">=0.1,<0.2"
+sdk = ">=2,<3"
+engine = ">=0.2,<0.3"
 python = ">=3.11"
 wire_adapters = ["document-delivery/1"]
 
@@ -92,7 +92,7 @@ capture_default = "off"
 safe_counters = ["requests", "pages", "discovered", "downloaded", "rejected"]
 
 [verification]
-fixture_set = "tests/fixtures/synthetic_catalog.json"
+fixture_set = "package:billharbor_vendors/data/fixtures/amazon_business_de.json"
 live_verified = false
 known_gaps = ["Eligibility", "API fields", "origins", "date semantics", "native identity"]
 drift_indicators = ["Unknown response shape", "Missing continuation"]

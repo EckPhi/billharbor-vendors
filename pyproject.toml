@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "billharbor-vendors"
-version = "0.1.0"
+version = "0.2.0"
 description = "Reviewed vendor connector catalog for BillHarbor"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Proprietary" }
-dependencies = ["billharbor==0.1.0"]
+dependencies = ["billharbor==0.2.0"]
 
 [dependency-groups]
 test = ["pytest==9.1.1"]
@@ -30,6 +30,8 @@ packages = [
 "catalog.toml" = "billharbor_vendors/data/catalog.toml"
 "vendors/amazon_business_de/vendor.toml" = "billharbor_vendors/data/amazon_business_de.toml"
 "vendors/oekostrom_at/vendor.toml" = "billharbor_vendors/data/oekostrom_at.toml"
+"vendors/amazon_business_de/tests/fixtures/synthetic_catalog.json" = "billharbor_vendors/data/fixtures/amazon_business_de.json"
+"vendors/oekostrom_at/tests/fixtures/synthetic_catalog.json" = "billharbor_vendors/data/fixtures/oekostrom_at.json"
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "vendors"]

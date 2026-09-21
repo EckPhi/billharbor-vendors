@@ -1,15 +1,14 @@
 schema = "vendor-catalog/1"
-version = "0.1.0"
+version = "0.2.0"
 
 [[vendors]]
 id = "amazon_business_de"
-version = "0.1.0"
+version = "0.2.0"
 status = "design_only"
 manifest = "vendors/amazon_business_de/vendor.toml"
 
 [[vendors]]
 id = "oekostrom_at"
-version = "0.1.0"
+version = "0.2.0"
 status = "design_only"
 manifest = "vendors/oekostrom_at/vendor.toml"
-
