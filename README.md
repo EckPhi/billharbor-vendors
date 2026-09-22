@@ -9,6 +9,7 @@ deployment yet.
 
 - [Vendor-definition specification](docs/vendor-definition.md)
 - [Dependency decisions](docs/dependencies.md)
+- [D4 synthetic vendor packages](docs/d4-synthetic-packages.md)
 - [CI/CD](docs/ci-cd.md)
 - [Next steps](NEXT_STEPS.md)
 - [BillHarbor engine and integration design](../billharbor/README.md)

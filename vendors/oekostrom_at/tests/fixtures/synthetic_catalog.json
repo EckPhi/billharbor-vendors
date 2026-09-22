@@ -2,8 +2,14 @@
   "synthetic": true,
   "connector_id": "oekostrom_at",
   "scopes": [
-    {"kind": "installation", "id": "anlage_demo_wien"},
-    {"kind": "installation", "id": "anlage_demo_graz"}
+    {
+      "kind": "installation",
+      "id": "anlage_demo_wien"
+    },
+    {
+      "kind": "installation",
+      "id": "anlage_demo_graz"
+    }
   ],
   "documents": [
     {
@@ -17,9 +23,36 @@
       "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCB1dGlsaXR5IGZpeHR1cmUKJSVFT0YK",
       "observed_at": "2026-02-11T08:00:00Z",
       "observations": [
-        {"field": "gross_amount", "value_type": "decimal", "value": "45.67", "source": "vendor_portal", "source_path": "fixture.documents[0].amount"},
-        {"field": "currency", "value_type": "currency", "value": "EUR", "source": "vendor_portal", "source_path": "fixture.documents[0].currency"}
-      ]
+        {
+          "field": "gross_amount",
+          "value_type": "decimal",
+          "value": "45.67",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[0].amount"
+        },
+        {
+          "field": "currency",
+          "value_type": "currency",
+          "value": "EUR",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[0].currency"
+        },
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "document_demo_oeko_001",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[0].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-02-10",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[0].issue_date"
+        }
+      ],
+      "scope_kind": "installation"
     },
     {
       "native_id": "document_demo_oeko_002",
@@ -32,9 +65,79 @@
       "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBmZWVkLWluIGZpeHR1cmUKJSVFT0YK",
       "observed_at": "2026-02-13T08:00:00Z",
       "observations": [
-        {"field": "gross_amount", "value_type": "decimal", "value": "-8.90", "source": "vendor_portal", "source_path": "fixture.documents[1].amount"},
-        {"field": "currency", "value_type": "currency", "value": "EUR", "source": "vendor_portal", "source_path": "fixture.documents[1].currency"}
-      ]
+        {
+          "field": "gross_amount",
+          "value_type": "decimal",
+          "value": "-8.90",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[1].amount"
+        },
+        {
+          "field": "currency",
+          "value_type": "currency",
+          "value": "EUR",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[1].currency"
+        },
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "document_demo_oeko_002",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[1].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-02-12",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[1].issue_date"
+        }
+      ],
+      "scope_kind": "installation"
+    },
+    {
+      "native_id": "document_demo_oeko_003",
+      "scope_id": "anlage_demo_graz",
+      "document_kind": "credit_note",
+      "issue_date": "2026-02-10",
+      "issuer_reference": "invented_energy_supplier",
+      "filename": "synthetic-oekostrom-credit-note.pdf",
+      "media_type": "application/pdf",
+      "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBjcmVkaXQgbm90ZQolJUVPRgo=",
+      "observed_at": "2026-02-11T08:00:00Z",
+      "observations": [
+        {
+          "field": "gross_amount",
+          "value_type": "decimal",
+          "value": "45.67",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[2].amount"
+        },
+        {
+          "field": "currency",
+          "value_type": "currency",
+          "value": "EUR",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[2].currency"
+        },
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "document_demo_oeko_001",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[2].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-02-10",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[2].issue_date"
+        }
+      ],
+      "scope_kind": "installation"
     }
-  ]
+  ],
+  "fixture_version": "vendor-synthetic/1"
 }

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 from datetime import date, datetime
 from importlib.resources import files
@@ -35,6 +36,19 @@ class SyntheticConnector:
             raise ValueError("connector accepts only explicitly synthetic fixture data")
         if self._fixture.get("connector_id") != self.connector_id:
             raise ValueError("fixture connector_id does not match connector")
+        if self._fixture.get("fixture_version") != "vendor-synthetic/1":
+            raise ValueError("unsupported synthetic fixture version")
+        known_scopes = {(item["kind"], item["id"]) for item in self._fixture["scopes"]}
+        if len(known_scopes) != len(self._fixture["scopes"]):
+            raise ValueError("duplicate synthetic scope")
+        identities = set()
+        for item in self._fixture["documents"]:
+            identity = (item["scope_kind"], item["scope_id"], item["document_kind"], item["native_id"])
+            if (item["scope_kind"], item["scope_id"]) not in known_scopes or identity in identities:
+                raise ValueError("invalid or duplicate synthetic document scope identity")
+            identities.add(identity)
+            if DocumentKind(item["document_kind"]) not in self.document_kinds:
+                raise ValueError("unsupported synthetic document kind")
         if page_size < 1 or page_size > 100:
             raise ValueError("page_size must be between 1 and 100")
         self._page_size = page_size
@@ -63,15 +77,18 @@ class SyntheticConnector:
         self._ensure_ready(context)
         if not scopes:
             raise ValueError("at least one explicit scope is required")
-        scope_by_id = {scope.id: scope for scope in scopes}
+        available = {(scope.kind, scope.id) for scope in await self.list_scopes(context)}
+        if len(set(scopes)) != len(scopes) or not {(scope.kind, scope.id) for scope in scopes} <= available:
+            raise ValueError("unknown synthetic scope")
+        scope_by_identity = {(scope.kind.value, scope.id): scope for scope in scopes}
         offset = 0 if checkpoint_id is None else int(checkpoint_id.removeprefix("offset_"))
         records = [
             item for item in self._fixture["documents"]
-            if item["scope_id"] in scope_by_id
+            if (item["scope_kind"], item["scope_id"]) in scope_by_identity
             and starts_on <= date.fromisoformat(item["issue_date"]) <= ends_on
         ]
         page_records = records[offset : offset + self._page_size]
-        documents = tuple(self._reference(scope_by_id[item["scope_id"]], item) for item in page_records)
+        documents = tuple(self._reference(scope_by_identity[(item["scope_kind"], item["scope_id"])], item) for item in page_records)
         next_offset = offset + len(page_records)
         terminal = next_offset >= len(records)
         return DiscoveryPage(
@@ -84,14 +101,16 @@ class SyntheticConnector:
         self, context: ConnectorContext, reference: DocumentReference
     ) -> ArtifactPublication:
         self._ensure_ready(context)
-        scope_ids = {scope.id for scope in reference.scopes}
+        scope_ids = {(scope.kind.value, scope.id) for scope in reference.scopes}
         item = next((candidate for candidate in self._fixture["documents"]
-                     if candidate["native_id"] == reference.source_document_id
-                     and candidate["scope_id"] in scope_ids
+                     if self._source_id(candidate) == reference.source_document_id
+                     and (candidate["scope_kind"], candidate["scope_id"]) in scope_ids
                      and DocumentKind(candidate["document_kind"]) is reference.document_kind), None)
         if item is None:
             raise LookupError("synthetic document reference was not discovered")
         content = base64.b64decode(item["content_base64"], validate=True)
+        if not content.startswith(b"%PDF-") or item["media_type"] != "application/pdf":
+            raise ValueError("synthetic original is not a PDF")
         return await context.publish_artifact(
             artifact_id=f"fixture_{reference.source_document_id}",
             filename=item["filename"], media_type=item["media_type"],
@@ -109,7 +128,7 @@ class SyntheticConnector:
             source_path=value["source_path"],
         ) for value in item["observations"])
         return DocumentReference(
-            source_document_id=item["native_id"], document_kind=DocumentKind(item["document_kind"]),
+            source_document_id=self._source_id(item), document_kind=DocumentKind(item["document_kind"]),
             observed_at=datetime.fromisoformat(item["observed_at"].replace("Z", "+00:00")),
             scopes=(scope,), observations=observations,
         )
@@ -119,3 +138,8 @@ class SyntheticConnector:
             raise RuntimeError("connector is closed")
         if context.cancelled():
             raise RuntimeError("execution is cancelled")
+
+    @staticmethod
+    def _source_id(item: Mapping[str, Any]) -> str:
+        parts = (item["scope_kind"], item["scope_id"], item["document_kind"], item["native_id"])
+        return "synthetic_" + hashlib.sha256(json.dumps(parts, separators=(",", ":")).encode()).hexdigest()

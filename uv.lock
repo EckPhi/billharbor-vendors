@@ -37,7 +37,7 @@ requires-dist = [{ name = "jsonschema", extras = ["format-nongpl"], specifier = 
 
 [[package]]
 name = "billharbor-vendors"
-version = "0.2.0"
+version = "0.3.0.dev0"
 source = { editable = "." }
 dependencies = [
     { name = "billharbor" },

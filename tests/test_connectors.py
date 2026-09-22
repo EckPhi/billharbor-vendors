@@ -111,6 +111,16 @@ def test_connector_rejects_unmarked_fixture(tmp_path: Path) -> None:
         AmazonConnector(fixture)
 
 
+def test_d4_rejects_duplicate_typed_source_identity(tmp_path: Path) -> None:
+    source = ROOT / "vendors/amazon_business_de/tests/fixtures/synthetic_catalog.json"
+    payload = json.loads(source.read_text(encoding="utf-8"))
+    payload["documents"].append(payload["documents"][0])
+    fixture = tmp_path / "duplicate.json"
+    fixture.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="duplicate synthetic document scope identity"):
+        AmazonConnector(fixture)
+
+
 def test_page_budget_is_bounded() -> None:
     with pytest.raises(ValueError, match="between 1 and 100"):
         AmazonConnector(
@@ -157,7 +167,35 @@ def test_connector_v2_bytes_reach_engine_outbox(
         fixture_payload = json.loads(fixture.read_text(encoding="utf-8"))
         for document in fixture_payload["documents"]:
             expected = base64.b64decode(document["content_base64"], validate=True)
-            stored = store.artifact_bytes("tenant", f"fixture_{document['native_id']}")
+            stored = store.artifact_bytes("tenant", f"fixture_{connector_type._source_id(document)}")
             assert stored == expected
+
+    asyncio.run(exercise())
+
+
+def test_d4_scoped_identity_and_document_types() -> None:
+    async def exercise() -> None:
+        amazon = AmazonConnector(ROOT / "vendors/amazon_business_de/tests/fixtures/synthetic_catalog.json")
+        oeko = OekostromConnector(ROOT / "vendors/oekostrom_at/tests/fixtures/synthetic_catalog.json")
+        context = FixtureContext()
+        amazon_scopes = await amazon.list_scopes(context)
+        pages = [await amazon.discover_page(context, starts_on=date(2026, 1, 1),
+                 ends_on=date(2026, 12, 31), scopes=(scope,), checkpoint_id=None)
+                 for scope in amazon_scopes]
+        assert [len(page.documents) for page in pages] == [2, 1]
+        assert pages[0].documents[0].source_document_id != pages[1].documents[0].source_document_id
+        assert {item.document_kind.value for item in pages[0].documents} == {"invoice", "credit_note"}
+        assert all(len(item.observations) >= 4 for page in pages for item in page.documents)
+        with pytest.raises(ValueError, match="unknown synthetic scope"):
+            await amazon.discover_page(context, starts_on=date(2026, 1, 1),
+                ends_on=date(2026, 12, 31), scopes=(await oeko.list_scopes(context))[0:1], checkpoint_id=None)
+        oeko_scopes = await oeko.list_scopes(context)
+        oeko_pages = [await oeko.discover_page(context, starts_on=date(2026, 1, 1),
+                      ends_on=date(2026, 12, 31), scopes=(scope,), checkpoint_id=None)
+                      for scope in oeko_scopes]
+        assert {item.document_kind.value for page in oeko_pages for item in page.documents} == {
+            "invoice", "credit_note", "settlement"}
+        await amazon.close()
+        await oeko.close()
 
     asyncio.run(exercise())

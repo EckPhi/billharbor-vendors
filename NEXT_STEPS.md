@@ -171,3 +171,26 @@ verified wheel digest
 No live connector, vendor authentication, receiver operation, or application
 deployment occurred. Future catalog changes must retain immutable engine pinning
 and rerun cross-repository CI before a new tag.
+
+## D4 synthetic vendor package candidate — 2026-09-22
+
+The operator requested D4 and a commit. This local `0.3.0.dev0` candidate keeps
+`vendor-definition/2`, connector SDK v2 and both `design_only` live gates. Invented
+`vendor-synthetic/1` fixtures now cover two Amazon legal-entity shaped scopes,
+including a repeated native invoice ID, and two Ökostrom installations with
+invoice, credit note and feed-in settlement outputs. The shared fixture reader
+validates typed scope membership and derives source IDs from scope, type and
+native ID. Four typed observations per document retain source paths. No new
+package, browser, secret, remote API or live selector was introduced.
+
+Direct local lifecycle verification fetched all six invented originals and proved
+unique scoped identities and per-type coverage. Python compilation and
+`git diff --check` passed. Full pytest could not be certified here: collection
+stalled in the local environment, while a clean uv cache required an unavailable
+network fetch for the pinned build backend. CI must run the catalog and sibling
+engine conformance suites before any version tag or release. This D4 work is
+committed locally after verification; inspect `git status` and remote divergence
+before publication. No push, tag, release, vendor access, receiver, deployment or
+accounting action is implied. Next: resolve the test-environment issue, obtain
+green cross-repository CI, review the immutable engine/catalog pin, then plan D5
+only under its separate deployment scope. G1/G2 remain closed.

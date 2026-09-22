@@ -2,7 +2,14 @@
   "synthetic": true,
   "connector_id": "amazon_business_de",
   "scopes": [
-    {"kind": "organization", "id": "entity_demo_de"}
+    {
+      "kind": "organization",
+      "id": "entity_demo_de"
+    },
+    {
+      "kind": "organization",
+      "id": "entity_demo_at"
+    }
   ],
   "documents": [
     {
@@ -16,9 +23,36 @@
       "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBub24tZmluYW5jaWFsIGZpeHR1cmUKJSVFT0YK",
       "observed_at": "2026-01-16T10:00:00Z",
       "observations": [
-        {"field": "gross_amount", "value_type": "decimal", "value": "12.34", "source": "vendor_api", "source_path": "fixture.documents[0].amount"},
-        {"field": "currency", "value_type": "currency", "value": "EUR", "source": "vendor_api", "source_path": "fixture.documents[0].currency"}
-      ]
+        {
+          "field": "gross_amount",
+          "value_type": "decimal",
+          "value": "12.34",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[0].amount"
+        },
+        {
+          "field": "currency",
+          "value_type": "currency",
+          "value": "EUR",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[0].currency"
+        },
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "document_demo_amazon_001",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[0].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-01-15",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[0].issue_date"
+        }
+      ],
+      "scope_kind": "organization"
     },
     {
       "native_id": "document_demo_amazon_002",
@@ -31,9 +65,79 @@
       "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBjcmVkaXQgbm90ZSBmaXh0dXJlCiUlRU9GCg==",
       "observed_at": "2026-01-21T10:00:00Z",
       "observations": [
-        {"field": "gross_amount", "value_type": "decimal", "value": "-3.21", "source": "vendor_api", "source_path": "fixture.documents[1].amount"},
-        {"field": "currency", "value_type": "currency", "value": "EUR", "source": "vendor_api", "source_path": "fixture.documents[1].currency"}
-      ]
+        {
+          "field": "gross_amount",
+          "value_type": "decimal",
+          "value": "-3.21",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[1].amount"
+        },
+        {
+          "field": "currency",
+          "value_type": "currency",
+          "value": "EUR",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[1].currency"
+        },
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "document_demo_amazon_002",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[1].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-01-20",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[1].issue_date"
+        }
+      ],
+      "scope_kind": "organization"
+    },
+    {
+      "native_id": "document_demo_amazon_001",
+      "scope_id": "entity_demo_at",
+      "document_kind": "invoice",
+      "issue_date": "2026-01-15",
+      "issuer_reference": "invented_marketplace_seller",
+      "filename": "synthetic-amazon-second-entity.pdf",
+      "media_type": "application/pdf",
+      "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBub24tZmluYW5jaWFsIGZpeHR1cmUKJSVFT0YK",
+      "observed_at": "2026-01-17T10:00:00Z",
+      "observations": [
+        {
+          "field": "gross_amount",
+          "value_type": "decimal",
+          "value": "12.34",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[2].amount"
+        },
+        {
+          "field": "currency",
+          "value_type": "currency",
+          "value": "EUR",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[2].currency"
+        },
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "document_demo_amazon_001",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[2].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-01-15",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[2].issue_date"
+        }
+      ],
+      "scope_kind": "organization"
     }
-  ]
+  ],
+  "fixture_version": "vendor-synthetic/1"
 }

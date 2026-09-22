@@ -7,5 +7,5 @@ from billharbor_vendors.synthetic import SyntheticConnector
 class Connector(SyntheticConnector):
     connector_id = "oekostrom_at"
     transport = "browser"
-    document_kinds = (DocumentKind.INVOICE, DocumentKind.SETTLEMENT)
+    document_kinds = (DocumentKind.INVOICE, DocumentKind.CREDIT_NOTE, DocumentKind.SETTLEMENT)
     supports_interaction = True
