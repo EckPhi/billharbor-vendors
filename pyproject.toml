@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "billharbor-vendors"
-version = "0.3.0.dev0"
+version = "0.3.0"
 description = "Reviewed vendor connector catalog for BillHarbor"
 readme = "README.md"
 requires-python = ">=3.11"

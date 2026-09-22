@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-from importlib.metadata import version
 import tomllib
 from pathlib import Path
 
@@ -26,8 +25,10 @@ def test_catalog_contains_two_valid_design_only_manifests() -> None:
     assert all(manifest["schema"] == "vendor-definition/2" for manifest in manifests)
     assert all(manifest["sdk"] == ">=2,<3" for manifest in manifests)
     assert all(manifest["compatibility"]["engine"] == ">=0.2,<0.3" for manifest in manifests)
-    assert {manifest["version"] for manifest in manifests} == {version("billharbor-vendors")}
-    assert catalog["version"] == version("billharbor-vendors")
+    with (ROOT / "pyproject.toml").open("rb") as handle:
+        source_version = tomllib.load(handle)["project"]["version"]
+    assert {manifest["version"] for manifest in manifests} == {source_version}
+    assert catalog["version"] == source_version
 
 
 def test_non_design_manifest_cannot_omit_reviewed_origins() -> None:

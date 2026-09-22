@@ -1,6 +1,6 @@
 # D4 synthetic vendor packages
 
-The 0.3.0.dev0 catalog candidate keeps both packages `design_only`. Their
+The 0.3.0 catalog candidate keeps both packages `design_only`. Their
 `vendor-definition/2` manifests remain the versioned configuration boundary;
 empty reviewed origins and unresolved discovery fields forbid live execution.
 The connectors read only packaged `vendor-synthetic/1` JSON and do not call an

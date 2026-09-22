@@ -174,7 +174,7 @@ and rerun cross-repository CI before a new tag.
 
 ## D4 synthetic vendor package candidate — 2026-09-22
 
-The operator requested D4 and a commit. This local `0.3.0.dev0` candidate keeps
+The operator requested D4 and a commit. This local `0.3.0` candidate keeps
 `vendor-definition/2`, connector SDK v2 and both `design_only` live gates. Invented
 `vendor-synthetic/1` fixtures now cover two Amazon legal-entity shaped scopes,
 including a repeated native invoice ID, and two Ökostrom installations with
@@ -194,3 +194,15 @@ before publication. No push, tag, release, vendor access, receiver, deployment o
 accounting action is implied. Next: resolve the test-environment issue, obtain
 green cross-repository CI, review the immutable engine/catalog pin, then plan D5
 only under its separate deployment scope. G1/G2 remain closed.
+
+### D4 verification correction — 2026-09-22
+
+The first pushed D4 commit used a PEP 440 development suffix in manifest versions;
+`vendor-definition/2` correctly rejects that spelling. The candidate catalog,
+manifest and package version is now `0.3.0` without changing the frozen schema.
+The source-tree catalog test reads the source `pyproject.toml` version so an older
+installed editable distribution cannot mask or falsely fail source conformance.
+With pytest's local cache plugin disabled, the full catalog suite passes **12/12**;
+`git diff --check` also passes. This correction must be committed and pushed
+before D4 can be treated as the remote baseline. Wheel-only packaging and remote
+cross-repository CI are still separate release gates; no release tag was made.
