@@ -7,6 +7,14 @@ Status: local v0.2 connector-SDK migration and packaged synthetic fixtures are
 implemented for conformance; no live-verified connector, vendor access or
 deployment yet.
 
+Ökostrom is the operator-selected first D6 candidate. Its package remains
+`design_only`: public pages advertise invoice PDF/CSV downloads, multiple Anlagen
+and PV feed-in PDFs, but the authenticated portal has not been observed. G1 is
+blocked pending a documented terms decision because the current portal terms
+restrict use to the user's own purposes, prohibit commercial use/data sharing with
+third parties and require credential secrecy. See BillHarbor's
+[Ökostrom D6 readiness record](../billharbor/docs/contracts/d6-oekostrom-readiness.md).
+
 - [Vendor-definition specification](docs/vendor-definition.md)
 - [Dependency decisions](docs/dependencies.md)
 - [D4 synthetic vendor packages](docs/d4-synthetic-packages.md)

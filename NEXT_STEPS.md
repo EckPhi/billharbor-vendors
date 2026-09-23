@@ -226,3 +226,20 @@ to that catalog commit; release run `35870777091` passed and published wheel
 SHA-256 `364dece35ea8083ac7a7e6a9180a11be4d1ab398f2bdd4d9e22665010fc8cba5`.
 The catalog remains synthetic and `design_only`. No vendor access, credential,
 real document, callback or deployment occurred; G1/G2 remain closed.
+
+## Ökostrom D6 readiness — 2026-09-23
+
+The operator selected Ökostrom as the first D6 candidate. The catalog package and
+manifest remain `design_only`; connector code still reads invented fixtures only.
+Official public pages advertise invoice PDF/CSV downloads, switching among
+multiple installations and downloadable PV feed-in statements. No authenticated
+portal behavior, selector, origin or API was tested. The portal requires customer
+registration/activation and credentials, so it is not an unauthenticated route.
+
+Current portal terms limit use to the user's own purposes, prohibit commercial use
+including sharing data with third parties, and require credential secrecy. G1 is
+blocked until the account holder's internal bookkeeping purpose and any BillHarbor
+or accountant document flow are explicitly resolved, with written vendor
+clarification if needed. A vendor inquiry draft is in the sibling BillHarbor D6
+readiness record; it has not been sent. G2 remains closed. No credentials, portal
+session, real documents, API, callback, deployment or accounting action occurred.
