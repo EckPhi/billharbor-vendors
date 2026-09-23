@@ -206,3 +206,13 @@ With pytest's local cache plugin disabled, the full catalog suite passes **12/12
 `git diff --check` also passes. This correction must be committed and pushed
 before D4 can be treated as the remote baseline. Wheel-only packaging and remote
 cross-repository CI are still separate release gates; no release tag was made.
+
+## 0.3.0 engine compatibility preparation — 2026-09-23
+
+Aligned the catalog package dependency, frozen lock and exported `__version__`
+with BillHarbor 0.3.0. The 12-test frozen catalog suite passes locally against
+engine commit `44c6dd8b2b75e282c16feaf53c808c80f1c5d580`. Before tagging, require that
+engine commit's green CI and immutable v0.3.0 release, set repository variable
+`BILLHARBOR_REF` to the full engine commit, then require green cross-repository
+catalog CI. No live vendor, credential, document, deployment or receiver action
+occurred; G1/G2 remain closed.

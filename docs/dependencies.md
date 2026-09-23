@@ -6,7 +6,7 @@ an unreviewed source.
 
 | Package | Pin | License | Purpose and data flow | Rollback |
 |---|---:|---|---|---|
-| BillHarbor | `0.1.0` | Apache-2.0 | Connector SDK values and manifest validation. Synthetic fixtures and public manifests only; no network flow. The local uv source is for sibling-checkout conformance and is not a publication source. | Restore the preceding catalog lock and matching immutable BillHarbor artifact; no persistent-state migration. |
+| BillHarbor | `0.3.0` release candidate | Apache-2.0 | Connector SDK values, durable synthetic runner and manifest validation. Synthetic fixtures and public manifests only; no network flow. The local uv source is for sibling-checkout conformance and is not a publication source. | Restore the preceding catalog lock and matching immutable BillHarbor artifact; no persistent-state migration. |
 | Hatchling | `1.32.0` | MIT | Build backend only; no runtime data flow. Matches the engine D1 build pin. | Build the preceding source revision with its frozen lock. |
 | pytest | `9.1.1` | MIT | Test runner for synthetic catalog, manifest and connector fixtures only; no runtime dependency or network flow. | Run the preceding frozen test environment; no runtime or persistent-state impact. |
 | actions/checkout | `v7.0.1` (`3d3c42e…`) | MIT | Checks out the catalog and exact private BillHarbor commit. The second checkout receives a fine-grained read-only token through GitHub Secrets. | Pin the preceding reviewed release commit; revoke the token to disable cross-repository CI. |
@@ -47,3 +47,13 @@ A clean local rebuild reproduced that digest. The released catalog wheel SHA-256
 for billharbor-vendors 0.2.0; the catalog release workflow independently rebuilt
 and published that matching wheel. Its `BILLHARBOR-SDK` provenance record pins
 the engine commit and wheel digest above.
+
+## 0.3.0 release candidate — 2026-09-23
+
+The catalog 0.3.0 candidate requires BillHarbor 0.3.0 and retains connector SDK
+v2 plus `vendor-definition/2`. Local frozen conformance passed 12 tests against
+engine commit `44c6dd8b2b75e282c16feaf53c808c80f1c5d580`. Publication requires that
+exact engine commit to pass CI and become the immutable v0.3.0 release, followed
+by catalog CI with `BILLHARBOR_REF` pinned to it. The release wheel digest replaces
+this candidate reference after publication. No vendor, credential or document
+network flow is introduced.
