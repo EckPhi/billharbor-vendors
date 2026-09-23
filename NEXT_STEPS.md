@@ -236,10 +236,10 @@ multiple installations and downloadable PV feed-in statements. No authenticated
 portal behavior, selector, origin or API was tested. The portal requires customer
 registration/activation and credentials, so it is not an unauthenticated route.
 
-Current portal terms limit use to the user's own purposes, prohibit commercial use
-including sharing data with third parties, and require credential secrecy. G1 is
-blocked until the account holder's internal bookkeeping purpose and any BillHarbor
-or accountant document flow are explicitly resolved, with written vendor
-clarification if needed. A vendor inquiry draft is in the sibling BillHarbor D6
-readiness record; it has not been sent. G2 remains closed. No credentials, portal
-session, real documents, API, callback, deployment or accounting action occurred.
+The operator confirmed that the intended personal-project use is permitted; the
+own-purpose G1 decision is recorded. The proposed G2 action is a five-minute,
+no-download session check for one personal account, stopping after installation
+enumeration and operator selection. It awaits explicit approval. The catalog
+remains `design_only`. A vendor inquiry draft is in the sibling BillHarbor D6
+readiness record; it has not been sent. No credentials, portal session, real
+documents, API, callback, deployment or accounting action occurred.
