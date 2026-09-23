@@ -3,15 +3,18 @@
 Status: `design_only`. The connector class reads invented local fixtures only; it
 does not implement portal login, selectors, browser actions, API calls or downloads.
 
-The operator selected this vendor as the first D6 candidate. Public portal
-materials advertise invoice filtering and PDF/CSV downloads, multiple installation
-selection, and PV feed-in settlement PDFs. These claims are not authenticated
-verification. Portal access requires customer registration/activation and
-credentials. G1 remains blocked until the account holder's own-purpose use and
-document handling through BillHarbor are explicitly resolved under the current
-portal terms. See the [D6 readiness record](../../../billharbor/docs/contracts/d6-oekostrom-readiness.md).
+The operator selected this vendor as the first D6 candidate and determined that
+personal use on their account is permitted. Public portal materials advertise
+invoice filtering and PDF/CSV downloads, multiple installation selection, and PV
+feed-in settlement PDFs. Authenticated observation confirmed eight installations,
+a combined invoice view, and one individually downloaded invoice PDF matched to
+its visible row by type and issue date. This does not establish complete live
+support. Full G1/G2 records and the remaining D6 acceptance evidence are open. See
+the [D6 readiness record](../../../billharbor/docs/contracts/d6-oekostrom-readiness.md).
 
-The intended initial transport is browser-based only after authorized discovery.
-Each installation or contract is an explicit scope. Supply invoices and PV
-feed-in settlements retain distinct document kinds. Exact origins, authentication,
-MFA, selectors, pagination, dates and document identity remain unverified.
+The manifest remains `design_only`; connector code still reads invented fixtures
+and no live transport is implemented. The approved initial observation budget has
+been consumed. A fresh bounded G2 is required before additional authenticated
+discovery. Exact origins, supported API/export, MFA, selectors, pagination, date
+rules, native identity, completeness, credit notes, PV settlements and recovery
+remain unverified.

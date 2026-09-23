@@ -1,5 +1,22 @@
 # Vendor catalog handoff — 2026-09-17
 
+## Ökostrom D6 continuation — 2026-09-24
+
+Supersedes the historical “awaiting sign-in” record below. The operator manually
+signed into their personal account, selected the `Alle Anlagen` view, and the
+portal showed eight installations plus a combined invoice overview. After
+clarifying that marked export is only a payment list, the operator authorized
+individual invoice downloads. One PDF was downloaded and, in the sibling
+BillHarbor workspace, locally matched to its selected row by document type and
+issue date. The original and its hash remain outside this catalog repository.
+
+The initial five-minute/ten-step session-check allowance is spent. Keep this
+manifest `design_only`; no live transport implementation exists. A fresh bounded
+G2 is needed for exact-origin, supported API/export, pagination/completeness,
+document-kind, identity and recovery discovery. Do not claim account verification
+or connector support from the single observed invoice path. See sibling
+`billharbor/docs/contracts/d6-oekostrom-readiness.md`.
+
 The operator selected a separate billharbor-vendors project. Read AGENTS.md,
 README.md, docs/vendor-definition.md and the sibling BillHarbor architecture.
 The manifest specification is a design, not an implemented schema. Next coordinate
