@@ -216,3 +216,13 @@ engine commit's green CI and immutable v0.3.0 release, set repository variable
 `BILLHARBOR_REF` to the full engine commit, then require green cross-repository
 catalog CI. No live vendor, credential, document, deployment or receiver action
 occurred; G1/G2 remain closed.
+
+## v0.3.0 publication — 2026-09-23
+
+Catalog commit `2b55e5720a6078c60d49a0f828f9410f9a3035a9` passed pinned
+cross-repository CI run `35870502057` against released BillHarbor commit
+`44c6dd8b2b75e282c16feaf53c808c80f1c5d580`. Annotated tag `v0.3.0` resolves
+to that catalog commit; release run `35870777091` passed and published wheel
+SHA-256 `364dece35ea8083ac7a7e6a9180a11be4d1ab398f2bdd4d9e22665010fc8cba5`.
+The catalog remains synthetic and `design_only`. No vendor access, credential,
+real document, callback or deployment occurred; G1/G2 remain closed.

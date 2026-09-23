@@ -57,3 +57,10 @@ exact engine commit to pass CI and become the immutable v0.3.0 release, followed
 by catalog CI with `BILLHARBOR_REF` pinned to it. The release wheel digest replaces
 this candidate reference after publication. No vendor, credential or document
 network flow is introduced.
+
+Publication completed from catalog commit
+`2b55e5720a6078c60d49a0f828f9410f9a3035a9`. Released catalog wheel SHA-256 is
+`364dece35ea8083ac7a7e6a9180a11be4d1ab398f2bdd4d9e22665010fc8cba5`.
+The pinned BillHarbor release commit is
+`44c6dd8b2b75e282c16feaf53c808c80f1c5d580`; its released wheel SHA-256 is
+`d8682b44275f0012951cd7c6da5c42e82795d3935ea857f608b01a0509169018`.
