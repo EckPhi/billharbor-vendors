@@ -10,11 +10,15 @@ individual invoice downloads. One PDF was downloaded and, in the sibling
 BillHarbor workspace, locally matched to its selected row by document type and
 issue date. The original and its hash remain outside this catalog repository.
 
-The initial five-minute/ten-step session-check allowance is spent. Keep this
-manifest `design_only`; no live transport implementation exists. A fresh bounded
-G2 is needed for exact-origin, supported API/export, pagination/completeness,
-document-kind, identity and recovery discovery. Do not claim account verification
-or connector support from the single observed invoice path. See sibling
+The initial five-minute/ten-step session-check allowance is spent. On 2026-09-24,
+the operator requested D6 completion and authorized a bounded continuation
+(decision `D6-OEKOSTROM-2026-09-24-01`, 15 minutes, 40 requests/navigation steps,
+25 pages, one additional invoice PDF up to 25 MiB, only the observed portal origin,
+no screenshots/callbacks/ingestion). The prior authenticated tab was unavailable;
+a fresh official login tab is open and this continuation is paused pending the
+operator's sign-in. Keep this manifest `design_only`; no live transport
+implementation exists. Do not claim account verification or connector support
+from the single observed invoice path. See sibling
 `billharbor/docs/contracts/d6-oekostrom-readiness.md`.
 
 The operator selected a separate billharbor-vendors project. Read AGENTS.md,
