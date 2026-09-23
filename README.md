@@ -10,9 +10,10 @@ deployment yet.
 Ökostrom is the operator-selected first D6 candidate. Its package remains
 `design_only`: public pages advertise invoice PDF/CSV downloads, multiple Anlagen
 and PV feed-in PDFs, but the authenticated portal has not been observed. The
-operator confirmed personal-project use is permitted. A five-minute, no-download
-session check is prepared and awaits explicit approval; it will not change the
-catalog status. See BillHarbor's
+operator confirmed personal-project use is permitted and approved a five-minute,
+no-download session check. The official sign-in page is open at
+`https://mein.oekostrom.at/`; the operator must enter credentials directly and the
+authenticated check has not started. This does not change the catalog status. See BillHarbor's
 [Ökostrom D6 readiness record](../billharbor/docs/contracts/d6-oekostrom-readiness.md).
 
 - [Vendor-definition specification](docs/vendor-definition.md)

@@ -237,9 +237,10 @@ portal behavior, selector, origin or API was tested. The portal requires custome
 registration/activation and credentials, so it is not an unauthenticated route.
 
 The operator confirmed that the intended personal-project use is permitted; the
-own-purpose G1 decision is recorded. The proposed G2 action is a five-minute,
-no-download session check for one personal account, stopping after installation
-enumeration and operator selection. It awaits explicit approval. The catalog
-remains `design_only`. A vendor inquiry draft is in the sibling BillHarbor D6
-readiness record; it has not been sent. No credentials, portal session, real
-documents, API, callback, deployment or accounting action occurred.
+own-purpose G1 decision is recorded. The operator approved the proposed five-
+minute, no-download session check for one personal account. The official login
+page is open at `https://mein.oekostrom.at/`; the operator is entering credentials
+directly and the authenticated check has not started. Installation enumeration
+and operator selection are the stop point. The catalog remains `design_only`. A
+vendor inquiry draft is in the sibling BillHarbor D6 readiness record; it has not
+been sent. No documents, callback, deployment or accounting action occurred.
