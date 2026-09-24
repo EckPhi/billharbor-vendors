@@ -10,15 +10,16 @@ individual invoice downloads. One PDF was downloaded and, in the sibling
 BillHarbor workspace, locally matched to its selected row by document type and
 issue date. The original and its hash remain outside this catalog repository.
 
-The initial five-minute/ten-step session-check allowance is spent. On 2026-09-24,
-the operator requested D6 completion and authorized a bounded continuation
-(decision `D6-OEKOSTROM-2026-09-24-01`, 15 minutes, 40 requests/navigation steps,
-25 pages, one additional invoice PDF up to 25 MiB, only the observed portal origin,
-no screenshots/callbacks/ingestion). The prior authenticated tab was unavailable;
-a fresh official login tab is open and this continuation is paused pending the
-operator's sign-in. Keep this manifest `design_only`; no live transport
-implementation exists. Do not claim account verification or connector support
-from the single observed invoice path. See sibling
+On 2026-09-24, the operator clarified that G2 has no time expiry; its caps remain
+40 requests/navigation steps, 25 pages, one additional invoice PDF up to 25 MiB,
+the same personal account and aggregate installation scope, the observed portal
+origin only, and no screenshots/callbacks/ingestion. The authenticated combined
+view reports eight installations and 222 documents in a single accessible table,
+with no visible pagination. An exact-day range test returned eight matching rows.
+These observations do not prove underlying completeness, date semantics, stable
+vendor-native identity, API availability or automation permission. No additional
+PDF was downloaded. Keep the manifest `design_only`; no live transport
+implementation exists. See sibling
 `billharbor/docs/contracts/d6-oekostrom-readiness.md`.
 
 The operator selected a separate billharbor-vendors project. Read AGENTS.md,
