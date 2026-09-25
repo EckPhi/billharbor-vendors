@@ -2,6 +2,24 @@
 
 ## Release hardening — 2026-09-25
 
+### v0.4.0.dev0 publication
+
+Catalog commit `cd3245973968bb17e09cba1eeeb6b45dd9da69bc` was pushed
+after repository variable `BILLHARBOR_REF` was pinned to released engine commit
+`38aa403393d502b6d6a42424162b9625f77115f8`. Cross-repository CI run
+`36123749836` passed. Annotated tag `v0.4.0.dev0` triggered release run
+`36123807672`, which passed frozen tests and paired wheel-only verification. The
+GitHub release is marked as a prerelease. Published catalog wheel SHA-256 is
+`e34dba0c998a967fdd8fa410c6ad2adc3da06accb71c09e160c4729536caf37d`;
+the published provenance asset records engine wheel SHA-256
+`6aac950e3fa759ae1eb05c8de6fc91cddeee596f738737b7227dcd0586dd6529`.
+No live connector, vendor access, callback or deployment was enabled.
+
+An isolated install of both downloaded release wheels ran the packaged Amazon and
+Ökostrom synthetic connectors through the released engine, producing six pending
+deliveries with successful executions and a clean artifact audit. Downloaded
+wheel hashes matched the published checksums; no callback was sent.
+
 The synthetic connector now accepts legacy `offset_N` checkpoints so an
 interrupted 0.3 catalog execution can finish after a connector upgrade; all new
 checkpoints remain bound to the normalized scope/date query digest. Pagination
@@ -15,11 +33,11 @@ it is local evidence only until published.
 BillHarbor `v0.4.0.dev0` is now released from commit
 `38aa403393d502b6d6a42424162b9625f77115f8`; its wheel SHA-256 is
 `6aac950e3fa759ae1eb05c8de6fc91cddeee596f738737b7227dcd0586dd6529`.
-The catalog package/lock now target that exact prerelease, while catalog and
-connector manifest versions use schema-valid `0.4.0`. Paired wheel compatibility
-is verified locally. Next commit/push, set immutable `BILLHARBOR_REF` to the
-engine commit, require green cross-repository CI and only then tag the catalog
-prerelease. No live gate is opened; both manifests remain `design_only`.
+The catalog package/lock target that exact prerelease, while catalog and connector
+manifest versions use schema-valid `0.4.0`. Local and remote paired-wheel
+compatibility are verified. Next run synthetic smoke tests from the published
+artifacts and collect feedback before any release-candidate/final promotion. No
+live gate is opened; both manifests remain `design_only`.
 
 ## Ökostrom D6 continuation — 2026-09-24
 
