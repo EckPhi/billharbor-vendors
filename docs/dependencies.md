@@ -6,7 +6,7 @@ an unreviewed source.
 
 | Package | Pin | License | Purpose and data flow | Rollback |
 |---|---:|---|---|---|
-| BillHarbor | `0.3.0` release candidate | Apache-2.0 | Connector SDK values, durable synthetic runner and manifest validation. Synthetic fixtures and public manifests only; no network flow. The local uv source is for sibling-checkout conformance and is not a publication source. | Restore the preceding catalog lock and matching immutable BillHarbor artifact; no persistent-state migration. |
+| BillHarbor | `0.4.0.dev0` prerelease | Apache-2.0 | Connector SDK values, durable synthetic runner and manifest validation. Synthetic fixtures and public manifests only; no network flow. The local uv source is for sibling-checkout conformance and is not a publication source. | Restore the preceding catalog lock and matching immutable BillHarbor artifact; unfinished 0.3 engine executions must finish on 0.3 or restart on 0.4. |
 | Hatchling | `1.32.0` | MIT | Build backend only; no runtime data flow. Matches the engine D1 build pin. | Build the preceding source revision with its frozen lock. |
 | pytest | `9.1.1` | MIT | Test runner for synthetic catalog, manifest and connector fixtures only; no runtime dependency or network flow. | Run the preceding frozen test environment; no runtime or persistent-state impact. |
 | actions/checkout | `v7.0.1` (`3d3c42e…`) | MIT | Checks out the catalog and exact private BillHarbor commit. The second checkout receives a fine-grained read-only token through GitHub Secrets. | Pin the preceding reviewed release commit; revoke the token to disable cross-repository CI. |
@@ -64,3 +64,12 @@ Publication completed from catalog commit
 The pinned BillHarbor release commit is
 `44c6dd8b2b75e282c16feaf53c808c80f1c5d580`; its released wheel SHA-256 is
 `d8682b44275f0012951cd7c6da5c42e82795d3935ea857f608b01a0509169018`.
+
+## 0.4.0.dev0 prerelease — 2026-09-25
+
+The catalog prerelease requires BillHarbor `0.4.0.dev0`, released from commit
+`38aa403393d502b6d6a42424162b9625f77115f8`. Its published wheel SHA-256 is
+`6aac950e3fa759ae1eb05c8de6fc91cddeee596f738737b7227dcd0586dd6529`.
+The catalog remains synthetic and `design_only`; this update adds bound checkpoint
+compatibility and no vendor, credential, document or network data flow. Roll back
+as the matched catalog/engine 0.3.0 pair; do not mix catalog 0.4 with engine 0.3.

@@ -81,19 +81,51 @@ class SyntheticConnector:
         if len(set(scopes)) != len(scopes) or not {(scope.kind, scope.id) for scope in scopes} <= available:
             raise ValueError("unknown synthetic scope")
         scope_by_identity = {(scope.kind.value, scope.id): scope for scope in scopes}
-        offset = 0 if checkpoint_id is None else int(checkpoint_id.removeprefix("offset_"))
+        query = {
+            "starts_on": starts_on.isoformat(),
+            "ends_on": ends_on.isoformat(),
+            "scopes": sorted((scope.kind.value, scope.id) for scope in scopes),
+        }
+        query_digest = hashlib.sha256(
+            json.dumps(query, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()[:16]
+        if checkpoint_id is None:
+            offset = 0
+        elif checkpoint_id.startswith("offset_"):
+            # Compatibility for interrupted 0.3 synthetic executions. New
+            # checkpoints are always query-bound.
+            try:
+                offset = int(checkpoint_id.removeprefix("offset_"))
+            except ValueError as exc:
+                raise ValueError("checkpoint is invalid") from exc
+            if offset < 0:
+                raise ValueError("checkpoint is invalid")
+        else:
+            prefix = f"cursor_{query_digest}_"
+            if not checkpoint_id.startswith(prefix):
+                raise ValueError("checkpoint does not match discovery filters")
+            try:
+                offset = int(checkpoint_id.removeprefix(prefix))
+            except ValueError as exc:
+                raise ValueError("checkpoint is invalid") from exc
+            if offset < 0:
+                raise ValueError("checkpoint is invalid")
         records = [
             item for item in self._fixture["documents"]
             if (item["scope_kind"], item["scope_id"]) in scope_by_identity
             and starts_on <= date.fromisoformat(item["issue_date"]) <= ends_on
         ]
+        if checkpoint_id is not None and (
+            offset <= 0 or offset >= len(records) or offset % self._page_size != 0
+        ):
+            raise ValueError("checkpoint offset was not emitted for this result set")
         page_records = records[offset : offset + self._page_size]
         documents = tuple(self._reference(scope_by_identity[(item["scope_kind"], item["scope_id"])], item) for item in page_records)
         next_offset = offset + len(page_records)
         terminal = next_offset >= len(records)
         return DiscoveryPage(
             documents=documents,
-            checkpoint_id=None if terminal else f"offset_{next_offset}",
+            checkpoint_id=None if terminal else f"cursor_{query_digest}_{next_offset}",
             terminal=terminal,
         )
 

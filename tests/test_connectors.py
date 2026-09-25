@@ -10,6 +10,7 @@ import pytest
 from amazon_business_de.connector import Connector as AmazonConnector
 from billharbor.sdk import ArtifactPublication, SessionState
 from billharbor.engine import DurableStore, RunnerConfig, RunnerContext, run_connector
+from billharbor.engine.runner import _scoped_artifact_identity, _scoped_source_identity
 import hashlib
 import json
 import tomllib
@@ -91,7 +92,15 @@ def test_pagination_is_scope_bound_and_terminal() -> None:
             context, starts_on=date(2026, 1, 1), ends_on=date(2026, 12, 31),
             scopes=(scope,), checkpoint_id=None,
         )
-        assert first.checkpoint_id == "offset_1"
+        query = {
+            "starts_on": "2026-01-01",
+            "ends_on": "2026-12-31",
+            "scopes": sorted((item.kind.value, item.id) for item in (scope,)),
+        }
+        digest = hashlib.sha256(
+            json.dumps(query, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()[:16]
+        assert first.checkpoint_id == f"cursor_{digest}_1"
         assert first.terminal is False
         second = await connector.discover_page(
             context, starts_on=date(2026, 1, 1), ends_on=date(2026, 12, 31),
@@ -100,6 +109,100 @@ def test_pagination_is_scope_bound_and_terminal() -> None:
         assert second.checkpoint_id is None
         assert second.terminal is True
         assert first.documents[0].source_document_id != second.documents[0].source_document_id
+
+    asyncio.run(exercise())
+
+
+def test_legacy_offset_checkpoint_can_finish_after_upgrade() -> None:
+    async def exercise() -> None:
+        connector = AmazonConnector(
+            ROOT / "vendors/amazon_business_de/tests/fixtures/synthetic_catalog.json",
+            page_size=1,
+        )
+        context = FixtureContext()
+        scope = (await connector.list_scopes(context))[0]
+        page = await connector.discover_page(
+            context, starts_on=date(2026, 1, 1), ends_on=date(2026, 12, 31),
+            scopes=(scope,), checkpoint_id="offset_1",
+        )
+        assert len(page.documents) == 1
+        assert page.terminal is True
+
+    asyncio.run(exercise())
+
+
+def test_checkpoint_rejects_unemitted_offset() -> None:
+    async def exercise() -> None:
+        connector = AmazonConnector(
+            ROOT / "vendors/amazon_business_de/tests/fixtures/synthetic_catalog.json",
+            page_size=1,
+        )
+        context = FixtureContext()
+        scope = (await connector.list_scopes(context))[0]
+        first = await connector.discover_page(
+            context, starts_on=date(2026, 1, 1), ends_on=date(2026, 12, 31),
+            scopes=(scope,), checkpoint_id=None,
+        )
+        invalid = first.checkpoint_id.rsplit("_", 1)[0] + "_999"
+        with pytest.raises(ValueError, match="not emitted"):
+            await connector.discover_page(
+                context, starts_on=date(2026, 1, 1), ends_on=date(2026, 12, 31),
+                scopes=(scope,), checkpoint_id=invalid,
+            )
+        with pytest.raises(ValueError, match="not emitted"):
+            await connector.discover_page(
+                context, starts_on=date(2026, 1, 1), ends_on=date(2026, 12, 31),
+                scopes=(scope,), checkpoint_id="offset_999",
+            )
+
+    asyncio.run(exercise())
+
+
+def test_checkpoint_is_bound_to_scope_and_date_filters() -> None:
+    async def exercise() -> None:
+        connector = AmazonConnector(
+            ROOT / "vendors/amazon_business_de/tests/fixtures/synthetic_catalog.json",
+            page_size=1,
+        )
+        context = FixtureContext()
+        scopes = await connector.list_scopes(context)
+        first = await connector.discover_page(
+            context, starts_on=date(2026, 1, 1), ends_on=date(2026, 12, 31),
+            scopes=(scopes[0],), checkpoint_id=None,
+        )
+        replay = await connector.discover_page(
+            context, starts_on=date(2026, 1, 1), ends_on=date(2026, 12, 31),
+            scopes=(scopes[0],), checkpoint_id=first.checkpoint_id,
+        )
+        assert replay.terminal is True
+        with pytest.raises(ValueError, match="does not match"):
+            await connector.discover_page(
+                context, starts_on=date(2026, 2, 1), ends_on=date(2026, 12, 31),
+                scopes=(scopes[0],), checkpoint_id=first.checkpoint_id,
+            )
+        with pytest.raises(ValueError, match="does not match"):
+            await connector.discover_page(
+                context, starts_on=date(2026, 1, 1), ends_on=date(2026, 12, 31),
+                scopes=(scopes[1],), checkpoint_id=first.checkpoint_id,
+            )
+
+    asyncio.run(exercise())
+
+
+def test_empty_terminal_page_has_explicit_completion() -> None:
+    async def exercise() -> None:
+        connector = OekostromConnector(
+            ROOT / "vendors/oekostrom_at/tests/fixtures/synthetic_catalog.json"
+        )
+        context = FixtureContext()
+        scope = (await connector.list_scopes(context))[0]
+        page = await connector.discover_page(
+            context, starts_on=date(2030, 1, 1), ends_on=date(2030, 12, 31),
+            scopes=(scope,), checkpoint_id=None,
+        )
+        assert page.documents == ()
+        assert page.checkpoint_id is None
+        assert page.terminal is True
 
     asyncio.run(exercise())
 
@@ -165,9 +268,21 @@ def test_connector_v2_bytes_reach_engine_outbox(
         assert all(store.delivery("tenant", value)["state"] == "pending" for value in delivery_ids)
         assert store.execution("tenant", "run")["discovery_complete"] == 1
         fixture_payload = json.loads(fixture.read_text(encoding="utf-8"))
+        context = FixtureContext()
         for document in fixture_payload["documents"]:
             expected = base64.b64decode(document["content_base64"], validate=True)
-            stored = store.artifact_bytes("tenant", f"fixture_{connector_type._source_id(document)}")
+            reference = connector_type(fixture)._reference(
+                next(scope for scope in await connector_type(fixture).list_scopes(context)
+                     if scope.kind.value == document["scope_kind"] and scope.id == document["scope_id"]),
+                document,
+            )
+            source_identity = _scoped_source_identity(
+                connector_type.connector_id, "account_demo", reference
+            )
+            stored = store.artifact_bytes(
+                "tenant",
+                _scoped_artifact_identity(source_identity),
+            )
             assert stored == expected
 
     asyncio.run(exercise())

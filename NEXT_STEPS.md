@@ -1,17 +1,39 @@
 # Vendor catalog handoff — 2026-09-17
 
+## Release hardening — 2026-09-25
+
+The synthetic connector now accepts legacy `offset_N` checkpoints so an
+interrupted 0.3 catalog execution can finish after a connector upgrade; all new
+checkpoints remain bound to the normalized scope/date query digest. Pagination
+coverage now asserts the exact deterministic cursor instead of only its suffix.
+The frozen offline suite passes 16 tests; Python compilation, `git diff --check`
+and Git integrity checks pass. Paired wheel-only installation and manifest/
+entrypoint validation succeeds. Candidate catalog wheel SHA-256 is
+`e34dba0c998a967fdd8fa410c6ad2adc3da06accb71c09e160c4729536caf37d`;
+it is local evidence only until published.
+
+BillHarbor `v0.4.0.dev0` is now released from commit
+`38aa403393d502b6d6a42424162b9625f77115f8`; its wheel SHA-256 is
+`6aac950e3fa759ae1eb05c8de6fc91cddeee596f738737b7227dcd0586dd6529`.
+The catalog package/lock now target that exact prerelease, while catalog and
+connector manifest versions use schema-valid `0.4.0`. Paired wheel compatibility
+is verified locally. Next commit/push, set immutable `BILLHARBOR_REF` to the
+engine commit, require green cross-repository CI and only then tag the catalog
+prerelease. No live gate is opened; both manifests remain `design_only`.
+
 ## Ökostrom D6 continuation — 2026-09-24
 
 Supersedes the historical “awaiting sign-in” record below. The operator manually
 signed into their personal account, selected the `Alle Anlagen` view, and the
 portal showed eight installations plus a combined invoice overview. After
 clarifying that marked export is only a payment list, the operator authorized
-individual invoice downloads. One PDF was downloaded and, in the sibling
-BillHarbor workspace, locally matched to its selected row by document type and
-issue date. The original and its hash remain outside this catalog repository.
+individual invoice downloads. Six distinct PDFs and two duplicate copies were
+downloaded for operator inspection and remain outside this catalog repository;
+they do not establish connector completeness.
 
 On 2026-09-24, the operator clarified that G2 has no time expiry; its caps remain
-40 requests/navigation steps, 25 pages, one additional invoice PDF up to 25 MiB,
+40 requests/navigation steps, 25 pages, up to ten invoice PDFs total at 25 MiB
+each / 250 MiB aggregate,
 the same personal account and aggregate installation scope, the observed portal
 origin only, and no screenshots/callbacks/ingestion. The authenticated combined
 view reports eight installations and 222 documents in a single accessible table,
@@ -266,3 +288,15 @@ directly and the authenticated check has not started. Installation enumeration
 and operator selection are the stop point. The catalog remains `design_only`. A
 vendor inquiry draft is in the sibling BillHarbor D6 readiness record; it has not
 been sent. No documents, callback, deployment or accounting action occurred.
+
+## Synthetic discovery conformance — 2026-09-24
+
+Fixture connectors retain the released connector-v2 signature and inclusive
+issue-date filtering. Opaque checkpoints now bind the selected scopes and date
+window; changed-filter replay fails rather than skipping records. Added replay and
+empty-terminal-page coverage. Kind filtering stays engine-side until a deliberate
+connector/manifest v3. The catalog remains `design_only`.
+
+Python compilation passes. Focused pytest was blocked by sandbox denial of uv's
+global cache. Git reports `2ecb6ab`, six commits ahead, plus a truncated-pack
+warning; no history was rewritten, no commit was created and nothing was pushed.

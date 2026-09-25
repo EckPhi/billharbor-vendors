@@ -2,7 +2,7 @@ schema = "vendor-definition/2"
 id = "oekostrom_at"
 display_name = "oekostrom.at"
 vendor_site = "https://oekostrom.at/"
-version = "0.3.0"
+version = "0.4.0"
 status = "design_only"
 entrypoint = "oekostrom_at.connector:Connector"
 sdk = ">=2,<3"
@@ -11,7 +11,7 @@ license = "Apache-2.0"
 
 [compatibility]
 sdk = ">=2,<3"
-engine = ">=0.2,<0.3"
+engine = ">=0.4.0.dev0,<0.5"
 python = ">=3.11"
 wire_adapters = ["document-delivery/1"]
 

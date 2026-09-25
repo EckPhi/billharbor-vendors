@@ -76,4 +76,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DIST_DIR: ${{ runner.temp }}/dists
-        run: gh release create "$GITHUB_REF_NAME" "$DIST_DIR"/billharbor_vendors-*.whl "$DIST_DIR"/SHA256SUMS "$DIST_DIR"/BILLHARBOR-SDK --verify-tag --generate-notes
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          RELEASE_FLAGS=(--verify-tag --generate-notes)
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            RELEASE_FLAGS+=(--prerelease --latest=false)
+          fi
+          gh release create "$GITHUB_REF_NAME" "$DIST_DIR"/billharbor_vendors-*.whl "$DIST_DIR"/SHA256SUMS "$DIST_DIR"/BILLHARBOR-SDK "${RELEASE_FLAGS[@]}"

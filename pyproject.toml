@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "billharbor-vendors"
-version = "0.3.0"
+version = "0.4.0.dev0"
 description = "Reviewed vendor connector catalog for BillHarbor"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Proprietary" }
-dependencies = ["billharbor==0.3.0"]
+dependencies = ["billharbor==0.4.0.dev0"]
 
 [dependency-groups]
 test = ["pytest==9.1.1"]
