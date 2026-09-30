@@ -73,3 +73,18 @@ The catalog prerelease requires BillHarbor `0.4.0.dev0`, released from commit
 The catalog remains synthetic and `design_only`; this update adds bound checkpoint
 compatibility and no vendor, credential, document or network data flow. Roll back
 as the matched catalog/engine 0.3.0 pair; do not mix catalog 0.4 with engine 0.3.
+
+## Browser candidate — 2026-09-30
+
+The optional Ökostrom browser factory uses the engine worker extra's
+`playwright==1.63.0` (Apache-2.0 Python/Node driver; browser distribution includes
+its own Chromium third-party licenses). No new mandatory catalog dependency or
+catalog lock update is introduced. Microsoft maintains Playwright; updates must
+be reviewed together with matching browser binaries and rerun invented-portal
+integration tests. The local verification browser is Chromium build v1243,
+downloaded only to `/tmp/billharbor-playwright`. Credentials pass from an
+execution-scoped resolver to the isolated browser form; invented originals pass
+through temporary browser storage to the engine artifact publisher. Browser
+tracing and persistent profiles are disabled. Rollback is to the existing
+fixture-only catalog entrypoint; this candidate does not replace it. Published
+artifacts and immutable SDK pins remain unchanged.

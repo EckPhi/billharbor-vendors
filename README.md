@@ -4,8 +4,9 @@ Separately versioned vendor definitions and connector packages for BillHarbor.
 Initial targets: Amazon Business and oekostrom.at.
 
 Status: v0.3.0 synthetic connector packages are released; local 0.4 discovery
-hardening is in progress. No live-verified connector, vendor access or deployment
-exists yet.
+hardening is in progress. An isolated Playwright Ökostrom candidate now passes invented-portal tests; its
+configuration deliberately accepts only loopback fixtures. No live-verified
+connector, vendor access or deployment exists yet.
 
 Ökostrom is the operator-selected first D6 candidate. Its package remains
 `design_only`: public pages advertise invoice PDF/CSV downloads, multiple Anlagen
@@ -22,6 +23,7 @@ stays `design_only`; see BillHarbor's
 - [Dependency decisions](docs/dependencies.md)
 - [D4 synthetic vendor packages](docs/d4-synthetic-packages.md)
 - [CI/CD](docs/ci-cd.md)
+- [Ökostrom browser candidate and live acceptance](docs/oekostrom-browser.md)
 - [Next steps](NEXT_STEPS.md)
 - [BillHarbor engine and integration design](../billharbor/README.md)
 
@@ -33,3 +35,9 @@ operator instructions and invented fixtures. Credentials, account bindings,
 browser sessions and downloaded documents never belong in this repository.
 Engine SDK/schema versions will be pinned; catalog content will be reviewed and
 installed during builds rather than fetched/executed dynamically during a run.
+
+The new `oekostrom_at.browser` candidate is restricted to an invented loopback
+portal. A separate packaged `oekostrom_browser_synthetic.toml` profile lets the
+durable BillHarbor runner exercise its invoice-only behavior without changing
+the original catalog manifest or claiming live vendor support. See
+[synthetic browser proof](docs/oekostrom-browser.md).

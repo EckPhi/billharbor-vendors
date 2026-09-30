@@ -30,6 +30,7 @@ packages = [
 "catalog.toml" = "billharbor_vendors/data/catalog.toml"
 "vendors/amazon_business_de/vendor.toml" = "billharbor_vendors/data/amazon_business_de.toml"
 "vendors/oekostrom_at/vendor.toml" = "billharbor_vendors/data/oekostrom_at.toml"
+"vendors/oekostrom_at/browser-synthetic.toml" = "billharbor_vendors/data/oekostrom_browser_synthetic.toml"
 "vendors/amazon_business_de/tests/fixtures/synthetic_catalog.json" = "billharbor_vendors/data/fixtures/amazon_business_de.json"
 "vendors/oekostrom_at/tests/fixtures/synthetic_catalog.json" = "billharbor_vendors/data/fixtures/oekostrom_at.json"
 

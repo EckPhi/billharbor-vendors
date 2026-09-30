@@ -1,3 +1,24 @@
+## Browser candidate and engine integration — 2026-09-30
+
+The operator authorized implementation and a local commit. A Playwright SDK-v2
+browser candidate now handles an invented loopback Ökostrom-shaped portal,
+including credential injection, account scope checks, issue-date filtering,
+checkpointed discovery, original PDF publication, exact-origin request budgets,
+challenge signaling and browser cleanup. The original `design_only` vendor
+manifest remains unchanged. A separate packaged invoice-only synthetic browser
+profile supports the engine proof; it is also `design_only`. No real portal
+selectors, native document ID or completeness assumption entered source.
+
+The full catalog suite passed 21 tests, including five actual Chromium tests. A
+browser candidate run through the durable engine retained two invented PDFs and
+pending outbox deliveries. The candidate catalog wheel built locally, and one
+packaged catalog fixture ran through BillHarbor's spawned worker. No live vendor,
+real documents/credentials or deployment occurred. The browser's post-download
+byte check still requires a worker tmpfs/disk limit. D6 G1/G2, automation terms,
+real mapping/identity/completeness, recovery and reviewed live profile remain
+open. Git state: committed locally on branch `codex/first-release-foundation`
+at operator request; nothing was pushed or tagged.
+
 # Vendor catalog handoff — 2026-09-17
 
 ## Release hardening — 2026-09-25
@@ -318,3 +339,24 @@ connector/manifest v3. The catalog remains `design_only`.
 Python compilation passes. Focused pytest was blocked by sandbox denial of uv's
 global cache. Git reports `2ecb6ab`, six commits ahead, plus a truncated-pack
 warning; no history was rewritten, no commit was created and nothing was pushed.
+
+## Browser implementation candidate — 2026-09-30
+
+Added the separate SDK v2 `oekostrom_at.browser.BrowserConnector` and asynchronous
+isolated Playwright factory. Reviewed behavior and integration contracts are in
+`docs/oekostrom-browser.md`. Browser selectors and login data are entirely invented;
+constructor accepts only explicit loopback profiles. Default manifest/entrypoint
+remain fixture-only and `design_only`. No authenticated access, real invoice,
+secret, callback, deployment, commit, push or release occurred.
+
+Actual Chromium synthetic integration coverage now exercises login, scopes,
+original PDF bytes, inclusive date filtering, continuation/restart, malformed
+originals, duplicates, unsupported pagination, challenge handling, origin guard
+and download limits. Downloads are size-checked after completion: a worker disk
+quota remains necessary. D6 still requires evidence-backed identity, date meaning,
+completeness, actual selectors, automation permission and live acceptance. The
+existing historical release pins are unchanged; new implementation is uncommitted.
+
+Verification: full catalog suite **20 passed**, including four actual Chromium
+browser tests with Playwright 1.63.0; `git diff --check` passed. Browser binaries
+were downloaded into `/tmp/billharbor-playwright` for invented-loopback tests.
