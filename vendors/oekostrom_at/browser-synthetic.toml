@@ -1,0 +1,99 @@
+schema = "vendor-definition/2"
+id = "oekostrom_at"
+display_name = "oekostrom.at"
+vendor_site = "https://oekostrom.at/"
+version = "0.4.0"
+status = "design_only"
+entrypoint = "oekostrom_at.browser:BrowserConnector"
+sdk = ">=2,<3"
+maintainer = "BillHarbor catalog maintainers"
+license = "Apache-2.0"
+
+[compatibility]
+sdk = ">=2,<3"
+engine = ">=0.4.0.dev1,<0.5"
+python = ">=3.11"
+wire_adapters = ["document-delivery/1"]
+
+[coverage]
+countries = ["AT"]
+locales = ["de-AT"]
+timezone = "Europe/Vienna"
+account_types = ["customer"]
+document_kinds = ["invoice"]
+known_exclusions = ["Synthetic invented portal only; live selectors and identity unverified"]
+
+[transport]
+preferred = "browser"
+supported = ["browser"]
+selection_rules = "Use browser transport only after authorized portal verification; request supported API information first"
+
+[network]
+origins = []
+redirect_origins = []
+unresolved = ["Authentication, portal and download origins require authorized discovery"]
+methods = ["GET", "POST"]
+redirect_policy = "No redirects unless each origin is reviewed"
+
+[authentication]
+mode = "interactive_or_secret_bundle"
+secret_fields = ["username", "password"]
+session_scope = "account"
+manual_challenges = ["mfa", "captcha", "session_expired"]
+
+[account_hierarchy]
+scope_kind = "installation"
+enumeration = "Enumerate installations after authentication; exact behavior requires verification"
+selection = "Every run uses an explicitly selected installation"
+
+[discovery]
+scope_kind = "installation"
+date_basis = "issue_date"
+date_inclusivity = "inclusive"
+pagination = "page"
+ordering = "invented_stable_order"
+empty_result_semantics = "terminal_when_scope_and_pagination_verified"
+
+[document_identity]
+native_id = "Operator-selected exact Bezeichnung surrogate; not printed invoice number"
+scope = "Account, installation or contract, type and issuer as required"
+revision_policy = "conflict_on_changed_bytes"
+encoding = "oekostrom-label/1 JSON tuple SHA-256; exact label text without normalization"
+
+[download]
+formats = ["application/pdf", "text/csv"]
+mechanism = "Download the original; CSV may supplement but never replace PDF"
+validation = "Validate status, MIME, signature and byte limits"
+original_policy = "Preserve vendor originals"
+
+[metadata]
+observations = ["invoice_number", "issue_date", "gross_amount", "currency", "issuer_name"]
+provenance = "Each observation retains field path and observation time"
+issuer_evidence = "Portal identity does not prove legal issuer"
+
+[limits]
+concurrent_sessions_per_account = 1
+maximum_documents_per_page = 1
+maximum_requests = 100
+maximum_pages = 10
+maximum_documents = 10
+maximum_document_bytes = 20971520
+maximum_total_bytes = 104857600
+maximum_execution_seconds = 240
+
+[interaction]
+detectors = ["mfa", "captcha", "session_expired", "portal_drift"]
+pause_policy = "Pause with bounded lease and explicit expiry"
+permitted_human_actions = ["Complete login in the same isolated browser"]
+maximum_wait_seconds = 120
+
+[diagnostics]
+capture_default = "off"
+safe_counters = ["requests", "pages", "discovered", "downloaded", "rejected"]
+
+[verification]
+fixture_set = "package:billharbor_vendors/data/fixtures/oekostrom_at.json"
+live_verified = false
+known_gaps = ["API availability", "origins", "selectors", "pagination", "native identity"]
+drift_indicators = ["Unexpected empty page", "Selector mismatch", "HTML returned for PDF"]
+recovery_instructions = "Stop safely; do not guess selectors or undocumented APIs"

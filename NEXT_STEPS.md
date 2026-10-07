@@ -1,3 +1,43 @@
+# 0.4.0.dev1 release preparation — 2026-10-08
+
+Package/exported version and exact BillHarbor dependency are now `0.4.0.dev1`;
+manifest/catalog versions stay schema-valid `0.4.0`, with minimum engine dev1.
+Lock version entries were updated without dependency upgrades; verify frozen
+lock conformance against the newly versioned engine before publication.
+CI/release now install pinned browser test dependencies and Chromium, enforce
+zero skipped tests, and verify packaged browser modules/profile.
+
+Parent orchestrates engine release first, then records its immutable commit and
+wheel digest, updates `BILLHARBOR_REF`, obtains green catalog CI and creates the
+matching prerelease. No commit, push or release has occurred from this preparation.
+
+## Label policy verification completed — 2026-10-08
+
+All 25 catalog tests passed in existing immutable offline verification image
+ced27a48ddf4, including Chromium browser acquisition/restart, duplicate/drift
+rejection and durable acquisition reopen/skip/account isolation. Engine runner
+and store suites independently passed 48 tests. No new dependency, live access
+or publication. Current main8da7240 plus uncommitted imported browser/helper/tests
+and docs; engine source main8d7a27d plus local edits. Service image predates this
+policy. See engine NEXT_STEPS for remaining live acceptance and artifact work.
+
+# Exact Bezeichnung identity candidate — 2026-10-08
+
+Local implementation of `oekostrom-label/1` hashes the exact invented label,
+installation and kind; the engine separately scopes by account binding.
+Duplicate keys fail before date filtering/output. Rename reconciliation remains
+manual. A separate `LabelConnector` fixture version preserves legacy IDs. Browser
+foundation from recorded `58b7af2fc22b5a6bdbcfd0a68c48e7ac3f4b99ed` was imported into
+this checkout without switching branches; its loopback-only mapping now reads
+and rechecks exact designation text. Default connector/live manifests stay
+`design_only`; no real selectors, access or publication was enabled.
+
+Compilation and `git diff --check` pass. Frozen uv pytest is blocked by global
+cache sandbox access; this checkout's .venv lacks pytest. Parent verification
+will record the complete suite result. No dependencies were adopted, no live
+access, credentials, captures, callback, receipt-processing or deployment occurred.
+Changes are local and uncommitted; recorded main source baseline is `8da7240`.
+
 # Vendor catalog handoff — 2026-09-17
 
 ## Release hardening — 2026-09-25

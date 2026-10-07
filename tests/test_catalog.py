@@ -25,12 +25,12 @@ def test_catalog_contains_two_valid_design_only_manifests() -> None:
     assert all(manifest["schema"] == "vendor-definition/2" for manifest in manifests)
     assert all(manifest["sdk"] == ">=2,<3" for manifest in manifests)
     assert all(
-        manifest["compatibility"]["engine"] == ">=0.4.0.dev0,<0.5"
+        manifest["compatibility"]["engine"] == ">=0.4.0.dev1,<0.5"
         for manifest in manifests
     )
     with (ROOT / "pyproject.toml").open("rb") as handle:
         source_version = tomllib.load(handle)["project"]["version"]
-    connector_version = source_version.removesuffix(".dev0")
+    connector_version = source_version.split(".dev", 1)[0]
     assert {manifest["version"] for manifest in manifests} == {connector_version}
     assert catalog["version"] == connector_version
 

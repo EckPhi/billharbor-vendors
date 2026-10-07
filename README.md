@@ -4,8 +4,8 @@ Separately versioned vendor definitions and connector packages for BillHarbor.
 Initial targets: Amazon Business and oekostrom.at.
 
 Status: v0.3.0 synthetic connector packages are released; local 0.4 discovery
-hardening is in progress. No live-verified connector, vendor access or deployment
-exists yet.
+hardening is in progress. A loopback-only browser candidate and exact-label identity policy are verified
+with invented fixtures. No live-verified connector or deployment exists yet.
 
 Ökostrom is the operator-selected first D6 candidate. Its package remains
 `design_only`: public pages advertise invoice PDF/CSV downloads, multiple Anlagen
@@ -33,3 +33,8 @@ operator instructions and invented fixtures. Credentials, account bindings,
 browser sessions and downloaded documents never belong in this repository.
 Engine SDK/schema versions will be pinned; catalog content will be reviewed and
 installed during builds rather than fetched/executed dynamically during a run.
+
+Ökostrom uses a versioned exact `Bezeichnung` source key scoped by installation
+and kind; the engine adds account binding scope. Duplicate labels fail closed.
+Legacy synthetic connector identities remain unchanged. See
+[browser candidate](docs/oekostrom-browser.md) for limitations and rollback.

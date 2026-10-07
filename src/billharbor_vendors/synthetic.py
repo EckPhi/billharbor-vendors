@@ -25,6 +25,7 @@ class SyntheticConnector:
     transport: str
     document_kinds: tuple[DocumentKind, ...]
     supports_interaction: bool = False
+    fixture_version = "vendor-synthetic/1"
 
     def __init__(self, fixture_path: Path | None = None, *, page_size: int = 100) -> None:
         fixture = fixture_path or files("billharbor_vendors").joinpath(
@@ -36,14 +37,14 @@ class SyntheticConnector:
             raise ValueError("connector accepts only explicitly synthetic fixture data")
         if self._fixture.get("connector_id") != self.connector_id:
             raise ValueError("fixture connector_id does not match connector")
-        if self._fixture.get("fixture_version") != "vendor-synthetic/1":
+        if self._fixture.get("fixture_version") != self.fixture_version:
             raise ValueError("unsupported synthetic fixture version")
         known_scopes = {(item["kind"], item["id"]) for item in self._fixture["scopes"]}
         if len(known_scopes) != len(self._fixture["scopes"]):
             raise ValueError("duplicate synthetic scope")
         identities = set()
         for item in self._fixture["documents"]:
-            identity = (item["scope_kind"], item["scope_id"], item["document_kind"], item["native_id"])
+            identity = self._source_id(item)
             if (item["scope_kind"], item["scope_id"]) not in known_scopes or identity in identities:
                 raise ValueError("invalid or duplicate synthetic document scope identity")
             identities.add(identity)

@@ -25,3 +25,11 @@ workflow alone receives `contents: write` for the current catalog repository.
 Actions are pinned to immutable release commits. uv is pinned to 0.7.19 to match
 the lock evidence. Dependency upgrades require reviewed locks and workflow
 changes in both repositories.
+
+For the 0.4.0.dev1 candidate, CI and release jobs install the exact reviewed
+browser test pins into the frozen environment, install matching Chromium, and
+require zero skipped tests in the JUnit report. Wheel-only verification also
+imports the packaged browser/identity modules and validates the separate
+synthetic browser manifest. That profile remains `design_only` and rejects live
+origins. Release sequencing is engine release first, then exact `BILLHARBOR_REF`,
+green catalog CI, then matching catalog prerelease tag.

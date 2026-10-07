@@ -11,7 +11,7 @@ license = "Apache-2.0"
 
 [compatibility]
 sdk = ">=2,<3"
-engine = ">=0.4.0.dev0,<0.5"
+engine = ">=0.4.0.dev1,<0.5"
 python = ">=3.11"
 wire_adapters = ["document-delivery/1"]
 

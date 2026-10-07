@@ -54,7 +54,18 @@ jobs:
 
       - name: Test frozen catalog
         working-directory: billharbor-vendors
-        run: uv run --frozen --group test pytest -q
+        run: |
+          uv sync --frozen --group test
+          # CI-only browser environment; exact reviewed engine browser pins.
+          uv pip install --python .venv/bin/python playwright==1.63.0 greenlet==3.5.6 pyee==13.0.1
+          .venv/bin/python -m playwright install --with-deps chromium
+          .venv/bin/python -m pytest -q --junitxml="$RUNNER_TEMP/catalog-tests.xml"
+          python - <<'PYTEST_REPORT'
+          import os
+          import xml.etree.ElementTree as ET
+          report = ET.parse(os.path.join(os.environ["RUNNER_TEMP"], "catalog-tests.xml"))
+          assert sum(int(s.get("skipped", 0)) for s in report.iter("testsuite")) == 0, "Browser verification must not skip tests"
+          PYTEST_REPORT
 
       - name: Build and verify release wheels
         env:
@@ -66,7 +77,7 @@ jobs:
           uv run --no-project --isolated \
             --with "$DIST_DIR"/billharbor-*.whl \
             --with "$DIST_DIR"/billharbor_vendors-*.whl \
-            python -c 'from importlib.resources import files; from billharbor.validation import validate_manifest; from amazon_business_de.connector import Connector as A; from oekostrom_at.connector import Connector as O; validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_at.toml").read_bytes()); A(); O()'
+            python -c 'from importlib.resources import files; from billharbor.validation import validate_manifest; from amazon_business_de.connector import Connector as A; from oekostrom_at.connector import Connector as O; validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_at.toml").read_bytes()); A(); O(); validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_browser_synthetic.toml").read_bytes()); from oekostrom_at.browser import BrowserConnector; from oekostrom_at.identity import source_id; assert source_id("installation", "invented", "invoice", "Invented label").startswith("oekostrom_label_v1_")'
           sha256sum "$DIST_DIR"/billharbor_vendors-*.whl > "$DIST_DIR"/SHA256SUMS
           ENGINE_DIGEST=$(sha256sum "$DIST_DIR"/billharbor-*.whl | cut -d ' ' -f 1)
           printf 'repository=EckPhi/billharbor\ncommit=%s\nwheel_sha256=%s\n' "$BILLHARBOR_REF" "$ENGINE_DIGEST" > "$DIST_DIR"/BILLHARBOR-SDK

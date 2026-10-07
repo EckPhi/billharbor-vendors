@@ -73,3 +73,22 @@ The catalog prerelease requires BillHarbor `0.4.0.dev0`, released from commit
 The catalog remains synthetic and `design_only`; this update adds bound checkpoint
 compatibility and no vendor, credential, document or network data flow. Roll back
 as the matched catalog/engine 0.3.0 pair; do not mix catalog 0.4 with engine 0.3.
+
+## 0.4.0.dev1 browser and label candidate — 2026-10-08
+
+The catalog requires the separately released BillHarbor `0.4.0.dev1`. Its exact
+commit and published wheel digest must be recorded before catalog publication;
+`BILLHARBOR_REF` is the immutable cross-repository CI pin. No dependency upgrade
+is introduced by this version bump.
+
+Browser CI installs the engine's reviewed Playwright Python `1.63.0`
+(Apache-2.0, Microsoft-maintained), greenlet `3.5.6` (MIT) and pyee `13.0.1` (MIT)
+in the disposable test environment and installs its matching Chromium. These
+are test-only additions to the frozen catalog environment, not catalog runtime
+requirements. Runtime browser provisioning remains engine-owned. See the engine
+[dependency evidence](../../billharbor/docs/dependencies.md) for browser revision,
+image digest and maintenance evidence. Invented loopback HTML/PDF data flows
+through the isolated browser into local engine artifacts; no live documents,
+sessions, screenshots or credentials are retained by this change. Rollback uses
+the preceding immutable engine/catalog pair and discards ephemeral browser state;
+never alias existing source IDs across label/native policies automatically.
