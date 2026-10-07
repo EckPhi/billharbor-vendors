@@ -1,3 +1,28 @@
+## Paired prereleases published — 2026-10-08
+
+BillHarbor v0.4.0.dev1 released from
+094adf3d4dd4a3f731e177c8a636409cdede6904; CI37694697723 and
+release37694751716 passed. Engine wheel SHA256
+51ca803c3ff7e12a429ac47de579f5c29362eb177e1c0e73b7fec3366b4ab31c.
+BillHarbor Vendors v0.4.0.dev1 released from
+2b21cbfa88b8b21af4a54d05738c85fbe736ce10; CI37694785586 and
+release37695426265 passed, including zero-skipped browser tests and wheel checks.
+Catalog wheel SHA256
+471ffde935248ddcbdb50bc643a05ac4973e7a7c7b17758f353c3a7a2c8f27a5.
+Published BILLHARBOR-SDK matches the engine commit and wheel digest exactly.
+
+- https://github.com/EckPhi/billharbor/releases/tag/v0.4.0.dev1
+- https://github.com/EckPhi/billharbor-vendors/releases/tag/v0.4.0.dev1
+
+Contract validator eckphi/billharbor-contracts:0.4.0.dev1 published at
+sha256:aa5c6aed58ffb75bff84bf9900a9289e98f40edcc4d381d36485172a03574cd9.
+Prereleases did not advance latest. Service image remains the historical local
+synthetic build; no service deployment or live activation. Catalog design_only.
+Next: rebuild/verify a synthetic service image with the released catalog wheel;
+live selectors, completeness, actual downloads and enforced egress remain open.
+Git: both release commits/tags pushed; this publication-state documentation is
+a follow-up main commit, deliberately outside the immutable release tags.
+
 # 0.4.0.dev1 release preparation — 2026-10-08
 
 Package/exported version and exact BillHarbor dependency are now `0.4.0.dev1`;
