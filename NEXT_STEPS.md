@@ -1,3 +1,32 @@
+## Independent development release inputs verified — 2026-10-20
+
+Committed catalog/plugin source: `218ae03ba22834e9519ba73121e1dd8d992ac136`.
+SDK build/test source pin: `81c4b05d428ed5093a9611776836f4772a64c663` (independent
+SDK `0.1.0`, no application runtime requirement). The standalone synthetic
+`0.1.0.dev0` and optional aggregate `0.5.0.dev0` wheels were rebuilt from this
+exact catalog archive and verified with the final SDK/application artifacts.
+
+Standalone plugin SHA-256:
+`2e18007588ff0412b1ff91b4e5b6ce93d9232b7a9f806c7f80ae0489dfb831e3`.
+Optional catalog SHA-256:
+`fb22be88f14f10ebf7b4f8cd33d281c9d4df95b03efb29b211c03fd41612af5c`.
+The source catalog/browser suite passed 32 tests; clean standalone SDK/plugin
+installation had no application or catalog import. Optional catalog installation
+with SDK and synthetic plugin also passed dependency checks. The engine's exact
+committed vendor-free image passed 161 installed tests with zero skips and its
+19-check installed-plugin UI/lifecycle proof passed three times. The aborted
+concurrent harness attempt and its unconfirmed cause remain recorded in the
+engine evidence rather than hidden by reruns.
+
+Release assets/provenance/checksums are staged locally in the sibling engine's
+`dist/dev-0.5.0.dev0/`; authoritative wheel hashes and the ordered publication
+runbook are in its `docs/releases/`. Push engine first so catalog CI can fetch the
+reviewed SDK source pin, require remote CI, then follow the prepared dev-release
+sequence. No source files or dependency locks changed after this verified source
+baseline; this is a committed documentation handoff. No push, tag, release,
+hosted store, live-vendor access, real document, accounting action or deployment
+was performed. Amazon/Ökostrom live work remains deferred.
+
 ## Immutable SDK source adopted — 2026-10-20
 
 The repository-owned `.github/billharbor-sdk-ref` pins reviewed engine source
