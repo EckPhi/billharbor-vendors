@@ -92,3 +92,32 @@ through the isolated browser into local engine artifacts; no live documents,
 sessions, screenshots or credentials are retained by this change. Rollback uses
 the preceding immutable engine/catalog pair and discards ephemeral browser state;
 never alias existing source IDs across label/native policies automatically.
+
+## Independent SDK and synthetic plugin — 2026-10-20
+
+The `0.5.0.dev0` optional catalog utility depends on
+`billharbor-connector-sdk==0.1.0` and `billharbor-synthetic==0.1.0.dev0`, rather
+than the BillHarbor application. The synthetic distribution depends only on the
+SDK. Both distributions require Python >=3.11; the reviewed service profile is
+Python 3.13. SDK source is maintained by BillHarbor under Apache-2.0, with the
+existing exact `jsonschema[format-nongpl]==4.26.0` validator dependency (MIT and
+its existing reviewed transitive format validators). No new third-party library
+is adopted. Package-level distribution versions are separate from frozen
+connector SDK protocol versions (`billharbor-connector/1` and `/2`).
+
+The proprietary synthetic plugin is maintained with this repository. Its data
+flow is packaged invented JSON/PDF bytes → bounded SDK context → engine original
+storage. It has no network origin, live vendor, credential resolution, session,
+callback destination or account data. Source aliases preserve old public imports
+while one implementation owns each SDK class. The catalog compatibility helper
+subclasses the synthetic helper and selects catalog-owned legacy fixtures;
+independent plugin imports never load the aggregate catalog or engine.
+
+Installation requires reviewed immutable SDK/plugin wheel hashes and the exact
+index/descriptor/artifact pins. `tools/build_synthetic_store.py` emits metadata
+only and prints the generated index hash; running it grants no trust or live
+permission. Rebuild artifacts and record hashes at the final release boundary.
+Keep the previous image, immutable install locks and source fixture versions for
+rollback. Existing immutable document identities are preserved; moved helper
+sources change executable source-tree provenance, so historical execution and
+checkpoint digests must not be rewritten or silently resumed as the new build.

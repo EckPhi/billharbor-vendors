@@ -1,6 +1,6 @@
 """Synthetic-only SDK proof; this module does not open a browser."""
 
-from billharbor.sdk import DocumentKind
+from billharbor_sdk import DocumentKind
 from billharbor_vendors.synthetic import SyntheticConnector
 
 

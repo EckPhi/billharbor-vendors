@@ -1,0 +1,125 @@
+{
+  "synthetic": true,
+  "connector_id": "billharbor_synthetic",
+  "fixture_version": "vendor-synthetic/1",
+  "scopes": [
+    {
+      "kind": "installation",
+      "id": "installation-a"
+    },
+    {
+      "kind": "installation",
+      "id": "installation-b"
+    }
+  ],
+  "documents": [
+    {
+      "native_id": "reference-001",
+      "scope_kind": "installation",
+      "scope_id": "installation-a",
+      "document_kind": "invoice",
+      "issue_date": "2026-01-01",
+      "filename": "synthetic-reference-001.pdf",
+      "media_type": "application/pdf",
+      "content_base64": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA0IDAgUiA+PiA+PiAvQ29udGVudHMgNSAwIFIgPj4KZW5kb2JqCjQgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhID4+CmVuZG9iago1IDAgb2JqCjw8IC9MZW5ndGggMTAyID4+CnN0cmVhbQpCVCAvRjEgMTIgVGYgNDAgNzYwIFRkIChJbnZlbnRlZCBCaWxsSGFyYm9yIHJlZmVyZW5jZSByZWZlcmVuY2UtMDAxIC0gbm90IGEgZmluYW5jaWFsIGRvY3VtZW50KSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDI0MSAwMDAwMCBuIAowMDAwMDAwMzExIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNiAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNDYzCiUlRU9GCg==",
+      "observed_at": "2026-01-05T10:00:00Z",
+      "observations": [
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "reference-001",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[0].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-01-01",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[0].issue_date"
+        }
+      ]
+    },
+    {
+      "native_id": "reference-002",
+      "scope_kind": "installation",
+      "scope_id": "installation-a",
+      "document_kind": "credit_note",
+      "issue_date": "2026-01-02",
+      "filename": "synthetic-reference-002.pdf",
+      "media_type": "application/pdf",
+      "content_base64": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA0IDAgUiA+PiA+PiAvQ29udGVudHMgNSAwIFIgPj4KZW5kb2JqCjQgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhID4+CmVuZG9iago1IDAgb2JqCjw8IC9MZW5ndGggMTAyID4+CnN0cmVhbQpCVCAvRjEgMTIgVGYgNDAgNzYwIFRkIChJbnZlbnRlZCBCaWxsSGFyYm9yIHJlZmVyZW5jZSByZWZlcmVuY2UtMDAyIC0gbm90IGEgZmluYW5jaWFsIGRvY3VtZW50KSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDI0MSAwMDAwMCBuIAowMDAwMDAwMzExIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNiAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNDYzCiUlRU9GCg==",
+      "observed_at": "2026-01-05T10:00:00Z",
+      "observations": [
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "reference-002",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[1].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-01-02",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[1].issue_date"
+        }
+      ]
+    },
+    {
+      "native_id": "reference-003",
+      "scope_kind": "installation",
+      "scope_id": "installation-a",
+      "document_kind": "settlement",
+      "issue_date": "2026-01-03",
+      "filename": "synthetic-reference-003.pdf",
+      "media_type": "application/pdf",
+      "content_base64": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA0IDAgUiA+PiA+PiAvQ29udGVudHMgNSAwIFIgPj4KZW5kb2JqCjQgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhID4+CmVuZG9iago1IDAgb2JqCjw8IC9MZW5ndGggMTAyID4+CnN0cmVhbQpCVCAvRjEgMTIgVGYgNDAgNzYwIFRkIChJbnZlbnRlZCBCaWxsSGFyYm9yIHJlZmVyZW5jZSByZWZlcmVuY2UtMDAzIC0gbm90IGEgZmluYW5jaWFsIGRvY3VtZW50KSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDI0MSAwMDAwMCBuIAowMDAwMDAwMzExIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNiAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNDYzCiUlRU9GCg==",
+      "observed_at": "2026-01-05T10:00:00Z",
+      "observations": [
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "reference-003",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[2].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-01-03",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[2].issue_date"
+        }
+      ]
+    },
+    {
+      "native_id": "reference-004",
+      "scope_kind": "installation",
+      "scope_id": "installation-b",
+      "document_kind": "invoice",
+      "issue_date": "2026-01-04",
+      "filename": "synthetic-reference-004.pdf",
+      "media_type": "application/pdf",
+      "content_base64": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA0IDAgUiA+PiA+PiAvQ29udGVudHMgNSAwIFIgPj4KZW5kb2JqCjQgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhID4+CmVuZG9iago1IDAgb2JqCjw8IC9MZW5ndGggMTAyID4+CnN0cmVhbQpCVCAvRjEgMTIgVGYgNDAgNzYwIFRkIChJbnZlbnRlZCBCaWxsSGFyYm9yIHJlZmVyZW5jZSByZWZlcmVuY2UtMDA0IC0gbm90IGEgZmluYW5jaWFsIGRvY3VtZW50KSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDI0MSAwMDAwMCBuIAowMDAwMDAwMzExIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNiAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNDYzCiUlRU9GCg==",
+      "observed_at": "2026-01-05T10:00:00Z",
+      "observations": [
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "reference-004",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[3].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-01-04",
+          "source": "vendor_api",
+          "source_path": "fixture.documents[3].issue_date"
+        }
+      ]
+    }
+  ]
+}

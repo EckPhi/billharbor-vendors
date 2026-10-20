@@ -17,28 +17,33 @@ jobs:
     name: Frozen catalog boundary
     runs-on: ubuntu-latest
     steps:
-      - name: Require an immutable BillHarbor ref
-        env:
-          BILLHARBOR_REF: ${{ vars.BILLHARBOR_REF }}
-        run: '[[ "$BILLHARBOR_REF" =~ ^[0-9a-f]{40}$ ]]'
-
       - name: Check out catalog
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: billharbor-vendors
 
+      - name: Read reviewed SDK source revision
+        id: sdk_ref
+        shell: bash
+        run: |
+          REF_FILE=billharbor-vendors/.github/billharbor-sdk-ref
+          test -f "$REF_FILE" || { echo "Missing reviewed SDK source-ref file" >&2; exit 1; }
+          BILLHARBOR_REF=$(cat "$REF_FILE")
+          [[ "$BILLHARBOR_REF" =~ ^[0-9a-f]{40}$ ]] || { echo "SDK source ref must be one immutable 40-character SHA" >&2; exit 1; }
+          printf 'ref=%s\n' "$BILLHARBOR_REF" >> "$GITHUB_OUTPUT"
+
       - name: Check out pinned private BillHarbor source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: EckPhi/billharbor
-          ref: ${{ vars.BILLHARBOR_REF }}
+          ref: ${{ steps.sdk_ref.outputs.ref }}
           token: ${{ secrets.BILLHARBOR_READ_TOKEN }}
           path: billharbor
           persist-credentials: false
 
       - name: Verify checked-out BillHarbor revision
         env:
-          BILLHARBOR_REF: ${{ vars.BILLHARBOR_REF }}
+          BILLHARBOR_REF: ${{ steps.sdk_ref.outputs.ref }}
         run: test "$(git -C billharbor rev-parse HEAD)" = "$BILLHARBOR_REF"
 
       - name: Install uv
@@ -64,11 +69,12 @@ jobs:
           assert sum(int(s.get("skipped", 0)) for s in report.iter("testsuite")) == 0, "Browser verification must not skip tests"
           PYTEST_REPORT
 
-      - name: Build both wheels
+      - name: Build independent SDK, plugin and catalog wheels
         env:
           DIST_DIR: ${{ runner.temp }}/dists
         run: |
-          uv build --wheel --out-dir "$DIST_DIR" billharbor
+          uv build --wheel --out-dir "$DIST_DIR" billharbor/packages/connector-sdk
+          uv build --wheel --out-dir "$DIST_DIR" billharbor-vendors/vendors/billharbor_synthetic
           uv build --wheel --out-dir "$DIST_DIR" billharbor-vendors
 
       - name: Verify wheel-only compatibility
@@ -76,11 +82,12 @@ jobs:
           DIST_DIR: ${{ runner.temp }}/dists
         run: |
           uv run --no-project --isolated \
-            --with "$DIST_DIR"/billharbor-*.whl \
+            --with "$DIST_DIR"/billharbor_connector_sdk-*.whl \
+            --with "$DIST_DIR"/billharbor_synthetic-*.whl \
             --with "$DIST_DIR"/billharbor_vendors-*.whl \
             python - <<'PY'
           from importlib.resources import files
-          from billharbor.validation import validate_manifest
+          from billharbor_sdk.validation import validate_manifest
           from amazon_business_de.connector import Connector as AmazonConnector
           from oekostrom_at.connector import Connector as OekostromConnector
           from oekostrom_at.browser import BrowserConnector
@@ -94,6 +101,30 @@ jobs:
           assert source_id("installation", "invented", "invoice", "Invented label").startswith("oekostrom_label_v1_")
           PY
           sha256sum "$DIST_DIR"/*.whl > "$DIST_DIR"/SHA256SUMS
+
+      - name: Verify standalone reference plugin without application or catalog
+        env:
+          DIST_DIR: ${{ runner.temp }}/dists
+        run: |
+          uv run --no-project --isolated \
+            --with "$DIST_DIR"/billharbor_connector_sdk-*.whl \
+            --with "$DIST_DIR"/billharbor_synthetic-*.whl \
+            python - <<'PYPLUGIN'
+          import asyncio
+          from importlib.util import find_spec
+          from importlib.resources import files
+          from billharbor_sdk.validation import validate_manifest
+          from billharbor_synthetic.connector import create_connector
+          assert find_spec("billharbor") is None
+          assert find_spec("billharbor_vendors") is None
+          manifest = validate_manifest(files("billharbor_synthetic").joinpath("data/vendor.toml").read_bytes())
+          assert manifest["id"] == "billharbor_synthetic"
+          async def verify():
+              connector = await create_connector({}, lambda: None)
+              assert connector.capabilities().connector_id == manifest["id"]
+              await connector.close()
+          asyncio.run(verify())
+          PYPLUGIN
 
       - name: Upload build evidence
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

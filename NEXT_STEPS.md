@@ -1,3 +1,57 @@
+## Immutable SDK source adopted — 2026-10-20
+
+The repository-owned `.github/billharbor-sdk-ref` pins reviewed engine source
+`81c4b05d428ed5093a9611776836f4772a64c663`, which contains the independent
+SDK `0.1.0`. This is an SDK build/test source, not an application runtime
+requirement. CI/release read and validate the committed pin instead of relying
+on an external mutable repository variable. The engine commit must be pushed
+before catalog CI can fetch it; neither repository has been pushed here.
+
+The independent plugin/catalog implementation and this pin are committed with
+this handoff. Final exact-source wheel hashes, installed-image results and
+publication preparation are recorded in the engine's corresponding handoff.
+No tag, release, hosted store, live vendor access or deployment was performed.
+
+## Independent synthetic plugin and SDK boundary — 2026-10-20
+
+Operator authorized completing the main synthetic application/plugin system before
+returning to Amazon and Ökostrom. The optional catalog utility is now
+`0.5.0.dev0`; it depends on the separately built
+`billharbor-connector-sdk==0.1.0` and `billharbor-synthetic==0.1.0.dev0`, with no
+BillHarbor application runtime dependency. The synthetic wheel owns its helper,
+invented fixtures and vendor manifest. It neither imports nor requires the
+aggregate catalog. Frozen connector protocols, source IDs and document bytes are
+preserved; package versioning is independent of manifest/protocol versioning.
+
+SDK source remains in the engine repository at `packages/connector-sdk`; the
+catalog's immutable engine commit pin is solely a reproducible SDK build and
+cross-boundary test source. CI/release now build and verify independent SDK,
+synthetic-plugin and catalog wheels, with a separate clean-environment proof
+that the plugin imports with neither application nor aggregate catalog installed.
+No SDK source is forked into the catalog. The existing engine integration tests
+still use sibling engine source only as a test dependency.
+
+Verified locally: 32 catalog tests passed, including real Chromium fixture
+checks, inside the existing verification image with `--network none`. A clean
+Python 3.13 container installed only the SDK and plugin wheels plus the SDK's
+existing pinned JSON Schema dependencies; manifest validation, factory creation,
+capabilities and close passed, while both application/catalog imports were absent.
+Focused local factory, digest, identity and index-generator checks passed.
+The lock was regenerated with pinned uv 0.7.19 in disposable Python 3.13 Docker.
+
+Built artifact SHA-256 values (rebuild/verify at the final publication boundary):
+
+- SDK: `ba314b221e1b9ff0efa6c06634d76ea495845907742cf0d2e28f6c082d0a9340`.
+- Synthetic plugin: `2e18007588ff0412b1ff91b4e5b6ce93d9232b7a9f806c7f80ae0489dfb831e3`.
+- Optional catalog: `fb22be88f14f10ebf7b4f8cd33d281c9d4df95b03efb29b211c03fd41612af5c`.
+
+`tools/build_synthetic_store.py` creates exact hash-bound metadata for an already
+built wheel, without publication, package imports or network access. Main engine
+registry/API/UI lifecycle acceptance continues in parallel. Future live plugin
+work and production deployment acceptance remain deferred; no live credentials,
+real documents or bookkeeping work was accessed. Git/publication: local changes
+are uncommitted at this handoff; no push, tag or release was performed.
+
 # Synthetic reference vendor — 2026-10-20
 
 The operator authorized completing BillHarbor against an invented reference vendor

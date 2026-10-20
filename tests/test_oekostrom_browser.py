@@ -8,7 +8,7 @@ from urllib.parse import urlsplit
 
 import pytest
 
-from billharbor.sdk import DocumentKind, Scope, ScopeKind, SessionState
+from billharbor_sdk import DocumentKind, Scope, ScopeKind, SessionState
 from oekostrom_at.browser import PortalMapping, create_browser_connector
 
 PDF = b'%PDF-1.7\nInvented invoice bytes only\n%%EOF'

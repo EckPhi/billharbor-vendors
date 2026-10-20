@@ -9,7 +9,9 @@ ROOT = Path(__file__).resolve().parents[1]
 BILLHARBOR = ROOT.parent / "billharbor"
 
 for source in (
+    # Engine is test-only for cross-boundary outbox integration, never a runtime dependency.
     BILLHARBOR / "src",
+    BILLHARBOR / "packages/connector-sdk/src",
     ROOT / "src",
     ROOT / "vendors/billharbor_synthetic/src",
     ROOT / "vendors/amazon_business_de/src",

@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "billharbor-vendors"
-version = "0.4.0.dev2"
+version = "0.5.0.dev0"
 description = "Reviewed vendor connector catalog for BillHarbor"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Proprietary" }
-dependencies = ["billharbor==0.4.0.dev2"]
+dependencies = ["billharbor-connector-sdk==0.1.0", "billharbor-synthetic==0.1.0.dev0"]
 
 [dependency-groups]
 test = ["pytest==9.1.1"]
@@ -17,12 +17,12 @@ test = ["pytest==9.1.1"]
 [tool.uv.sources]
 # Development-only cross-repository conformance. Published catalog artifacts must
 # resolve BillHarbor from an immutable released artifact and verify its digest.
-billharbor = { path = "../billharbor" }
+billharbor-connector-sdk = { path = "../billharbor/packages/connector-sdk" }
+billharbor-synthetic = { path = "vendors/billharbor_synthetic" }
 
 [tool.hatch.build.targets.wheel]
 packages = [
   "src/billharbor_vendors",
-  "vendors/billharbor_synthetic/src/billharbor_synthetic",
   "vendors/amazon_business_de/src/amazon_business_de",
   "vendors/oekostrom_at/src/oekostrom_at",
 ]

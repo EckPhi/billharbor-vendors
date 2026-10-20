@@ -9,7 +9,7 @@ import pytest
 
 from billharbor_synthetic.connector import Connector as ReferenceConnector
 from amazon_business_de.connector import Connector as AmazonConnector
-from billharbor.sdk import ArtifactPublication, SessionState
+from billharbor_sdk import ArtifactPublication, SessionState
 from billharbor.engine import DurableStore, RunnerConfig, RunnerContext, run_connector
 from billharbor.engine.runner import _scoped_artifact_identity, _scoped_source_identity
 import hashlib

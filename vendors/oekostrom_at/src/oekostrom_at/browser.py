@@ -14,7 +14,7 @@ from urllib.parse import urlsplit
 
 from .identity import source_id as label_source_id
 
-from billharbor.sdk import (
+from billharbor_sdk import (
     ConnectorCapabilities, DiscoveryPage, DocumentKind, DocumentReference,
     InteractionKind, InteractionRequest, Observation, ObservationField,
     ObservationSource, ObservationValueType, Scope, ScopeKind, SessionState,

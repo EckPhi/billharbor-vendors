@@ -6,7 +6,7 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
-from billharbor.validation import validate_manifest
+from billharbor_sdk.validation import validate_manifest
 
 
 def load_manifest(path: Path) -> dict[str, Any]:

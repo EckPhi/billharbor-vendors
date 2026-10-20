@@ -30,7 +30,12 @@ stays `design_only`; see BillHarbor's
 Frozen design-only manifest fixtures live under `vendors/`. Empty network origins
 and `requires_verification` fields make them ineligible for live runs.
 
-Each future vendor package contains TOML metadata, small typed Python connectors,
+The synthetic reference now has an independently installable wheel depending only
+on `billharbor-connector-sdk==0.1.0`. The optional aggregate catalog utility no
+longer depends on the BillHarbor application; engine integration imports exist
+only in cross-boundary tests. Amazon and Ökostrom remain deferred.
+
+Each vendor package contains TOML metadata, small typed Python connectors,
 operator instructions and invented fixtures. Credentials, account bindings,
 browser sessions and downloaded documents never belong in this repository.
 Engine SDK/schema versions will be pinned; catalog content will be reviewed and
