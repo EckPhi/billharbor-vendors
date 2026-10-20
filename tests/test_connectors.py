@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from billharbor_synthetic.connector import Connector as ReferenceConnector
 from amazon_business_de.connector import Connector as AmazonConnector
 from billharbor.sdk import ArtifactPublication, SessionState
 from billharbor.engine import DurableStore, RunnerConfig, RunnerContext, run_connector
@@ -49,6 +50,7 @@ class FixtureContext:
 @pytest.mark.parametrize(
     ("connector_type", "fixture", "expected_transport"),
     [
+        (ReferenceConnector, ROOT / "vendors/billharbor_synthetic/tests/fixtures/synthetic_catalog.json", "api"),
         (AmazonConnector, ROOT / "vendors/amazon_business_de/tests/fixtures/synthetic_catalog.json", "api"),
         (OekostromConnector, ROOT / "vendors/oekostrom_at/tests/fixtures/synthetic_catalog.json", "browser"),
     ],

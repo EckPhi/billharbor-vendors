@@ -1,3 +1,42 @@
+# Synthetic reference vendor — 2026-10-20
+
+The operator authorized completing BillHarbor against an invented reference vendor
+while deferring Ökostrom and Amazon implementation/live work. Added stable connector
+`billharbor_synthetic` using the unchanged shared fixture SDK implementation, separate
+from existing real-vendor identities and fixtures. Four invented, structurally valid
+one-page PDF originals cover two installation scopes and invoice/credit-note/settlement
+kinds; inclusive dates and cursor pagination are explicit. No network transport,
+external account, new dependency or live eligibility is introduced. Manifest remains
+`design_only` because frozen higher-maturity validation requires reviewed origins.
+
+Verification: full source catalog suite passed **28 tests, zero skips** in existing
+`billharbor-service-verify:synthetic-20261020`, external network disabled and repositories
+mounted read-only. New focused checks cover scope/date/pagination, distinct PDF bytes,
+foreign fixture rejection and HTML masquerading as PDF. `git diff --check` passed.
+Offline wheel build reused pinned Hatchling 1.32.0 from the existing temporary cache.
+Local candidate `/private/tmp/billharbor-synthetic-reference-dist/billharbor_vendors-0.4.0.dev2-py3-none-any.whl`
+SHA-256: `90001be5fadd618d3be6ab9d64dff9451658316ca3d7b8c45f0c2614d3645734`.
+Verified new module/manifest/fixture resources in the wheel. This distinct dev2 local
+development artifact is not published and does not replace the immutable dev1 release.
+
+Local pair compatibility: the catalog exact SDK dependency and development lock
+now target the sibling engine `0.4.0.dev2`, matching both local candidate package
+versions. The preceding candidate wheel digest above predates this dependency
+correction and is not the final committed artifact. No temporary artifact path
+is introduced into dependency metadata. Before publication require the reviewed
+immutable engine dev2 release, its commit/wheel digest, and cross-repository CI;
+local source compatibility does not establish released provenance.
+
+Integrated BillHarbor service acceptance against this fixture and a local synthetic
+callback sink passed 12 checks in the sibling checkout; browser authentication/real
+session semantics remain separate proofs. Preserve real-vendor design-only gates
+and unchanged prior source identities. Next: build/test the committed local image,
+then finish application/plugin administration and remaining production proofs.
+Git handoff: synthetic reference changes committed locally in the commit containing
+this record. No remote refresh, push, tag, release, deployment or bookkeeping edits.
+The unreleased engine SDK provenance remains a publication blocker;
+source-mounted local tests do not remove it. Existing historical records follow.
+
 ## Paired prereleases published — 2026-10-08
 
 BillHarbor v0.4.0.dev1 released from

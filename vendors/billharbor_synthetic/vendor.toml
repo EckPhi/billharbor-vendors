@@ -1,0 +1,99 @@
+schema = "vendor-definition/2"
+id = "billharbor_synthetic"
+display_name = "BillHarbor Synthetic Reference"
+vendor_site = "https://synthetic.invalid"
+version = "0.4.0"
+status = "design_only"
+entrypoint = "billharbor_synthetic.connector:Connector"
+sdk = ">=2,<3"
+maintainer = "BillHarbor catalog maintainers"
+license = "Proprietary"
+
+[compatibility]
+sdk = ">=2,<3"
+engine = ">=0.4.0.dev1,<0.5"
+python = ">=3.11"
+wire_adapters = ["document-delivery/1"]
+
+[coverage]
+countries = ["DE"]
+locales = ["de-DE"]
+timezone = "Europe/Berlin"
+account_types = ["business"]
+document_kinds = ["invoice", "credit_note", "settlement"]
+known_exclusions = ["Invented reference only; no real vendor exists"]
+
+[transport]
+preferred = "api"
+supported = ["api"]
+selection_rules = "Offline fixture simulation only; no network transport or live execution"
+
+[network]
+origins = []
+redirect_origins = []
+unresolved = ["Offline fixture only; live operation is prohibited"]
+methods = ["GET", "POST"]
+redirect_policy = "No redirects unless the exact origin is reviewed"
+
+[authentication]
+mode = "secret_bundle"
+secret_fields = ["username", "password"]
+session_scope = "account"
+manual_challenges = []
+
+[account_hierarchy]
+scope_kind = "installation"
+enumeration = "Enumerate invented installation scopes"
+selection = "Explicit invented installation selection is required"
+
+[discovery]
+scope_kind = "installation"
+date_basis = "issue_date"
+date_inclusivity = "inclusive"
+pagination = "cursor"
+ordering = "Fixture order, deterministic"
+empty_result_semantics = "terminal_when_scope_and_pagination_verified"
+
+[document_identity]
+native_id = "Invented immutable native_id scoped by installation and kind"
+scope = "Account, legal entity, type and issuer as required"
+revision_policy = "conflict_on_changed_bytes"
+encoding = "Versioned digest of an unambiguous typed tuple"
+
+[download]
+formats = ["application/pdf"]
+mechanism = "Read bounded packaged invented PDF bytes"
+validation = "Validate status, MIME, signature, archives and byte limits"
+original_policy = "Preserve vendor originals"
+
+[metadata]
+observations = ["invoice_number", "issue_date", "gross_amount", "currency", "issuer_name"]
+provenance = "Each observation retains field path and observation time"
+issuer_evidence = "Marketplace branding does not establish legal issuer"
+
+[limits]
+concurrent_sessions_per_account = 1
+maximum_documents_per_page = 100
+maximum_requests = 100
+maximum_pages = 25
+maximum_documents = 500
+maximum_document_bytes = 20971520
+maximum_total_bytes = 104857600
+maximum_execution_seconds = 300
+
+[interaction]
+detectors = ["onboarding_required", "access_denied", "credential_expired"]
+pause_policy = "Return a bounded interaction outcome"
+permitted_human_actions = ["Complete official onboarding outside execution"]
+maximum_wait_seconds = 900
+
+[diagnostics]
+capture_default = "off"
+safe_counters = ["requests", "pages", "discovered", "downloaded", "rejected"]
+
+[verification]
+fixture_set = "package:billharbor_vendors/data/fixtures/billharbor_synthetic.json"
+live_verified = false
+known_gaps = ["No real vendor exists; intentionally ineligible for live validation"]
+drift_indicators = ["Unknown response shape", "Missing continuation"]
+recovery_instructions = "Stop safely; this reference never accesses a real vendor"

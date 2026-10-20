@@ -11,6 +11,7 @@ BILLHARBOR = ROOT.parent / "billharbor"
 for source in (
     BILLHARBOR / "src",
     ROOT / "src",
+    ROOT / "vendors/billharbor_synthetic/src",
     ROOT / "vendors/amazon_business_de/src",
     ROOT / "vendors/oekostrom_at/src",
 ):

@@ -1,7 +1,9 @@
 # BillHarbor Vendors
 
 Separately versioned vendor definitions and connector packages for BillHarbor.
-Initial targets: Amazon Business and oekostrom.at.
+Reference vendor: `billharbor_synthetic`, an entirely invented offline source for
+completing the application. Amazon Business and oekostrom.at remain deferred real
+vendor targets. See [synthetic reference](vendors/billharbor_synthetic/README.md).
 
 Status: v0.3.0 synthetic connector packages are released; local 0.4 discovery
 hardening is in progress. A loopback-only browser candidate and exact-label identity policy are verified
