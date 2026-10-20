@@ -29,11 +29,9 @@ def test_catalog_contains_three_valid_design_only_manifests() -> None:
         manifest["compatibility"]["engine"] == ">=0.5.0.dev0,<0.6"
         for manifest in manifests
     )
-    with (ROOT / "pyproject.toml").open("rb") as handle:
-        source_version = tomllib.load(handle)["project"]["version"]
-    connector_version = source_version.split(".dev", 1)[0]
-    assert {manifest["version"] for manifest in manifests} == {connector_version, "0.1.0"}
-    assert catalog["version"] == connector_version
+    # Frozen catalog/manifest versions are independent of distribution releases.
+    assert {manifest["version"] for manifest in manifests} == {"0.5.0", "0.1.0"}
+    assert catalog["version"] == "0.5.0"
 
 
 def test_non_design_manifest_cannot_omit_reviewed_origins() -> None:

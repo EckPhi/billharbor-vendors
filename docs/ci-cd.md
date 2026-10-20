@@ -22,13 +22,25 @@ exactly to it; it never
 follows BillHarbor `main`. Rotate or revoke the token through GitHub. Never put its
 value in this repository, logs or workflow inputs.
 
-The release guard rejects a tag that differs from `v<project.version>` and reports
-both values. Bump the aggregate project version, exported version and lock self-entry
-together before creating a new matching tag. Preserve failed tags; a rerun cannot
-repair a source/version mismatch. Independently versioned SDK and plugin packages
-do not need a version bump for an aggregate-only correction.
+The release tag is authoritative for the aggregate package version. Before frozen
+installation/testing, `tools/prepare_release.py` stamps project metadata, exported
+`__version__` and only the aggregate lock self-entry in the disposable Actions
+checkout. The committed `0.5.0.dev2` remains the local/non-release fallback. No
+version-bump commit or rewritten tag is required; preserve all existing tags.
+Supported canonical tags are `vMAJOR.MINOR.PATCH` with optional `aN`, `bN`, `rcN`,
+`.devN` or `.postN`; leading zeros, normalization aliases, local labels and combined
+suffixes are rejected. The release wheel's metadata and exported version must
+match the tag before publication. Reproducing a tagged artifact locally requires
+running the same preparation command in a disposable checkout first.
 
-Pushing a tag matching `v<project.version>` creates a GitHub Release containing
+SDK and standalone plugin versions/dependencies remain independent and unchanged.
+Frozen catalog/manifest versions and engine compatibility ranges also remain
+unchanged; choosing a release version does not imply a compatibility change.
+This uses Python's standard library only, with no dependency adoption, credentials
+or additional network/data flow. Rollback restores the preceding workflow/source
+and immutable artifacts; never retag published source.
+
+Pushing a supported release tag creates a GitHub Release containing
 the aggregate catalog wheel, independent synthetic plugin wheel, checksums and
 `BILLHARBOR-SDK` provenance containing the reviewed source commit and rebuilt SDK
 wheel digest. The SDK wheel is independently distributed in the engine release;

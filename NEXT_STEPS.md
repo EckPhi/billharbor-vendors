@@ -1,3 +1,24 @@
+## Tag-derived aggregate release version — 2026-10-21
+
+Release preparation now derives the aggregate package version from a canonical
+release tag in the disposable Actions checkout, before frozen tests/builds.
+Project metadata, exported version and aggregate lock self-entry are stamped
+together; source-tree/local fallback remains `0.5.0.dev2`. Independent SDK/plugin
+versions and frozen manifest/catalog contracts are preserved. The built aggregate
+wheel is checked against the tag before publishing. No new dependency, network
+flow, live activation or production acceptance is introduced.
+
+Verified: 18 focused tests passed (canonical stable/dev/alpha/beta/rc/post tags,
+invalid tags fail without writes, stale source rejection, aggregate-only lock
+changes and frozen catalog contract). Disposable checkout stable `1.2.3` and
+prerelease `1.2.4rc1` offline wheel builds using cached Hatchling 1.32.0 passed;
+frozen lock checks and both wheel metadata/export versions match their tags.
+Local fallback is unchanged; `git diff --check` passes.
+
+Git/publication: committed with this handoff; no push, tag, release or deployment
+performed. Next: push and require green remote CI, then create a fresh
+immutable release tag. Existing failed tags remain untouched.
+
 ## Release-tag mismatch corrected — 2026-10-21
 
 Latest failed release [39509017862](https://github.com/EckPhi/billharbor-vendors/actions/runs/39509017862)
