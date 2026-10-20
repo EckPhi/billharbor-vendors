@@ -22,6 +22,12 @@ exactly to it; it never
 follows BillHarbor `main`. Rotate or revoke the token through GitHub. Never put its
 value in this repository, logs or workflow inputs.
 
+The release guard rejects a tag that differs from `v<project.version>` and reports
+both values. Bump the aggregate project version, exported version and lock self-entry
+together before creating a new matching tag. Preserve failed tags; a rerun cannot
+repair a source/version mismatch. Independently versioned SDK and plugin packages
+do not need a version bump for an aggregate-only correction.
+
 Pushing a tag matching `v<project.version>` creates a GitHub Release containing
 the aggregate catalog wheel, independent synthetic plugin wheel, checksums and
 `BILLHARBOR-SDK` provenance containing the reviewed source commit and rebuilt SDK

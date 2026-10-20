@@ -1,3 +1,39 @@
+## Release-tag mismatch corrected — 2026-10-21
+
+Latest failed release [39509017862](https://github.com/EckPhi/billharbor-vendors/actions/runs/39509017862)
+ran tag `v0.5.0.dev1` at `0fc00bab78b2d50261828c8b42b31543278367f8`.
+Its `Match tag to package version` step correctly rejected the tag because that
+source declares `0.5.0.dev0`. This is separate from the already corrected Python
+checkout namespace issue. The failed tag remains immutable; rerunning it cannot
+repair source/version mismatch.
+
+Prepared aggregate catalog `0.5.0.dev2` in project metadata, exported version
+(previously stale at `0.4.0.dev2`) and the lock self-entry. Independent SDK `0.1.0`
+and synthetic plugin `0.1.0.dev0` are unchanged; vendor manifests remain frozen.
+The release guard now reports actual tag and expected package version explicitly.
+No new dependency or data flow; rollback uses prior immutable source/artifacts,
+never a rewritten tag.
+
+Verified offline: frozen lock check; wheel build using cached Hatchling 1.32.0;
+three catalog manifest tests; actual release guard accepts `v0.5.0.dev2` and rejects
+`v0.5.0.dev1` with an explicit diagnostic; project/export/lock/wheel metadata agree.
+Disposable network-disabled Docker verification of the new aggregate wheel plus
+unchanged SDK/plugin wheels passes both workflows' actual standalone and aggregate
+Python checks, including polluted-workspace negative controls. `git diff --check`
+passes. No remote CI success is claimed by local verification.
+SDK source remains `81c4b05d428ed5093a9611776836f4772a64c663`; its wheel
+SHA-256 is `ba314b221e1b9ff0efa6c06634d76ea495845907742cf0d2e28f6c082d0a9340`.
+New aggregate dev2 wheel SHA-256 is
+`4c7a89f3208d37412186cdaa49a7dcff949bbfb1558ff8aec4c3109acc1cecf2`.
+These local candidate hashes must be checked against the actual committed/tagged
+release build; no SDK wheel is newly published by the catalog workflow.
+
+Git/publication: correction is committed with this handoff. No
+push, new tag, retag, release, workflow rerun, live access or deployment performed.
+Next: push the corrected source, require green CI, then deliberately create the
+new matching `v0.5.0.dev2` tag/release under publication authorization. Do not reuse
+`v0.5.0.dev1` or substitute old dev0 wheel/checksum provenance for dev2.
+
 ## Wheel-only CI namespace isolation correction — 2026-10-21
 
 The reported standalone-plugin CI failure is a checkout-path false positive,

@@ -48,7 +48,7 @@ requires-dist = [{ name = "billharbor-connector-sdk", directory = "../billharbor
 
 [[package]]
 name = "billharbor-vendors"
-version = "0.5.0.dev0"
+version = "0.5.0.dev2"
 source = { editable = "." }
 dependencies = [
     { name = "billharbor-connector-sdk" },
