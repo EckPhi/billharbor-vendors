@@ -81,11 +81,12 @@ jobs:
         env:
           DIST_DIR: ${{ runner.temp }}/dists
         run: |
+          # uv isolates packages; Python -I also excludes checkout/PYTHONPATH imports.
           uv run --no-project --isolated \
             --with "$DIST_DIR"/billharbor_connector_sdk-*.whl \
             --with "$DIST_DIR"/billharbor_synthetic-*.whl \
             --with "$DIST_DIR"/billharbor_vendors-*.whl \
-            python - <<'PY'
+            python -I - <<'PY'
           from importlib.resources import files
           from billharbor_sdk.validation import validate_manifest
           from amazon_business_de.connector import Connector as AmazonConnector
@@ -106,10 +107,11 @@ jobs:
         env:
           DIST_DIR: ${{ runner.temp }}/dists
         run: |
+          # uv isolates packages; Python -I also excludes checkout/PYTHONPATH imports.
           uv run --no-project --isolated \
             --with "$DIST_DIR"/billharbor_connector_sdk-*.whl \
             --with "$DIST_DIR"/billharbor_synthetic-*.whl \
-            python - <<'PYPLUGIN'
+            python -I - <<'PYPLUGIN'
           import asyncio
           from importlib.util import find_spec
           from importlib.resources import files

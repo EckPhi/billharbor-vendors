@@ -80,11 +80,12 @@ jobs:
           uv build --wheel --out-dir "$DIST_DIR" billharbor/packages/connector-sdk
           uv build --wheel --out-dir "$DIST_DIR" billharbor-vendors/vendors/billharbor_synthetic
           uv build --wheel --out-dir "$DIST_DIR" billharbor-vendors
+          # uv isolates packages; Python -I also excludes checkout/PYTHONPATH imports.
           uv run --no-project --isolated \
             --with "$DIST_DIR"/billharbor_connector_sdk-*.whl \
             --with "$DIST_DIR"/billharbor_synthetic-*.whl \
             --with "$DIST_DIR"/billharbor_vendors-*.whl \
-            python -c 'from importlib.resources import files; from billharbor_sdk.validation import validate_manifest; from amazon_business_de.connector import Connector as A; from oekostrom_at.connector import Connector as O; validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_at.toml").read_bytes()); A(); O(); validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_browser_synthetic.toml").read_bytes()); from oekostrom_at.browser import BrowserConnector; from oekostrom_at.identity import source_id; assert source_id("installation", "invented", "invoice", "Invented label").startswith("oekostrom_label_v1_")'
+            python -I -c 'from importlib.resources import files; from billharbor_sdk.validation import validate_manifest; from amazon_business_de.connector import Connector as A; from oekostrom_at.connector import Connector as O; validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_at.toml").read_bytes()); A(); O(); validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_browser_synthetic.toml").read_bytes()); from oekostrom_at.browser import BrowserConnector; from oekostrom_at.identity import source_id; assert source_id("installation", "invented", "invoice", "Invented label").startswith("oekostrom_label_v1_")'
           sha256sum "$DIST_DIR"/*.whl > "$DIST_DIR"/SHA256SUMS
           ENGINE_DIGEST=$(sha256sum "$DIST_DIR"/billharbor_connector_sdk-*.whl | cut -d ' ' -f 1)
           printf 'repository=EckPhi/billharbor\ncommit=%s\nwheel_sha256=%s\n' "$BILLHARBOR_REF" "$ENGINE_DIGEST" > "$DIST_DIR"/BILLHARBOR-SDK
@@ -93,10 +94,11 @@ jobs:
         env:
           DIST_DIR: ${{ runner.temp }}/dists
         run: |
+          # uv isolates packages; Python -I also excludes checkout/PYTHONPATH imports.
           uv run --no-project --isolated \
             --with "$DIST_DIR"/billharbor_connector_sdk-*.whl \
             --with "$DIST_DIR"/billharbor_synthetic-*.whl \
-            python - <<'PYPLUGIN'
+            python -I - <<'PYPLUGIN'
           import asyncio
           from importlib.util import find_spec
           from importlib.resources import files

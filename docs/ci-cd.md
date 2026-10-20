@@ -3,7 +3,10 @@
 GitHub Actions tests the catalog's frozen lock, builds the independent SDK,
 synthetic plugin and optional aggregate catalog wheels, then validates packaged
 metadata and imports. A clean wheel-only proof installs SDK + synthetic plugin
-without application/catalog distributions. Pull
+without application/catalog distributions. Wheel-only Python checks use `-I`
+to exclude the workspace and `PYTHONPATH`: uv environment isolation alone does
+not prevent sibling checkout directories from appearing as namespace packages.
+The application/catalog absence assertions remain mandatory. Pull
 requests and pushes to `main` retain both wheels and checksums for 14 days as
 build evidence.
 

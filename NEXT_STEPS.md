@@ -1,3 +1,32 @@
+## Wheel-only CI namespace isolation correction — 2026-10-21
+
+The reported standalone-plugin CI failure is a checkout-path false positive,
+not a package dependency cycle: the workspace contains a sibling `billharbor/`
+checkout, and Python exposes that directory as a namespace package when stdin
+or `-c` execution includes the current directory. uv's `--no-project --isolated`
+isolates dependency resolution/environment reuse; it does not isolate Python's
+import search path. CI and release now pass Python `-I` to both standalone and
+aggregate wheel checks, excluding checkout/PYTHONPATH imports while preserving
+all application/catalog absence and manifest/factory/lifecycle assertions.
+
+Verified offline in disposable local image
+`billharbor-service:0.5.0.dev0-81c4b05`, with both repositories mounted read-only
+as sibling checkouts and deliberately contaminated `PYTHONPATH`. Removed all
+BillHarbor distributions/modules in the container, then unpacked only the exact
+existing SDK and synthetic wheels (retaining installed external dependencies).
+For each workflow's actual standalone Python body, the previous invocation
+failed its absence assertion and `python -I` passed manifest validation, connector
+creation, capability identity and close. After adding the optional catalog wheel,
+both actual aggregate compatibility bodies passed under `-I`. No product code,
+wheel contents, dependency pins or live-vendor behavior changed; `git diff
+--check` passed. These are local import-boundary checks, not a remote CI result.
+
+Git/publication at handoff: workflow/documentation fix is committed with this
+handoff; no remote refresh, push, tag, release or deployment was performed.
+Next: push the correction, then require green remote catalog CI before
+publishing the prepared development release. Existing artifact digests remain
+unchanged.
+
 ## Independent development release inputs verified — 2026-10-20
 
 Committed catalog/plugin source: `218ae03ba22834e9519ba73121e1dd8d992ac136`.
