@@ -67,3 +67,13 @@ is declared by the plugin's SDK pin and engine range. Update the SDK source pin
 only after reviewing the SDK source/artifact and running catalog conformance.
 The existing read-only private checkout token remains a CI build input; plugin
 runtime artifacts contain no token, checkout, application wheel or Git source.
+
+## Optional public synthetic store
+
+The manual `vendor-store-pages.yml` workflow reconstructs a complete public site
+from `.github/vendor-store.json` reviewed release-asset pins, retaining historical
+wheels at digest-addressed URLs. It does not run on push or release. It uses no
+SDK checkout or additional PAT; only build-time current-repository release reads
+and scoped Pages deployment. See [setup, renewal and rollback](vendor-store-pages.md)
+for required GitHub settings, public distribution scope, explicit increasing
+revision and 90-day expiry. No Pages deployment or remote acceptance is claimed.

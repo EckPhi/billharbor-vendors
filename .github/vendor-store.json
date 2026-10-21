@@ -1,0 +1,11 @@
+{
+  "store_id": "billharbor-vendors",
+  "releases": [
+    {
+      "tag": "v0.5.0.dev2",
+      "filename": "billharbor_synthetic-0.1.0.dev0-py3-none-any.whl",
+      "sha256": "2e18007588ff0412b1ff91b4e5b6ce93d9232b7a9f806c7f80ae0489dfb831e3",
+      "current": true
+    }
+  ]
+}

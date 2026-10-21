@@ -121,3 +121,25 @@ Keep the previous image, immutable install locks and source fixture versions for
 rollback. Existing immutable document identities are preserved; moved helper
 sources change executable source-tree provenance, so historical execution and
 checkpoint digests must not be rewritten or silently resumed as the new build.
+
+## GitHub Pages store distribution — 2026-10-21
+
+No Python/runtime dependency is adopted. `tools/build_pages_store.py` uses the
+Python standard library and existing index builder; GitHub-hosted Ubuntu provides
+Python and the GitHub CLI as build tools. They download only current-repository
+reviewed release wheels into ephemeral runner storage, never execute them, and
+publish only hash-verified synthetic wheel bytes plus index/checksum metadata.
+The current-repository short-lived `GITHUB_TOKEN` has read-only contents access
+in this job; no new PAT or private SDK checkout is needed.
+
+| Action | Reviewed pin | License / maintenance | Flow and rollback |
+|---|---|---|---|
+| actions/upload-pages-artifact | v4.0.0 `7b1f4a764d45c48632c6b24a0339c27f5614fb0b` | MIT; GitHub Actions maintained | Packages the explicit site directory, excluding the checkout, into an ephemeral Pages artifact. Its nested upload-artifact is pinned to v4.6.2 `ea165f8d65b6e75b540449e92b4886f43607fa02`. Remove the manual workflow or restore the preceding reviewed pin to stop uploads. |
+| actions/deploy-pages | v4.0.5 `d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e` | MIT; GitHub Actions maintained | Uses scoped Pages write and OIDC permissions to publish the prepared artifact. Disable publication or issue a higher reviewed index revision selecting retained prior wheels; never roll back to an expired index. |
+
+Pins were checked against official [upload release](https://github.com/actions/upload-pages-artifact/releases/tag/v4.0.0)
+and [deployment release](https://github.com/actions/deploy-pages/releases/tag/v4.0.5)
+commit links on 2026-10-21. This is a reviewed version choice, not a claim that
+these are the newest releases. Existing checkout pin is reused unchanged.
+The manual workflow is inert until pushed and explicitly dispatched; public
+publication of the proprietary synthetic wheel requires operator authorization.

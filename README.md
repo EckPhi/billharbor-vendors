@@ -45,3 +45,10 @@ installed during builds rather than fetched/executed dynamically during a run.
 and kind; the engine adds account binding scope. Duplicate labels fail closed.
 Legacy synthetic connector identities remain unchanged. See
 [browser candidate](docs/oekostrom-browser.md) for limitations and rollback.
+
+## Optional vendor store hosting
+
+A manual GitHub Pages workflow is prepared for the synthetic store. See
+[Pages setup and BillHarbor registration](docs/vendor-store-pages.md) for GitHub
+settings, reviewed release prerequisites, public distribution, renewal and rollback.
+No site has been published by this local implementation.

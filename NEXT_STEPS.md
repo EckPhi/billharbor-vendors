@@ -591,3 +591,32 @@ connector/manifest v3. The catalog remains `design_only`.
 Python compilation passes. Focused pytest was blocked by sandbox denial of uv's
 global cache. Git reports `2ecb6ab`, six commits ahead, plus a truncated-pack
 warning; no history was rewritten, no commit was created and nothing was pushed.
+
+## Manual GitHub Pages synthetic store prepared — 2026-10-21
+
+Added a manually dispatched Pages workflow and standard-library site builder.
+Committed release manifest pins the locally verified synthetic wheel SHA-256
+`2e18007588ff0412b1ff91b4e5b6ce93d9232b7a9f806c7f80ae0489dfb831e3`
+at candidate tag `v0.5.0.dev2`; GitHub Release availability remains unverified.
+Build verifies all retained release wheels, copies immutable digest-addressed
+paths, emits the current index and exact checksum, and never executes wheels.
+Explicit positive revision and 1–90-day validity prevent implicit trust renewal.
+Manual renewal requires higher revision and a new reviewed BillHarbor index pin.
+Only synthetic metadata/artifacts are selected for future public hosting; live vendor work remains gated.
+
+Verified: four offline publication-invariant tests passed (retained historical
+bytes, current selection/index hash, tamper rejection before output, invalid
+manifest/revision/lifetime and contaminated output rejection). The exact local
+8824-byte dev2 proof wheel generated a site whose index was accepted by the engine
+Registry configure/refresh flow using an offline mock fetch; descriptor compatibility
+and wheel hash were independently checked. YAML parsing and git diff checks passed.
+These prove local metadata compatibility, not remote HTTP or Pages acceptance. No new runtime
+dependency, credential access or SDK checkout was introduced.
+
+Blockers: push under separate authorization; require green remote CI and reviewed
+successful release assets; enable Settings → Pages → GitHub Actions on a supported
+plan, review public proprietary-wheel distribution, explicitly dispatch on main,
+then verify published exact bytes/no redirects/content encoding and BillHarbor
+acceptance. See docs/vendor-store-pages.md. Git/publication: local implementation
+is committed locally and tagged with annotated development tag `v0.5.0.dev3`; no push, release,
+workflow dispatch, settings change or Pages deployment performed here.
