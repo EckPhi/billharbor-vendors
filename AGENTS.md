@@ -15,3 +15,8 @@ state at handoff. Do not modify concurrent bookkeeping receipt-processing work.
 Read docs/vendor-definition.md. Catalog packages are executable dependencies;
 review and pin immutable releases. Never embed tenant, company or credential
 values. Synthetic fixture verification is not proof of live vendor support.
+
+Commit completed work at handoff. Do not create manual development tags: branch
+push workflows own versioned alpha/beta builds. Create explicit version tags for
+release builds only when separately requested. Do not push or publish unless
+separately requested. Preserve unrelated concurrent changes outside the commit.

@@ -1,3 +1,11 @@
+## Development handoff tag policy — 2026-10-23
+
+Updated agent guidance: commit completed work without manual development tags.
+Branch push workflows own versioned alpha/beta builds; explicit release version
+tags require a separate request. This guidance-only change leaves workflow behavior
+and existing tags unchanged. Documentation diff review is sufficient; runtime tests
+are not needed. No blocker, push, tag, publication or deployment is introduced.
+
 ## Automatic release channels and installable fixture vendors — 2026-10-23
 
 Implemented `develop` alpha, `main` beta and canonical version-tag release builds.
