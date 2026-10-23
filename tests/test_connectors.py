@@ -16,6 +16,11 @@ import hashlib
 import json
 import tomllib
 from oekostrom_at.connector import Connector as OekostromConnector
+from drei_at.connector import Connector as DreiAtConnector
+from lidl_connect_at.connector import Connector as LidlConnectAtConnector
+from netcup.connector import Connector as NetcupConnector
+from hornbach_at.connector import Connector as HornbachAtConnector
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -50,6 +55,10 @@ class FixtureContext:
 @pytest.mark.parametrize(
     ("connector_type", "fixture", "expected_transport"),
     [
+        (DreiAtConnector, ROOT / "vendors/drei_at/tests/fixtures/synthetic_catalog.json", "browser"),
+        (LidlConnectAtConnector, ROOT / "vendors/lidl_connect_at/tests/fixtures/synthetic_catalog.json", "browser"),
+        (NetcupConnector, ROOT / "vendors/netcup/tests/fixtures/synthetic_catalog.json", "browser"),
+        (HornbachAtConnector, ROOT / "vendors/hornbach_at/tests/fixtures/synthetic_catalog.json", "browser"),
         (ReferenceConnector, ROOT / "vendors/billharbor_synthetic/tests/fixtures/synthetic_catalog.json", "api"),
         (AmazonConnector, ROOT / "vendors/amazon_business_de/tests/fixtures/synthetic_catalog.json", "api"),
         (OekostromConnector, ROOT / "vendors/oekostrom_at/tests/fixtures/synthetic_catalog.json", "browser"),

@@ -1,0 +1,99 @@
+schema = "vendor-definition/2"
+id = "drei_at"
+display_name = "Drei Austria"
+vendor_site = "https://www.drei.at/"
+version = "0.1.0"
+status = "design_only"
+entrypoint = "drei_at.connector:Connector"
+sdk = ">=2,<3"
+maintainer = "BillHarbor catalog maintainers"
+license = "Apache-2.0"
+
+[compatibility]
+sdk = ">=2,<3"
+engine = ">=0.5.0.dev0,<0.6"
+python = ">=3.11"
+wire_adapters = ["document-delivery/1"]
+
+[coverage]
+countries = ["AT"]
+locales = ["de-AT"]
+timezone = "Europe/Vienna"
+account_types = ["customer"]
+document_kinds = ["invoice"]
+known_exclusions = ["Portal behavior, API availability and document identity are unverified"]
+
+[transport]
+preferred = "browser"
+supported = ["browser"]
+selection_rules = "Use browser transport only after authorized portal verification; request supported API information first"
+
+[network]
+origins = []
+redirect_origins = []
+unresolved = ["Authentication, portal and download origins require authorized discovery"]
+methods = ["GET", "POST"]
+redirect_policy = "No redirects unless each origin is reviewed"
+
+[authentication]
+mode = "interactive_or_secret_bundle"
+secret_fields = []
+session_scope = "account"
+manual_challenges = ["mfa", "captcha", "session_expired"]
+
+[account_hierarchy]
+scope_kind = "account"
+enumeration = "Requires authorized account and contract hierarchy verification"
+selection = "Every run requires explicit account selection; underlying contract hierarchy requires verification"
+
+[discovery]
+scope_kind = "account"
+date_basis = "requires_verification"
+date_inclusivity = "requires_verification"
+pagination = "requires_verification"
+ordering = "requires_verification"
+empty_result_semantics = "requires_verification"
+
+[document_identity]
+native_id = "requires_verification"
+scope = "Account, contract if required, type and issuer; requires verification"
+revision_policy = "conflict_on_changed_bytes"
+encoding = "Versioned digest of an unambiguous typed tuple"
+
+[download]
+formats = ["application/pdf"]
+mechanism = "requires_verification; PDF is a synthetic target only, not verified live format"
+validation = "Validate status, MIME, signature and byte limits"
+original_policy = "Preserve vendor originals"
+
+[metadata]
+observations = ["invoice_number", "issue_date", "gross_amount", "currency", "issuer_name"]
+provenance = "Each observation retains field path and observation time"
+issuer_evidence = "Portal identity does not prove legal issuer"
+
+[limits]
+concurrent_sessions_per_account = 1
+maximum_documents_per_page = 100
+maximum_requests = 100
+maximum_pages = 25
+maximum_documents = 500
+maximum_document_bytes = 20971520
+maximum_total_bytes = 104857600
+maximum_execution_seconds = 300
+
+[interaction]
+detectors = ["mfa", "captcha", "session_expired", "portal_drift"]
+pause_policy = "Pause with bounded lease and explicit expiry"
+permitted_human_actions = ["Complete login in the same isolated browser"]
+maximum_wait_seconds = 900
+
+[diagnostics]
+capture_default = "off"
+safe_counters = ["requests", "pages", "discovered", "downloaded", "rejected"]
+
+[verification]
+fixture_set = "package:billharbor_vendors/data/fixtures/drei_at.json"
+live_verified = false
+known_gaps = ["API availability", "origins", "selectors", "authentication fields", "formats", "coverage", "pagination", "native identity", "date semantics"]
+drift_indicators = ["Unexpected empty page", "Selector mismatch", "HTML returned for PDF"]
+recovery_instructions = "Stop safely; do not guess selectors or undocumented APIs"

@@ -1,0 +1,55 @@
+{
+  "synthetic": true,
+  "connector_id": "lidl_connect_at",
+  "scopes": [
+    {
+      "kind": "account",
+      "id": "invented_lidl_connect_at_account"
+    }
+  ],
+  "documents": [
+    {
+      "native_id": "invented_lidl_connect_at_invoice_001",
+      "scope_id": "invented_lidl_connect_at_account",
+      "document_kind": "invoice",
+      "issue_date": "2026-01-15",
+      "issuer_reference": "invented_lidl_connect_at_issuer",
+      "filename": "synthetic-lidl_connect_at-invoice.pdf",
+      "media_type": "application/pdf",
+      "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBub24tZmluYW5jaWFsIGZpeHR1cmUKJSVFT0YK",
+      "observed_at": "2026-01-16T10:00:00Z",
+      "observations": [
+        {
+          "field": "gross_amount",
+          "value_type": "decimal",
+          "value": "12.34",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[0].amount"
+        },
+        {
+          "field": "currency",
+          "value_type": "currency",
+          "value": "EUR",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[0].currency"
+        },
+        {
+          "field": "invoice_number",
+          "value_type": "identifier",
+          "value": "invented_lidl_connect_at_invoice_001",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[0].native_id"
+        },
+        {
+          "field": "issue_date",
+          "value_type": "date",
+          "value": "2026-01-15",
+          "source": "vendor_portal",
+          "source_path": "fixture.documents[0].issue_date"
+        }
+      ],
+      "scope_kind": "account"
+    }
+  ],
+  "fixture_version": "vendor-synthetic/1"
+}

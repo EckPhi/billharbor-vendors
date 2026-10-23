@@ -1,3 +1,31 @@
+# Four design-only vendor targets — 2026-10-23
+
+Added `drei_at`, `lidl_connect_at`, `netcup` and `hornbach_at` to the aggregate
+catalog, including schema-valid manifests, typed fixture connectors, packaged
+invented invoice fixtures, public evidence and per-vendor rollback notes. Austria
+is operator-confirmed for Lidl Connect (requested as lidl-mobile) and HORNBACH.
+No new dependency; existing pinned SDK/synthetic helper only. The engine/catalog/
+receiver boundaries and all existing source identities are preserved.
+
+Verified: 21 focused catalog/lifecycle tests passed. Full available local suite:
+51 passed, 4 existing browser tests skipped because Playwright is unavailable;
+initial restricted run could not bind their loopback server. The loopback-enabled
+rerun establishes no real-browser proof. Offline wheel build reused cached pinned
+Hatchling 1.32.0. An isolated Python `-I` smoke unpacked that new aggregate wheel,
+validated each of the four packaged manifests, instantiated each connector with
+its default packaged fixture and passed discovery/fetch/close. Existing SDK and
+standalone synthetic source supplied dependencies; this smoke proves aggregate
+wheel resource loading, not independent plugin packaging. `git diff --check` passes.
+
+Blockers: live origins, login fields/terms, scope hierarchy, date/pagination/
+identity/completeness, formats and original download behavior remain unverified.
+Only offline invented invoice/PDF targets are implemented. New entries have no
+independent plugin wheel/store descriptor or installed-app activation. Production
+and authenticated verification require separate applicable gates.
+
+Git/publication: committed locally with annotated development tag `v0.5.0.dev4`
+at handoff; no push, release, store publication, live access or deployment performed.
+
 ## Tag-derived aggregate release version — 2026-10-21
 
 Release preparation now derives the aggregate package version from a canonical

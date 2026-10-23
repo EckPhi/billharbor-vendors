@@ -18,3 +18,27 @@ id = "billharbor_synthetic"
 version = "0.1.0"
 status = "design_only"
 manifest = "vendors/billharbor_synthetic/vendor.toml"
+
+[[vendors]]
+id = "drei_at"
+version = "0.1.0"
+status = "design_only"
+manifest = "vendors/drei_at/vendor.toml"
+
+[[vendors]]
+id = "lidl_connect_at"
+version = "0.1.0"
+status = "design_only"
+manifest = "vendors/lidl_connect_at/vendor.toml"
+
+[[vendors]]
+id = "netcup"
+version = "0.1.0"
+status = "design_only"
+manifest = "vendors/netcup/vendor.toml"
+
+[[vendors]]
+id = "hornbach_at"
+version = "0.1.0"
+status = "design_only"
+manifest = "vendors/hornbach_at/vendor.toml"

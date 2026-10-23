@@ -2,8 +2,8 @@
 
 Separately versioned vendor definitions and connector packages for BillHarbor.
 Reference vendor: `billharbor_synthetic`, an entirely invented offline source for
-completing the application. Amazon Business and oekostrom.at remain deferred real
-vendor targets. See [synthetic reference](vendors/billharbor_synthetic/README.md).
+completing the application. Amazon Business, oekostrom.at, Drei Austria, Lidl Connect Austria, netcup and
+HORNBACH Austria remain design-only real vendor targets. See [synthetic reference](vendors/billharbor_synthetic/README.md).
 
 Status: v0.3.0 synthetic connector packages are released; local 0.4 discovery
 hardening is in progress. A loopback-only browser candidate and exact-label identity policy are verified
@@ -52,3 +52,15 @@ A manual GitHub Pages workflow is prepared for the synthetic store. See
 [Pages setup and BillHarbor registration](docs/vendor-store-pages.md) for GitHub
 settings, reviewed release prerequisites, public distribution, renewal and rollback.
 No site has been published by this local implementation.
+
+## Additional design-only targets — 2026-10-23
+
+Added aggregate catalog definitions and invented offline invoice fixtures for
+[Drei Austria](vendors/drei_at/README.md),
+[Lidl Connect Austria](vendors/lidl_connect_at/README.md) (requested as lidl-mobile),
+[netcup](vendors/netcup/README.md) and
+[HORNBACH Austria](vendors/hornbach_at/README.md). Austria is the operator-confirmed
+Lidl/HORNBACH scope. These are not independently installable store plugins or live
+connectors. Empty runtime origins, unresolved live semantics and `design_only`
+status remain explicit. No dependency, credential, network transport or live
+activation is introduced. See NEXT_STEPS.md for verification and publication state.

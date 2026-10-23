@@ -23,11 +23,23 @@ billharbor-synthetic = { path = "vendors/billharbor_synthetic" }
 [tool.hatch.build.targets.wheel]
 packages = [
   "src/billharbor_vendors",
+  "vendors/hornbach_at/src/hornbach_at",
+  "vendors/netcup/src/netcup",
+  "vendors/lidl_connect_at/src/lidl_connect_at",
+  "vendors/drei_at/src/drei_at",
   "vendors/amazon_business_de/src/amazon_business_de",
   "vendors/oekostrom_at/src/oekostrom_at",
 ]
 
 [tool.hatch.build.targets.wheel.force-include]
+"vendors/hornbach_at/vendor.toml" = "billharbor_vendors/data/hornbach_at.toml"
+"vendors/hornbach_at/tests/fixtures/synthetic_catalog.json" = "billharbor_vendors/data/fixtures/hornbach_at.json"
+"vendors/netcup/vendor.toml" = "billharbor_vendors/data/netcup.toml"
+"vendors/netcup/tests/fixtures/synthetic_catalog.json" = "billharbor_vendors/data/fixtures/netcup.json"
+"vendors/lidl_connect_at/vendor.toml" = "billharbor_vendors/data/lidl_connect_at.toml"
+"vendors/lidl_connect_at/tests/fixtures/synthetic_catalog.json" = "billharbor_vendors/data/fixtures/lidl_connect_at.json"
+"vendors/drei_at/vendor.toml" = "billharbor_vendors/data/drei_at.toml"
+"vendors/drei_at/tests/fixtures/synthetic_catalog.json" = "billharbor_vendors/data/fixtures/drei_at.json"
 "vendors/billharbor_synthetic/vendor.toml" = "billharbor_vendors/data/billharbor_synthetic.toml"
 "vendors/billharbor_synthetic/tests/fixtures/synthetic_catalog.json" = "billharbor_vendors/data/fixtures/billharbor_synthetic.json"
 "catalog.toml" = "billharbor_vendors/data/catalog.toml"

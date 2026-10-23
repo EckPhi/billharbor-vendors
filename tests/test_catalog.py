@@ -12,7 +12,7 @@ from billharbor_vendors.catalog import validate_catalog
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_catalog_contains_three_valid_design_only_manifests() -> None:
+def test_catalog_contains_seven_valid_design_only_manifests() -> None:
     manifests = validate_catalog(ROOT)
     with (ROOT / "catalog.toml").open("rb") as handle:
         catalog = tomllib.load(handle)
@@ -20,6 +20,10 @@ def test_catalog_contains_three_valid_design_only_manifests() -> None:
         "amazon_business_de",
         "oekostrom_at",
         "billharbor_synthetic",
+        "drei_at",
+        "lidl_connect_at",
+        "netcup",
+        "hornbach_at",
     }
     assert {manifest["status"] for manifest in manifests} == {"design_only"}
     assert all(manifest["verification"]["live_verified"] is False for manifest in manifests)
