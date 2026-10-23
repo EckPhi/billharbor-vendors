@@ -1,7 +1,8 @@
 # HORNBACH Austria
 
-Status: `design_only`. Included in the aggregate development catalog only; no
-independent installable store plugin or live support is claimed. The connector
+Status: `design_only`. Independent offline fixture wheels can be generated and
+verified by the release pipeline, alongside the aggregate catalog. No publication
+or live support is claimed. The connector
 reads invented offline fixtures; browser capability describes the intended
 transport and does not launch a browser. Invoice is the synthetic target kind,
 and PDF is the invented fixture format; neither establishes live coverage.

@@ -26,7 +26,7 @@ class PagesStoreTests(unittest.TestCase):
             name = f"billharbor_synthetic-{version}-py3-none-any.whl"
             wheel = self.root / name
             with zipfile.ZipFile(wheel, "w") as archive:
-                archive.writestr("billharbor_synthetic/data/vendor.toml", "invented manifest")
+                archive.writestr("billharbor_synthetic/data/vendor.toml", 'id = "billharbor_synthetic"\nstatus = "design_only"\n' )
                 archive.writestr(f"billharbor_synthetic-{version}.dist-info/METADATA",
                                  f"Name: billharbor-synthetic\nVersion: {version}\n")
             digest = hashlib.sha256(wheel.read_bytes()).hexdigest()

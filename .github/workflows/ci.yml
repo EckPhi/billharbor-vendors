@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, develop]
 
 permissions:
   contents: read
@@ -75,6 +75,8 @@ jobs:
         run: |
           uv build --wheel --out-dir "$DIST_DIR" billharbor/packages/connector-sdk
           uv build --wheel --out-dir "$DIST_DIR" billharbor-vendors/vendors/billharbor_synthetic
+          PLUGIN_VERSION=$(python3 -c 'import tomllib; print(tomllib.load(open("billharbor-vendors/pyproject.toml", "rb"))["project"]["version"])')
+          uv run --no-project --with hatchling==1.32.0 python billharbor-vendors/tools/build_vendor_plugins.py --version "$PLUGIN_VERSION" --output-dir "$DIST_DIR"
           uv build --wheel --out-dir "$DIST_DIR" billharbor-vendors
 
       - name: Verify wheel-only compatibility
@@ -102,6 +104,18 @@ jobs:
           assert source_id("installation", "invented", "invoice", "Invented label").startswith("oekostrom_label_v1_")
           PY
           sha256sum "$DIST_DIR"/*.whl > "$DIST_DIR"/SHA256SUMS
+
+      - name: Verify four installed fixture plugins without application or catalog
+        env:
+          DIST_DIR: ${{ runner.temp }}/dists
+        run: |
+          uv run --no-project --isolated \
+            --with "$DIST_DIR"/billharbor_connector_sdk-*.whl \
+            --with "$DIST_DIR"/billharbor_drei_at-*.whl \
+            --with "$DIST_DIR"/billharbor_lidl_connect_at-*.whl \
+            --with "$DIST_DIR"/billharbor_netcup-*.whl \
+            --with "$DIST_DIR"/billharbor_hornbach_at-*.whl \
+            python -I billharbor-vendors/tools/verify_vendor_plugins.py
 
       - name: Verify standalone reference plugin without application or catalog
         env:

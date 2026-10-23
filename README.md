@@ -48,7 +48,8 @@ Legacy synthetic connector identities remain unchanged. See
 
 ## Optional vendor store hosting
 
-A manual GitHub Pages workflow is prepared for the synthetic store. See
+Release builds prepare and publish alpha/beta/stable plugin stores on GitHub
+Pages; a manual recovery workflow reconstructs retained releases. See
 [Pages setup and BillHarbor registration](docs/vendor-store-pages.md) for GitHub
 settings, reviewed release prerequisites, public distribution, renewal and rollback.
 No site has been published by this local implementation.
@@ -60,7 +61,7 @@ Added aggregate catalog definitions and invented offline invoice fixtures for
 [Lidl Connect Austria](vendors/lidl_connect_at/README.md) (requested as lidl-mobile),
 [netcup](vendors/netcup/README.md) and
 [HORNBACH Austria](vendors/hornbach_at/README.md). Austria is the operator-confirmed
-Lidl/HORNBACH scope. These are not independently installable store plugins or live
-connectors. Empty runtime origins, unresolved live semantics and `design_only`
+Lidl/HORNBACH scope. Independent offline fixture plugin wheels can now be generated for all four.
+They remain design-only and are not live connectors. Empty runtime origins, unresolved live semantics and `design_only`
 status remain explicit. No dependency, credential, network transport or live
 activation is introduced. See NEXT_STEPS.md for verification and publication state.

@@ -28,12 +28,13 @@ installation/testing, `tools/prepare_release.py` stamps project metadata, export
 checkout. The committed `0.5.0.dev2` remains the local/non-release fallback. No
 version-bump commit or rewritten tag is required; preserve all existing tags.
 Supported canonical tags are `vMAJOR.MINOR.PATCH` with optional `aN`, `bN`, `rcN`,
-`.devN` or `.postN`; leading zeros, normalization aliases, local labels and combined
+or `.devN`; leading zeros, normalization aliases, local labels and combined
 suffixes are rejected. The release wheel's metadata and exported version must
 match the tag before publication. Reproducing a tagged artifact locally requires
 running the same preparation command in a disposable checkout first.
 
-SDK and standalone plugin versions/dependencies remain independent and unchanged.
+SDK and reference synthetic plugin versions/dependencies remain independent and
+unchanged; the four new fixture wheels use their release version.
 Frozen catalog/manifest versions and engine compatibility ranges also remain
 unchanged; choosing a release version does not imply a compatibility change.
 This uses Python's standard library only, with no dependency adoption, credentials
@@ -68,12 +69,52 @@ only after reviewing the SDK source/artifact and running catalog conformance.
 The existing read-only private checkout token remains a CI build input; plugin
 runtime artifacts contain no token, checkout, application wheel or Git source.
 
-## Optional public synthetic store
+## Public vendor store
 
-The manual `vendor-store-pages.yml` workflow reconstructs a complete public site
-from `.github/vendor-store.json` reviewed release-asset pins, retaining historical
-wheels at digest-addressed URLs. It does not run on push or release. It uses no
-SDK checkout or additional PAT; only build-time current-repository release reads
-and scoped Pages deployment. See [setup, renewal and rollback](vendor-store-pages.md)
-for required GitHub settings, public distribution scope, explicit increasing
-revision and 90-day expiry. No Pages deployment or remote acceptance is claimed.
+Release builds publish channel indexes and all retained plugin wheels to Pages
+in the same workflow. The manual Pages action reconstructs those channels for
+recovery or renewal; it takes no revision/lifetime inputs. See
+[setup, renewal and rollback](vendor-store-pages.md). Nothing is published by
+local implementation or verification alone.
+
+## Automatic alpha, beta and final releases
+
+Pushes to `develop` produce alpha prereleases; pushes to `main` produce beta
+prereleases. Both use the source `MAJOR.MINOR.PATCH` base and suffix `aN` / `bN`,
+where `N = github.run_number * 1000 + github.run_attempt` (attempts 1–999).
+The exact push SHA is the release target. Explicit canonical `v*` tags (excluding `.postN`) retain
+their version; only plain `vMAJOR.MINOR.PATCH` is stable/latest. `.postN` is rejected before building because the engine plugin version parser
+does not support it. Other supported tag suffixes remain prereleases and never replace GitHub's latest stable release.
+These builds stamp only disposable aggregate metadata, never commit version bumps.
+The independent four fixture plugins get the release version; synthetic and SDK
+versions remain independent. All five plugin wheels accompany the catalog release.
+
+The release workflow builds/tests, creates the GitHub Release and reconstructs /
+publishes Pages in the same run: `GITHUB_TOKEN` release/tag events do not trigger
+a second workflow. Release and manual Pages runs share one non-cancelling
+concurrency group covering build and deployment, with `queue: max` retaining
+pending pushes rather than replacing an older pending run. Pages environment rules must
+allow `develop`, `main` and approved version tags; restricting that environment to
+`main` blocks the other release channels. Required environment reviewers remain
+an operator setting. Publication failures leave immutable release assets available
+for manual Pages reconstruction; existing releases are never overwritten.
+
+Each release includes an immutable `store-release.json` recording channel,
+sequence and plugin filenames/digests. Store reconstruction paginates GitHub's
+release list, verifies all retained assets plus the legacy reviewed manifest,
+and selects the largest sequence per channel. A delayed older release cannot
+promote older packages. All wheel URLs retain digest-addressed Pages paths.
+The source run ID times 1000 plus attempt orders release selection independently
+of completion order; publication revisions use UTC microseconds captured once
+inside the serialized publisher, with all index timestamps derived from that
+revision. This assumes GitHub-hosted runners' UTC clocks do not regress between
+serialized runs. Every reconstruction, including manual recovery, has a new
+revision/digest. No package code is executed to construct store metadata.
+
+The separate alpha/beta/stable feeds use `/alpha/index.json`, `/beta/index.json`
+and `/stable/index.json` when those channels exist. Legacy `/index.json` follows
+beta once available (stable fallback before the first beta; seeded synthetic
+fallback before either). A stable tag never silently switches the legacy beta
+subscription. Exact index trust approval, plugin installation, instance deployment,
+and live vendor activation remain explicit operator actions. A successful release
+does not update an instance's reviewed index digest.

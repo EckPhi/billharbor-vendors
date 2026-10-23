@@ -71,3 +71,17 @@ def test_store_generator_binds_exact_wheel_and_manifest(tmp_path):
     assert release["descriptor"]["manifest"]["sha256"] == hashlib.sha256(manifest).hexdigest()
     assert release["descriptor_sha256"] == hashlib.sha256(module.canonical(release["descriptor"])).hexdigest()
     assert index["expires_at"] == 86500
+
+
+def test_original_published_synthetic_descriptor_identity_is_preserved(tmp_path):
+    spec = importlib.util.spec_from_file_location("build_synthetic_store", ROOT / "tools/build_synthetic_store.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    wheel = tmp_path / "billharbor_synthetic-0.1.0.dev0-py3-none-any.whl"
+    with zipfile.ZipFile(wheel, "w") as archive:
+        archive.writestr("billharbor_synthetic/data/vendor.toml",
+            (ROOT / "vendors/billharbor_synthetic/vendor.toml").read_bytes())
+        archive.writestr("billharbor_synthetic-0.1.0.dev0.dist-info/METADATA",
+            "Metadata-Version: 2.3\nName: billharbor-synthetic\nVersion: 0.1.0.dev0\n")
+    index = module.build_index(wheel, "https://example.invalid/packages", now=100, python_version="3.13")
+    assert index["releases"][0]["descriptor_sha256"] == "db788b458ff962936e30a9857382bd5223989760f45775d1aef40e83ce024e96"

@@ -1,3 +1,37 @@
+## Automatic release channels and installable fixture vendors — 2026-10-23
+
+Implemented `develop` alpha, `main` beta and canonical version-tag release builds.
+Branch versions use the source tuple plus a/b(run_number*1000+attempt), with unique
+reruns and exact SHA targets. Only final versions advance latest. CI covers both
+branches. The release workflow builds four independent SDK-only offline vendor
+wheels alongside the unchanged synthetic reference/SDK and aggregate catalog.
+Four new factories bundle reviewed invented fixtures/helper; no live support.
+
+Successful releases reconstruct and publish retained alpha/beta/stable stores in
+the same workflow. Immutable ledgers/digests preserve historical package URLs;
+highest source sequence selects each channel. Shared queued publication and a
+fresh UTC-microsecond revision protect ordering and manual renewal. Hosted runner
+UTC clocks must not regress. Legacy index.json follows beta once present, with
+separate alpha/stable IDs. Existing synthetic descriptor bytes remain unchanged.
+Manual Pages reconstruction recovers publication failures without replacing releases.
+
+Verified: full catalog suite 65 passed, four browser tests skipped for unavailable
+Playwright. Four actual wheels passed isolated installed-package lifecycle checks
+and real application Registry extraction/subprocess conformance/install-lock proof
+in an existing Python3.13 image with no network and disposable state. All changed
+workflow YAML parses; whitespace checks pass. Application release tests passed 9.
+See ../billharbor/docs/evidence/release-channels-2026-10-23.md for exact scope.
+Existing pinned Hatchling/SDK only; dependency decisions record licenses, helper
+bundling, maintenance, data flow and rollback. No new third-party action/pin.
+
+Git/publication: committed locally with annotated development tag `v0.5.0.dev5`.
+No push, release publication, new image, Pages deployment or live activation.
+Remote Actions/native runners/Pages remain unverified. Environment rules must allow
+main/develop/approved version tags for Pages and app Docker publication; required
+reviewers and build credential settings remain unchanged. Index digest review and
+installation remain explicit, as do compatible app deployment and live vendor gates.
+No credential/session/real document/accounting write or bookkeeping change occurred.
+
 # Four design-only vendor targets — 2026-10-23
 
 Added `drei_at`, `lidl_connect_at`, `netcup` and `hornbach_at` to the aggregate

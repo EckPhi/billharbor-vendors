@@ -2,16 +2,6 @@ name: Publish synthetic vendor store
 
 on:
   workflow_dispatch:
-    inputs:
-      revision:
-        description: 'Positive store revision, strictly greater than every previously published revision'
-        required: true
-        type: string
-      lifetime_days:
-        description: 'Index validity in days (1–90); renewal requires another manual run and trust review'
-        required: true
-        default: '90'
-        type: string
 
 permissions:
   contents: read
@@ -19,6 +9,7 @@ permissions:
 concurrency:
   group: vendor-store-pages
   cancel-in-progress: false
+  queue: max
 
 jobs:
   build:
@@ -35,16 +26,13 @@ jobs:
           STORE_REPOSITORY: ${{ github.repository }}
           STORE_OWNER: ${{ github.repository_owner }}
           STORE_NAME: ${{ github.event.repository.name }}
-          STORE_REVISION: ${{ inputs.revision }}
-          STORE_LIFETIME: ${{ inputs.lifetime_days }}
         run: |
-          python3 tools/build_pages_store.py \
-            --download-repository "$STORE_REPOSITORY" \
+          python3 tools/channel_store.py site \
+            --repository "$STORE_REPOSITORY" \
             --wheels "$RUNNER_TEMP/reviewed-wheels" \
             --output "$RUNNER_TEMP/vendor-store" \
-            --base-url "https://${STORE_OWNER,,}.github.io/$STORE_NAME" \
-            --revision "$STORE_REVISION" --lifetime-days "$STORE_LIFETIME" \
-            >> "$GITHUB_STEP_SUMMARY"
+            --base-url "https://${STORE_OWNER,,}.github.io/$STORE_NAME"
+          find "$RUNNER_TEMP/vendor-store" -name index.sha256 -exec cat {} \; >> "$GITHUB_STEP_SUMMARY"
       - name: Upload complete public site
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:

@@ -2,20 +2,42 @@ name: Release
 
 on:
   push:
+    branches: [develop, main]
     tags: ["v*"]
 
 permissions:
   contents: write
 
+concurrency:
+  group: vendor-store-pages
+  cancel-in-progress: false
+  queue: max
+
 jobs:
   github-release:
     name: Build GitHub release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out tagged catalog
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: billharbor-vendors
+
+      - name: Resolve immutable release identity
+        id: release
+        working-directory: billharbor-vendors
+        env:
+          PUSH_REF: ${{ github.ref }}
+          RUN_NUMBER: ${{ github.run_number }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: python3 tools/release_context.py --ref "$PUSH_REF" --run-number "$RUN_NUMBER" --attempt "$RUN_ATTEMPT" >> "$GITHUB_OUTPUT"
 
       - name: Read reviewed SDK source revision
         id: sdk_ref
@@ -52,7 +74,7 @@ jobs:
       - name: Derive aggregate package version from release tag
         working-directory: billharbor-vendors
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
         run: python tools/prepare_release.py "$RELEASE_TAG"
 
       - name: Test frozen catalog
@@ -72,12 +94,13 @@ jobs:
 
       - name: Build and verify release wheels
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
           BILLHARBOR_REF: ${{ steps.sdk_ref.outputs.ref }}
           DIST_DIR: ${{ runner.temp }}/dists
         run: |
           uv build --wheel --out-dir "$DIST_DIR" billharbor/packages/connector-sdk
           uv build --wheel --out-dir "$DIST_DIR" billharbor-vendors/vendors/billharbor_synthetic
+          uv run --no-project --with hatchling==1.32.0 python billharbor-vendors/tools/build_vendor_plugins.py --version "${RELEASE_TAG#v}" --output-dir "$DIST_DIR"
           uv build --wheel --out-dir "$DIST_DIR" billharbor-vendors
           python - <<'PYVERSION'
           import ast
@@ -105,6 +128,18 @@ jobs:
           sha256sum "$DIST_DIR"/*.whl > "$DIST_DIR"/SHA256SUMS
           ENGINE_DIGEST=$(sha256sum "$DIST_DIR"/billharbor_connector_sdk-*.whl | cut -d ' ' -f 1)
           printf 'repository=EckPhi/billharbor\ncommit=%s\nwheel_sha256=%s\n' "$BILLHARBOR_REF" "$ENGINE_DIGEST" > "$DIST_DIR"/BILLHARBOR-SDK
+
+      - name: Verify four installed fixture plugins without application or catalog
+        env:
+          DIST_DIR: ${{ runner.temp }}/dists
+        run: |
+          uv run --no-project --isolated \
+            --with "$DIST_DIR"/billharbor_connector_sdk-*.whl \
+            --with "$DIST_DIR"/billharbor_drei_at-*.whl \
+            --with "$DIST_DIR"/billharbor_lidl_connect_at-*.whl \
+            --with "$DIST_DIR"/billharbor_netcup-*.whl \
+            --with "$DIST_DIR"/billharbor_hornbach_at-*.whl \
+            python -I billharbor-vendors/tools/verify_vendor_plugins.py
 
       - name: Verify standalone reference plugin without application or catalog
         env:
@@ -136,10 +171,33 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DIST_DIR: ${{ runner.temp }}/dists
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          CHANNEL: ${{ steps.release.outputs.channel }}
+          PRERELEASE: ${{ steps.release.outputs.prerelease }}
+          RELEASE_SHA: ${{ github.sha }}
+          PUSH_REF: ${{ github.ref }}
         run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          RELEASE_FLAGS=(--verify-tag --generate-notes)
-          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            RELEASE_FLAGS+=(--prerelease --latest=false)
-          fi
-          gh release create "$GITHUB_REF_NAME" "$DIST_DIR"/billharbor_vendors-*.whl "$DIST_DIR"/billharbor_synthetic-*.whl "$DIST_DIR"/SHA256SUMS "$DIST_DIR"/BILLHARBOR-SDK "${RELEASE_FLAGS[@]}"
+          SEQUENCE=$((GITHUB_RUN_ID * 1000 + GITHUB_RUN_ATTEMPT))
+          RELEASE_FLAGS=(--generate-notes --target "$RELEASE_SHA")
+          if [[ "$PUSH_REF" == refs/tags/* ]]; then RELEASE_FLAGS+=(--verify-tag); fi
+          if [[ "$PRERELEASE" == true ]]; then RELEASE_FLAGS+=(--prerelease --latest=false); else RELEASE_FLAGS+=(--latest); fi
+          python3 tools/channel_store.py ledger --tag "$RELEASE_TAG" --channel "$CHANNEL" --sequence "$SEQUENCE" --wheels "$DIST_DIR" --output "$DIST_DIR/store-release.json"
+          gh release create "$RELEASE_TAG" "$DIST_DIR"/*.whl "$DIST_DIR"/SHA256SUMS "$DIST_DIR"/BILLHARBOR-SDK "$DIST_DIR"/store-release.json "${RELEASE_FLAGS[@]}"
+
+      - name: Reconstruct all retained channel stores from release ledgers
+        working-directory: billharbor-vendors
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STORE_REPOSITORY: ${{ github.repository }}
+          STORE_OWNER: ${{ github.repository_owner }}
+          STORE_NAME: ${{ github.event.repository.name }}
+        run: |
+          python3 tools/channel_store.py site --repository "$STORE_REPOSITORY" --wheels "$RUNNER_TEMP/retained-wheels" --output "$RUNNER_TEMP/vendor-store" --base-url "https://${STORE_OWNER,,}.github.io/$STORE_NAME"
+          find "$RUNNER_TEMP/vendor-store" -name index.sha256 -exec cat {} \; >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload complete public store
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        with:
+          path: ${{ runner.temp }}/vendor-store
+      - name: Deploy channel stores
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

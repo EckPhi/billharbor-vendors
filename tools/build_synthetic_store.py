@@ -1,4 +1,4 @@
-"""Emit an invented store index from an already-built standalone plugin wheel.
+"""Emit an offline store index from an already-built reviewed standalone plugin wheel.
 
 This never publishes, fetches packages, imports vendor code or starts a server.
 The operator reviews the printed index digest before configuring a store.
@@ -28,28 +28,40 @@ def build_index(wheel, base_url, *, store_id="synthetic", revision=1, python_ver
     if revision < 1 or lifetime < 1:
         raise ValueError("Positive revision and lifetime required.")
     raw = wheel.read_bytes()
-    manifest_path = "billharbor_synthetic/data/vendor.toml"
+    known = {"billharbor-synthetic": ("billharbor_synthetic", "synthetic")}
+    known.update({"billharbor-" + name.replace("_", "-"): (name, name.replace("_", "-"))
+                  for name in ("drei_at", "lidl_connect_at", "netcup", "hornbach_at")})
     with zipfile.ZipFile(wheel) as archive:
-        manifest = archive.read(manifest_path)
         metadata_names = [name for name in archive.namelist() if name.endswith(".dist-info/METADATA")]
         if len(metadata_names) != 1:
             raise ValueError("Exactly one plugin distribution required.")
         from email.parser import BytesParser
         metadata = BytesParser().parsebytes(archive.read(metadata_names[0]))
-        if metadata["Name"] != "billharbor-synthetic":
-            raise ValueError("Only the invented reference plugin is supported.")
+        if metadata["Name"] not in known:
+            raise ValueError("Only reviewed offline plugins are supported.")
+        connector_id, plugin_name = known[metadata["Name"]]
+        manifest_path = connector_id + "/data/vendor.toml"
+        manifest = archive.read(manifest_path)
+        import tomllib
+        parsed_manifest = tomllib.loads(manifest.decode())
+        if parsed_manifest["id"] != connector_id or parsed_manifest["status"] != "design_only":
+            raise ValueError("Expected matching design-only manifest.")
     descriptor = {
-        "schema": "vendor-plugin/1", "publisher": "billharbor", "name": "synthetic",
-        "version": metadata["Version"], "connector_id": "billharbor_synthetic",
+        "schema": "vendor-plugin/1", "publisher": "billharbor", "name": plugin_name,
+        "version": metadata["Version"], "connector_id": connector_id,
         "manifest": {"path": manifest_path, "sha256": hashlib.sha256(manifest).hexdigest()},
-        "entrypoint": "billharbor_synthetic.connector:create_connector",
+        "entrypoint": connector_id + ".connector:create_connector",
         "sdk_version": "0.1.0", "engine_compatibility": ">=0.5.0.dev0,<0.6.0",
         "runtime_profile": {"python": python_version or f"{sys.version_info.major}.{sys.version_info.minor}",
                             "platform": "any", "dependencies": {"billharbor-connector-sdk": "0.1.0"}},
         "license": "Proprietary", "maintainer": "BillHarbor catalog maintainers",
-        "maintenance": "Synthetic-only reference maintained with BillHarbor; no live vendor support.",
-        "changelog": "First independent plugin package; unchanged invented document identities.",
-        "conformance": {"options": {}, "fixture_path": "billharbor_synthetic/data/fixture.json"},
+        "maintenance": ("Synthetic-only reference maintained with BillHarbor; no live vendor support."
+                        if connector_id == "billharbor_synthetic" else
+                        "Offline invented fixtures maintained with BillHarbor; no live vendor support."),
+        "changelog": ("First independent plugin package; unchanged invented document identities."
+                      if connector_id == "billharbor_synthetic" else
+                      "Independent offline plugin package; preserved invented document identities."),
+        "conformance": {"options": {}, "fixture_path": connector_id + "/data/fixture.json"},
         "rollback": {"checkpoint_compatible": True},
     }
     now = int(time.time() if now is None else now)

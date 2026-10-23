@@ -143,3 +143,45 @@ commit links on 2026-10-21. This is a reviewed version choice, not a claim that
 these are the newest releases. Existing checkout pin is reused unchanged.
 The manual workflow is inert until pushed and explicitly dispatched; public
 publication of the proprietary synthetic wheel requires operator authorization.
+
+## Four independent offline design-only plugins — 2026-10-23
+
+`tools/build_vendor_plugins.py` builds Drei Austria, Lidl Connect Austria, netcup
+and HORNBACH Austria in disposable projects using existing pinned Hatchling
+1.32.0 (MIT, PyPA maintained). Each wheel bundles an exact copy of the existing
+reviewed synthetic fixture helper and its vendor's frozen manifest/invented fixture;
+no package is downloaded or source metadata modified. The only runtime dependency
+is the existing `billharbor-connector-sdk==0.1.0`. Distribution code remains
+Proprietary, matching the reviewed helper; the vendor manifest's Apache-2.0 field
+continues to describe that definition, not a relicensing of the bundled helper.
+BillHarbor catalog maintainers own all five offline packages. Generated package
+versions follow the release input independently of frozen manifest versions.
+
+Factories reject unknown options and unbound fixture digests, and never resolve
+credentials. Input is packaged invented JSON (or an explicitly digest-bound local
+synthetic fixture); output is neutral SDK observations and invented PDF bytes.
+There is no network transport, credential flow, live support or additional runtime
+dependency. Store generation reads wheel metadata/resources without importing code
+and only admits the five reviewed plugin distribution/connector identities.
+
+Retain prior immutable wheels and installation locks for rollback; select a prior
+reviewed lock explicitly for new runs. Existing executions retain their source
+provenance and must not resume under moved helper code. Revert the build/store
+change or omit these four wheels to stop offering them; never replace bytes under
+an existing published plugin version. Live vendor support remains separately gated.
+
+## Release-channel automation — 2026-10-23
+
+No dependency or action version was added. Standard-library release/store helpers
+are maintained with this proprietary catalog. They reuse the recorded pinned
+Hatchling/uv, checkout and Pages upload/deploy actions (GitHub-maintained, MIT).
+Build inputs are immutable reviewed SDK source plus synthetic fixture source;
+GitHub Release APIs supply immutable plugin wheels and JSON ledgers, which are
+hashed before public Pages copying. Release ledgers and wheel metadata are read
+as data; package code is not imported by the publisher. The existing scoped
+GitHub token writes repository releases and Pages only; the existing fine-grained
+SDK token remains checkout-only. Automatic alpha/beta publication broadens trigger
+scope, not vendor/credential data access. Maintenance requires reviewing the
+release workflows and retained ledgers together. Rollback disables automatic
+publication, preserves all historical assets/URLs, and explicitly installs a prior
+reviewed lock; never retag or overwrite published wheel bytes.

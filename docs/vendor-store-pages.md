@@ -1,88 +1,86 @@
-# Synthetic vendor store on GitHub Pages
+# Vendor stores on GitHub Pages
 
-The manual `Publish synthetic vendor store` workflow prepares the entire static
-store from reviewed GitHub Release wheels. No vendor access, SDK checkout, extra
-PAT, package installation or wheel execution occurs. It does not run on push,
-tag, release or schedule. This implementation has not deployed a site.
+Successful release builds construct and publish the complete retained store in
+the same workflow. Push `develop` for alpha, `main` for beta, or a supported
+canonical version tag for an explicit release. Plain `vMAJOR.MINOR.PATCH` is
+stable; `.postN` is unsupported by the engine plugin parser and rejected.
+Local implementation and tests do not publish anything.
 
-## GitHub setup and first publication
+## Setup and acceptance
 
-1. Push reviewed workflow/source changes only under separate publication approval.
-   Require green catalog CI and a successful reviewed release containing the
-   standalone synthetic wheel.
-2. In this repository's **Settings → Pages → Build and deployment**, set
-   **Source: GitHub Actions** and enable **Enforce HTTPS** if offered. Private repositories need a GitHub plan supporting
-   Pages (for example GitHub Pro); do not make the repository public merely to
-   enable hosting. The resulting public site exposes the selected proprietary
-   synthetic wheel and public metadata; repository visibility does not make the
-   site private. Confirm permission to distribute those files publicly first.
-3. Allow the pinned GitHub-owned checkout/upload/deploy actions if organization
-   policy restricts actions. The workflow grants its build job `contents: read`
-   and its deployment job `pages: write` / `id-token: write`. It requires no new
-   secret or broad default write permission. Keep the `github-pages` environment
-   restricted to `main`; required reviewers may be configured there.
-4. Review `.github/vendor-store.json`. Its initial `v0.5.0.dev2` tag is a **local
-   release candidate**, with an exact locally verified synthetic-wheel digest;
-   release existence and asset bytes on GitHub have not been checked here.
-   If that release has not succeeded, publish the reviewed release first or
-   deliberately select another successful release with the same reviewed bytes.
-   Missing assets and digest mismatches stop the build before deployment.
-5. In **Actions → Publish synthetic vendor store → Run workflow**, select `main`,
-   enter revision `1` for the first publication, and validity `90` days (1–90).
-   Subsequent publications and retries after successful deployment require a
-   strictly greater revision. The operator owns this monotonic counter.
-6. Review the run summary's exact index SHA-256, expiry and final site URL. After
-   deployment, download the index with `Accept-Encoding: identity`, confirm the
-   bytes match that SHA-256 and verify wheel URLs return directly without redirects
-   or content encoding. BillHarbor fails closed on redirects/encoded responses;
-   a successful Pages deployment alone is not application acceptance.
+1. Push reviewed changes under publication authorization and require successful
+   cross-repository tests against the committed immutable SDK pin. The existing
+   read-only SDK checkout token remains necessary; no token values belong in Git.
+2. Set **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+   Confirm public distribution of these proprietary fixture wheels is permitted.
+   A private repository requires a plan supporting Pages; repository privacy does
+   not make its public Pages site private. Use HTTPS.
+3. Permit the pinned checkout/upload/deploy actions and allow `develop`, `main`
+   and approved version tags in the `github-pages` environment. A main-only rule
+   blocks alpha/tag releases. Required reviewers may pause publication.
+4. Keep all GitHub Release wheels and `store-release.json` ledgers permanently.
+   The seed `.github/vendor-store.json` also retains the original synthetic wheel
+   and its reviewed digest. Missing or changed historical assets fail closed.
+5. After release publication, inspect the run summary's index digest and fetch
+   the desired index using `Accept-Encoding: identity`. Verify its exact bytes,
+   direct wheel URLs and application compatibility. Pages success alone does not
+   prove BillHarbor acceptance. Approve the new exact digest in BillHarbor before
+   installing a plugin; publication never changes instance trust automatically.
 
-The expected URL without a custom domain is
-`https://eckphi.github.io/billharbor-vendors/index.json`. Configure BillHarbor
-**Vendor stores → New store** using store ID `billharbor-vendors`, that index URL,
-its reviewed exact SHA-256, approved origin `https://eckphi.github.io`, and publisher
-`billharbor`. A deployment plugin administrator then checks the store and installs
-the synthetic plugin. Target Python is the reviewed `3.13` runtime. Only synthetic
-support is advertised; Amazon and Ökostrom remain deferred.
+Default feeds are:
 
-Custom domains and repository renames need an explicit workflow base-URL change
-and reviewed BillHarbor trust update before publication. GitHub login-protected
-Pages sites are unsuitable for the current unauthenticated store transport.
+| Feed | URL | Store ID |
+|---|---|---|
+| Alpha | `https://eckphi.github.io/billharbor-vendors/alpha/index.json` | `billharbor-vendors-alpha` |
+| Beta | `https://eckphi.github.io/billharbor-vendors/beta/index.json` | `billharbor-vendors` |
+| Stable | `https://eckphi.github.io/billharbor-vendors/stable/index.json` | `billharbor-vendors-stable` |
 
-## Renewal, retention and rollback
+A channel exists once its first release succeeds. Legacy `/index.json` is
+byte-identical to beta once beta exists. Before beta it exposes stable under the
+legacy store ID, or the seeded synthetic release before stable exists. Separate
+channel store IDs allow side-by-side subscriptions. Approved publisher remains
+`billharbor`, approved origin `https://eckphi.github.io`, target runtime Python
+`3.13`. Custom domains/repository renames require reviewed base URL/trust changes.
 
-The index expires after 90 days by default. Renew manually before expiry with a
-higher revision and review/update BillHarbor's exact index trust digest. Renewal
-changes issue/expiry bytes and therefore changes the digest even with the same
-wheel. No silent automatic trust update or scheduled publication is provided.
+## Retention, renewal and recovery
 
-Keep **every previously published manifest entry forever**, with its original
-tag, filename and SHA-256. Add entries for new plugin versions; set `current` to
-false to stop listing an old version while retaining its downloadable wheel.
-Never replace an existing distribution/version's bytes; use a new plugin version.
-All retained assets are downloaded and checked on every publication, then copied
-to `packages/<sha256>/<filename>`. Missing old assets fail the build so a deployment
-cannot silently remove historical install/rollback URLs. Preserve GitHub Release
-assets and enable GitHub immutable releases when available under release policy.
+Every release includes an immutable ledger with channel, ordering sequence and
+wheel filenames/digests. Publication paginates release history, verifies every
+retained wheel, and copies it to `packages/<sha256>/<filename>`. The highest
+release sequence wins per channel, so delayed older builds cannot replace newer
+packages. Never replace bytes under an existing distribution/version or delete
+historical release assets. Enable GitHub immutable releases where available.
 
-Rollback to earlier plugin versions by changing the current flags while retaining
-all entries, publishing a higher index revision and reviewing the new digest.
-Do not deploy an old expired/lower-revision index or delete retained wheels.
-Disabling the Pages workflow or site stops future distribution; existing installed
-plugins and locks remain engine-owned. Preserve previous verified application
-images and immutable install locks.
+Release and manual workflows share one serialized non-cancelling concurrency
+group with `queue: max`, which retains pending runs. Each publication captures a
+UTC-microsecond revision once and derives index timestamps from it, with a 90-day
+validity. This assumes GitHub-hosted runner clocks do not regress between runs.
+Every reconstruction changes the index digest and requires trust review.
+
+For recovery or renewal, run **Publish synthetic vendor store** on `main` after
+at least one successful ledger-bearing release. It takes no revision/lifetime
+inputs and reconstructs all channels without discarding historical wheels. A
+failed Pages step can be recovered this way after its release assets succeeded.
+Never overwrite an existing release to recover a Pages failure.
+
+Rollback uses earlier reviewed installation locks explicitly; existing executions
+retain their original provenance. Disable publication to stop future changes,
+while preserving historical assets and URLs. Vendor activation, live access and
+application deployment remain separately gated.
 
 ## Local verification
 
-Download reviewed release wheels separately into
-`<wheels>/<sha256>/<filename>`, then run without network or credentials:
+Offline helper tests cover branch identities, stale release selection, distinct
+channel IDs, root compatibility, revisions, retained bytes and path/digest safety:
 
 ```sh
-python3 tools/build_pages_store.py --wheels /tmp/reviewed-wheels \
-  --output /tmp/new-empty-site \
-  --base-url https://eckphi.github.io/billharbor-vendors --revision 1
+python3 -m unittest discover -s tests -p test_channel_release.py -v
 python3 -m unittest discover -s tests -p test_pages_store.py -v
 ```
 
-Official setup references: [custom Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages),
-[Pages availability and visibility](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages).
+No new dependency, action pin or PAT is adopted by this release-channel change.
+See [CI/CD](ci-cd.md) and [dependency decisions](dependencies.md).
+
+Official references: [custom Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages),
+[Pages visibility](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages),
+[workflow concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency?apiVersion=2022-11-28).
