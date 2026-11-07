@@ -33,6 +33,11 @@ def test_label_acquisition_reopen_skip_and_account_isolation(tmp_path):
     fixture_path = tmp_path / 'invented.json'
     fixture_path.write_text(json.dumps(fixture))
     manifest = tomllib.loads((ROOT / 'vendors/oekostrom_at/vendor.toml').read_text())
+    # The released manifest is invoices-only; the unchanged legacy fixture
+    # connector still advertises its historical kinds, so the runner would
+    # (correctly) reject it. This test-local copy exercises label identity only.
+    assert manifest['coverage']['document_kinds'] == ['invoice']
+    manifest['coverage']['document_kinds'] = ['invoice', 'credit_note', 'settlement']
 
     async def exercise():
         for number, account, expected in ((1, 'account_a', 2), (2, 'account_a', 0), (3, 'account_b', 2)):

@@ -253,6 +253,14 @@ def test_page_budget_is_bounded() -> None:
 def test_connector_v2_bytes_reach_engine_outbox(
     connector_type: type, fixture: Path, tmp_path: Path
 ) -> None:
+    manifest = tomllib.loads((fixture.parents[2] / "vendor.toml").read_text(encoding="utf-8"))
+    if connector_type is OekostromConnector:
+        # The released Ökostrom manifest is invoices-only; the unchanged legacy
+        # fixture connector advertises historical kinds and is (correctly)
+        # rejected by the runner. Widen a test-local copy for byte delivery only.
+        assert manifest["coverage"]["document_kinds"] == ["invoice"]
+        manifest["coverage"]["document_kinds"] = ["invoice", "credit_note", "settlement"]
+
     async def exercise() -> None:
         store = DurableStore(tmp_path / "state.sqlite3", tmp_path / "artifacts")
         now = datetime.now(timezone.utc)
@@ -268,9 +276,7 @@ def test_connector_v2_bytes_reach_engine_outbox(
                 account_binding_id="account_demo",
                 destination_binding_id="destination_demo",
                 destination_revision=1,
-                connector_manifest=tomllib.loads(
-                    (fixture.parents[2] / "vendor.toml").read_text(encoding="utf-8")
-                ),
+                connector_manifest=manifest,
                 starts_on=date(2026, 1, 1),
                 ends_on=date(2026, 12, 31),
             ),

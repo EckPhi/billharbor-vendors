@@ -1,0 +1,30 @@
+# Placeholder for the real Ökostrom portal. Status "unreviewed" fails closed:
+# loading this profile always raises. Exact origins must come from an
+# operator-led origin-only observation and selectors from sanitized, authorized
+# evidence (G1/G2) before a reviewed profile can replace this file.
+schema = "oekostrom-portal-mapping/1"
+profile_id = "oekostrom-live"
+status = "unreviewed"
+origin = ""
+login_path = ""
+documents_path = ""
+page_size = 0
+maximum_rows = 0
+maximum_document_bytes = 0
+
+[selectors]
+username = ""
+password = ""
+submit = ""
+ready = ""
+challenge = ""
+scope_rows = ""
+document_rows = ""
+designation = ""
+download = ""
+next_page = ""
+
+[attributes]
+installation = ""
+issue_date = ""
+kind = ""

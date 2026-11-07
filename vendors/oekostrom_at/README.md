@@ -18,3 +18,11 @@ been consumed. A fresh bounded G2 is required before additional authenticated
 discovery. Exact origins, supported API/export, MFA, selectors, pagination, date
 rules, native identity, completeness, credit notes, PV settlements and recovery
 remain unverified.
+
+## Browser-rpc plugin — 2026-11-07
+
+`oekostrom_at.browser` now drives only the broker-owned `browser-rpc/1`
+capability against an invented `.test` portal profile; the live mapping profile is
+an `unreviewed` placeholder that fails closed. The independent
+`billharbor-oekostrom-at` wheel is `synthetic_verified` for the invented portal
+only and invoices only. See [browser-rpc connector](../../docs/oekostrom-browser.md).

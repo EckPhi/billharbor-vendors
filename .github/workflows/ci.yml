@@ -58,15 +58,14 @@ jobs:
         working-directory: billharbor-vendors
         run: |
           uv sync --frozen --group test
-          # CI-only browser environment; exact reviewed engine browser pins.
-          uv pip install --python .venv/bin/python playwright==1.63.0 greenlet==3.5.6 pyee==13.0.1
-          .venv/bin/python -m playwright install --with-deps chromium
+          # No browser is installed: the Ökostrom plugin uses the broker-owned
+          # browser-rpc capability and its tests use an in-process invented portal.
           .venv/bin/python -m pytest -q --junitxml="$RUNNER_TEMP/catalog-tests.xml"
           python - <<'PYTEST_REPORT'
           import os
           import xml.etree.ElementTree as ET
           report = ET.parse(os.path.join(os.environ["RUNNER_TEMP"], "catalog-tests.xml"))
-          assert sum(int(s.get("skipped", 0)) for s in report.iter("testsuite")) == 0, "Browser verification must not skip tests"
+          assert sum(int(s.get("skipped", 0)) for s in report.iter("testsuite")) == 0, "Catalog verification must not skip tests"
           PYTEST_REPORT
 
       - name: Build independent SDK, plugin and catalog wheels
@@ -100,12 +99,12 @@ jobs:
           assert validate_manifest(data)["status"] == "design_only"
           assert AmazonConnector().capabilities().connector_id == "amazon_business_de"
           assert OekostromConnector().capabilities().connector_id == "oekostrom_at"
-          assert validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_browser_synthetic.toml").read_bytes())["status"] == "design_only"
+          assert validate_manifest(files("billharbor_vendors").joinpath("data/oekostrom_browser_synthetic.toml").read_bytes())["status"] == "synthetic_verified"
           assert source_id("installation", "invented", "invoice", "Invented label").startswith("oekostrom_label_v1_")
           PY
           sha256sum "$DIST_DIR"/*.whl > "$DIST_DIR"/SHA256SUMS
 
-      - name: Verify four installed fixture plugins without application or catalog
+      - name: Verify five installed fixture/browser-rpc plugins without application or catalog
         env:
           DIST_DIR: ${{ runner.temp }}/dists
         run: |
@@ -115,6 +114,7 @@ jobs:
             --with "$DIST_DIR"/billharbor_lidl_connect_at-*.whl \
             --with "$DIST_DIR"/billharbor_netcup-*.whl \
             --with "$DIST_DIR"/billharbor_hornbach_at-*.whl \
+            --with "$DIST_DIR"/billharbor_oekostrom_at-*.whl \
             python -I billharbor-vendors/tools/verify_vendor_plugins.py
 
       - name: Verify standalone reference plugin without application or catalog

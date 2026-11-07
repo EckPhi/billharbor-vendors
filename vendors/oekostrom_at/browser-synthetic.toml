@@ -2,9 +2,9 @@ schema = "vendor-definition/2"
 id = "oekostrom_at"
 display_name = "oekostrom.at"
 vendor_site = "https://oekostrom.at/"
-version = "0.5.0"
-status = "design_only"
-entrypoint = "oekostrom_at.browser:BrowserConnector"
+version = "0.6.0"
+status = "synthetic_verified"
+entrypoint = "oekostrom_at.connector:create_connector"
 sdk = ">=2,<3"
 maintainer = "BillHarbor catalog maintainers"
 license = "Apache-2.0"
@@ -21,19 +21,24 @@ locales = ["de-AT"]
 timezone = "Europe/Vienna"
 account_types = ["customer"]
 document_kinds = ["invoice"]
-known_exclusions = ["Synthetic invented portal only; live selectors and identity unverified"]
+known_exclusions = [
+  "Invented .test portal only; no real Oekostrom origin, selector or identity is reviewed",
+  "deposit (Teilbetrag) rows are skipped and never downloaded",
+  "credit_note rows are skipped and never downloaded",
+  "settlement rows are skipped and never downloaded",
+  "PV feed-in settlement rows are skipped and never downloaded",
+]
 
 [transport]
 preferred = "browser"
 supported = ["browser"]
-selection_rules = "Use browser transport only after authorized portal verification; request supported API information first"
+selection_rules = "Broker-owned browser-rpc/1 only; the plugin never launches a browser or opens network connections"
 
 [network]
-origins = []
-redirect_origins = []
-unresolved = ["Authentication, portal and download origins require authorized discovery"]
+origins = ["https://portal.oekostrom-invented.test"]
+redirect_origins = ["https://portal.oekostrom-invented.test"]
 methods = ["GET", "POST"]
-redirect_policy = "No redirects unless each origin is reviewed"
+redirect_policy = "The gateway rejects every 3xx response; only the exact invented HTTPS origin on port 443 is reachable"
 
 [authentication]
 mode = "interactive_or_secret_bundle"
@@ -43,7 +48,7 @@ manual_challenges = ["mfa", "captcha", "session_expired"]
 
 [account_hierarchy]
 scope_kind = "installation"
-enumeration = "Enumerate installations after authentication; exact behavior requires verification"
+enumeration = "Enumerate invented installations from the combined document view"
 selection = "Every run uses an explicitly selected installation"
 
 [discovery]
@@ -61,25 +66,25 @@ revision_policy = "conflict_on_changed_bytes"
 encoding = "oekostrom-label/1 JSON tuple SHA-256; exact label text without normalization"
 
 [download]
-formats = ["application/pdf", "text/csv"]
-mechanism = "Download the original; CSV may supplement but never replace PDF"
-validation = "Validate status, MIME, signature and byte limits"
+formats = ["application/pdf"]
+mechanism = "Broker download of the original invoice PDF control; returned bytes are bounded and signature-checked"
+validation = "Validate PDF signature and per-document byte limit on returned bytes"
 original_policy = "Preserve vendor originals"
 
 [metadata]
-observations = ["invoice_number", "issue_date", "gross_amount", "currency", "issuer_name"]
+observations = ["issue_date"]
 provenance = "Each observation retains field path and observation time"
 issuer_evidence = "Portal identity does not prove legal issuer"
 
 [limits]
 concurrent_sessions_per_account = 1
-maximum_documents_per_page = 1
-maximum_requests = 100
-maximum_pages = 10
-maximum_documents = 10
+maximum_documents_per_page = 2
+maximum_requests = 500
+maximum_pages = 50
+maximum_documents = 100
 maximum_document_bytes = 20971520
 maximum_total_bytes = 104857600
-maximum_execution_seconds = 240
+maximum_execution_seconds = 300
 
 [interaction]
 detectors = ["mfa", "captcha", "session_expired", "portal_drift"]
@@ -92,8 +97,8 @@ capture_default = "off"
 safe_counters = ["requests", "pages", "discovered", "downloaded", "rejected"]
 
 [verification]
-fixture_set = "package:billharbor_vendors/data/fixtures/oekostrom_at.json"
+fixture_set = "package:oekostrom_at/data/fixture.json"
 live_verified = false
-known_gaps = ["API availability", "origins", "selectors", "pagination", "native identity"]
-drift_indicators = ["Unexpected empty page", "Selector mismatch", "HTML returned for PDF"]
+known_gaps = ["Real origins", "selectors", "pagination", "native identity", "date semantics", "login/challenge flow"]
+drift_indicators = ["Unexpected empty page", "Selector mismatch", "New pagination control", "Row changed since discovery", "HTML returned for PDF"]
 recovery_instructions = "Stop safely; do not guess selectors or undocumented APIs"

@@ -1,0 +1,461 @@
+{
+ "synthetic": true,
+ "fixture_version": "oekostrom-invented-dom/1",
+ "connector_id": "oekostrom_at",
+ "profile_id": "synthetic-invented-portal",
+ "session": "authenticated",
+ "routes": {
+  "/anmelden": "signed_in",
+  "/rechnungen": "documents"
+ },
+ "views": {
+  "sign_in": [
+   {
+    "tag": "form",
+    "attributes": {
+     "class": "invented-sign-in"
+    },
+    "text": "",
+    "children": [
+     {
+      "tag": "input",
+      "attributes": {
+       "name": "invented-user"
+      },
+      "text": "",
+      "children": []
+     },
+     {
+      "tag": "input",
+      "attributes": {
+       "name": "invented-secret",
+       "type": "password"
+      },
+      "text": "",
+      "children": []
+     },
+     {
+      "tag": "button",
+      "attributes": {
+       "data-invented": "sign-in"
+      },
+      "text": "Invented sign in",
+      "children": [],
+      "action": "sign_in"
+     }
+    ]
+   }
+  ],
+  "signed_in": [
+   {
+    "tag": "div",
+    "attributes": {
+     "id": "invented-account-ready"
+    },
+    "text": "Invented account",
+    "children": []
+   }
+  ],
+  "challenge": [
+   {
+    "tag": "div",
+    "attributes": {
+     "id": "invented-challenge"
+    },
+    "text": "Invented manual challenge",
+    "children": []
+   }
+  ],
+  "documents": [
+   {
+    "tag": "main",
+    "attributes": {
+     "id": "invented-account-ready"
+    },
+    "text": "",
+    "children": [
+     {
+      "tag": "ul",
+      "attributes": {
+       "class": "invented-installations"
+      },
+      "text": "",
+      "children": [
+       {
+        "tag": "li",
+        "attributes": {
+         "class": "invented-installation",
+         "data-installation": "anlage-invented-nord"
+        },
+        "text": "Invented Anlage Nord",
+        "children": []
+       },
+       {
+        "tag": "li",
+        "attributes": {
+         "class": "invented-installation",
+         "data-installation": "anlage-invented-sued"
+        },
+        "text": "Invented Anlage Sued",
+        "children": []
+       }
+      ]
+     },
+     {
+      "tag": "table",
+      "attributes": {
+       "class": "invented-documents"
+      },
+      "text": "",
+      "children": [
+       {
+        "tag": "tr",
+        "attributes": {
+         "class": "invented-document",
+         "data-installation": "anlage-invented-nord",
+         "data-kind": "invoice",
+         "data-issued": "2026-01-15"
+        },
+        "text": "",
+        "children": [
+         {
+          "tag": "td",
+          "attributes": {
+           "class": "invented-designation"
+          },
+          "text": "Invented Jahresabrechnung 2025 Anlage Nord",
+          "children": []
+         },
+         {
+          "tag": "td",
+          "attributes": {},
+          "text": "",
+          "children": [
+           {
+            "tag": "a",
+            "attributes": {
+             "class": "invented-original",
+             "href": "/original/invoice-nord-2025"
+            },
+            "text": "PDF",
+            "children": [],
+            "original": "invoice-nord-2025"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "tag": "tr",
+        "attributes": {
+         "class": "invented-document",
+         "data-installation": "anlage-invented-nord",
+         "data-kind": "deposit",
+         "data-issued": "2026-02-01"
+        },
+        "text": "",
+        "children": [
+         {
+          "tag": "td",
+          "attributes": {
+           "class": "invented-designation"
+          },
+          "text": "Invented Teilbetrag Februar 2026",
+          "children": []
+         },
+         {
+          "tag": "td",
+          "attributes": {},
+          "text": "",
+          "children": [
+           {
+            "tag": "a",
+            "attributes": {
+             "class": "invented-original",
+             "href": "/original/excluded-deposit"
+            },
+            "text": "PDF",
+            "children": [],
+            "original": "excluded-deposit"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "tag": "tr",
+        "attributes": {
+         "class": "invented-document",
+         "data-installation": "anlage-invented-sued",
+         "data-kind": "invoice",
+         "data-issued": "2026-02-20"
+        },
+        "text": "",
+        "children": [
+         {
+          "tag": "td",
+          "attributes": {
+           "class": "invented-designation"
+          },
+          "text": "Invented Rechnung Februar 2026 Anlage Sued",
+          "children": []
+         },
+         {
+          "tag": "td",
+          "attributes": {},
+          "text": "",
+          "children": [
+           {
+            "tag": "a",
+            "attributes": {
+             "class": "invented-original",
+             "href": "/original/invoice-sued-2026-02"
+            },
+            "text": "PDF",
+            "children": [],
+            "original": "invoice-sued-2026-02"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "tag": "tr",
+        "attributes": {
+         "class": "invented-document",
+         "data-installation": "anlage-invented-sued",
+         "data-kind": "credit_note",
+         "data-issued": "2026-03-05"
+        },
+        "text": "",
+        "children": [
+         {
+          "tag": "td",
+          "attributes": {
+           "class": "invented-designation"
+          },
+          "text": "Invented Gutschrift Maerz 2026",
+          "children": []
+         },
+         {
+          "tag": "td",
+          "attributes": {},
+          "text": "",
+          "children": [
+           {
+            "tag": "a",
+            "attributes": {
+             "class": "invented-original",
+             "href": "/original/excluded-credit-note"
+            },
+            "text": "PDF",
+            "children": [],
+            "original": "excluded-credit-note"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "tag": "tr",
+        "attributes": {
+         "class": "invented-document",
+         "data-installation": "anlage-invented-nord",
+         "data-kind": "invoice",
+         "data-issued": "2026-03-31"
+        },
+        "text": "",
+        "children": [
+         {
+          "tag": "td",
+          "attributes": {
+           "class": "invented-designation"
+          },
+          "text": "Invented Rechnung Maerz 2026 Anlage Nord",
+          "children": []
+         },
+         {
+          "tag": "td",
+          "attributes": {},
+          "text": "",
+          "children": [
+           {
+            "tag": "a",
+            "attributes": {
+             "class": "invented-original",
+             "href": "/original/invoice-nord-2026-03"
+            },
+            "text": "PDF",
+            "children": [],
+            "original": "invoice-nord-2026-03"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "tag": "tr",
+        "attributes": {
+         "class": "invented-document",
+         "data-installation": "anlage-invented-sued",
+         "data-kind": "settlement",
+         "data-issued": "2026-04-10"
+        },
+        "text": "",
+        "children": [
+         {
+          "tag": "td",
+          "attributes": {
+           "class": "invented-designation"
+          },
+          "text": "Invented Abrechnung Q1 2026",
+          "children": []
+         },
+         {
+          "tag": "td",
+          "attributes": {},
+          "text": "",
+          "children": [
+           {
+            "tag": "a",
+            "attributes": {
+             "class": "invented-original",
+             "href": "/original/excluded-settlement"
+            },
+            "text": "PDF",
+            "children": [],
+            "original": "excluded-settlement"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "tag": "tr",
+        "attributes": {
+         "class": "invented-document",
+         "data-installation": "anlage-invented-nord",
+         "data-kind": "pv_settlement",
+         "data-issued": "2026-04-30"
+        },
+        "text": "",
+        "children": [
+         {
+          "tag": "td",
+          "attributes": {
+           "class": "invented-designation"
+          },
+          "text": "Invented Einspeiseabrechnung PV Q1 2026",
+          "children": []
+         },
+         {
+          "tag": "td",
+          "attributes": {},
+          "text": "",
+          "children": [
+           {
+            "tag": "a",
+            "attributes": {
+             "class": "invented-original",
+             "href": "/original/excluded-pv"
+            },
+            "text": "PDF",
+            "children": [],
+            "original": "excluded-pv"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "tag": "tr",
+        "attributes": {
+         "class": "invented-document",
+         "data-installation": "anlage-invented-sued",
+         "data-kind": "invoice",
+         "data-issued": "2026-05-02"
+        },
+        "text": "",
+        "children": [
+         {
+          "tag": "td",
+          "attributes": {
+           "class": "invented-designation"
+          },
+          "text": "Invented Rechnung Mai 2026 Anlage Sued",
+          "children": []
+         },
+         {
+          "tag": "td",
+          "attributes": {},
+          "text": "",
+          "children": [
+           {
+            "tag": "a",
+            "attributes": {
+             "class": "invented-original",
+             "href": "/original/invoice-sued-2026-05"
+            },
+            "text": "PDF",
+            "children": [],
+            "original": "invoice-sued-2026-05"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "tag": "tr",
+        "attributes": {
+         "class": "invented-document",
+         "data-installation": "anlage-invented-nord",
+         "data-kind": "invoice",
+         "data-issued": "2026-06-01"
+        },
+        "text": "",
+        "children": [
+         {
+          "tag": "td",
+          "attributes": {
+           "class": "invented-designation"
+          },
+          "text": "Invented Rechnung Juni 2026 Anlage Nord",
+          "children": []
+         },
+         {
+          "tag": "td",
+          "attributes": {},
+          "text": "",
+          "children": [
+           {
+            "tag": "a",
+            "attributes": {
+             "class": "invented-original",
+             "href": "/original/invoice-nord-2026-06"
+            },
+            "text": "PDF",
+            "children": [],
+            "original": "invoice-nord-2026-06"
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "originals": {
+  "invoice-nord-2025": "%PDF-1.4\n% Invented oekostrom fixture original: invoice-nord-2025\n%%EOF\n",
+  "excluded-deposit": "%PDF-1.4\n% Invented oekostrom fixture original: excluded-deposit\n%%EOF\n",
+  "invoice-sued-2026-02": "%PDF-1.4\n% Invented oekostrom fixture original: invoice-sued-2026-02\n%%EOF\n",
+  "excluded-credit-note": "%PDF-1.4\n% Invented oekostrom fixture original: excluded-credit-note\n%%EOF\n",
+  "invoice-nord-2026-03": "%PDF-1.4\n% Invented oekostrom fixture original: invoice-nord-2026-03\n%%EOF\n",
+  "excluded-settlement": "%PDF-1.4\n% Invented oekostrom fixture original: excluded-settlement\n%%EOF\n",
+  "excluded-pv": "%PDF-1.4\n% Invented oekostrom fixture original: excluded-pv\n%%EOF\n",
+  "invoice-sued-2026-05": "%PDF-1.4\n% Invented oekostrom fixture original: invoice-sued-2026-05\n%%EOF\n",
+  "invoice-nord-2026-06": "%PDF-1.4\n% Invented oekostrom fixture original: invoice-nord-2026-06\n%%EOF\n"
+ }
+}

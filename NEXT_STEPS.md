@@ -1,3 +1,39 @@
+## Ökostrom browser-rpc port and independent plugin — 2026-11-07
+
+Issue #12 (synthetic only). `oekostrom_at.browser` now uses only the worker's
+`browser-rpc/1` `context.browser` capability; plugin-owned Playwright launch, the
+loopback mapping and the Playwright loopback tests are removed. `PortalMapping` is
+a data-only `oekostrom-portal-mapping/1` profile selected by explicit id:
+`synthetic-invented-portal` (`https://portal.oekostrom-invented.test`) or the
+`unreviewed` `oekostrom-live` placeholder, which fails closed. Factory options are
+exactly `{"offline_fixture": true}` (descriptor conformance; in-process invented
+portal, no credentials) or `{"portal_profile": "synthetic-invented-portal"}`.
+`browser-synthetic.toml` 0.6.0 is `synthetic_verified` with the exact invented
+origin as origins and redirect_origins and invoices only; real `vendor.toml` 0.6.0
+stays `design_only`, empty origins, now invoices only (operator decision). Legacy
+fixture connectors are unchanged; two runner tests use widened test-local
+manifests because the runner rejects their historical kinds. A fifth independent
+SDK-only wheel, `billharbor-oekostrom-at`, is built/verified in CI and release;
+CI/release no longer install Playwright/Chromium.
+
+Verified offline: full suite 117 passed, 0 skipped. Local wheel
+`billharbor_oekostrom_at-0.6.0a1-py3-none-any.whl` (cached Hatchling 1.32.0,
+reproducible) SHA-256 `1913383a3b2e0a6bc20bf822b09a8553850a2806083fc3ee54e9959fe6c3f707`;
+manifest SHA-256 `45dd192486ea72b45f3fd9bf6e6adb596164559de60c0d966479ae41f194bbc3`;
+descriptor SHA-256 `6fb7008be70f011f7e164e8273a1e08566d3761c805109e0d9aac6267da02998`
+(store base URL `https://store.example.test/packages`, Python 3.13). The wheel
+passed application Registry extraction, local subprocess conformance and
+`BrowserPolicy.validate_installation` (browser-live/1), and the five-wheel
+isolated `verify_vendor_plugins.py` run. Workflow YAML parses; `git diff --check`
+passes. No new dependency.
+
+Blockers: no real origins/selectors (operator-led origin-only observation, G1/G2),
+key custody #10, the app-side live-validation proof with this wheel, and
+browser-rpc limits (3xx rejected, full-view reread per page vs. 100k callbacks).
+Git/publication: committed locally on `kepler/12-oekostrom-browser-rpc`; no push,
+tag, release, store publication or deployment. No credential, session, real
+document or accounting write.
+
 ## Development handoff tag policy — 2026-10-23
 
 Updated agent guidance: commit completed work without manual development tags.
