@@ -96,7 +96,8 @@ never alias existing source IDs across label/native policies automatically.
 ## Independent SDK and synthetic plugin — 2026-10-20
 
 The `0.5.0.dev0` optional catalog utility depends on
-`billharbor-connector-sdk==0.1.0` and `billharbor-synthetic==0.1.0.dev0`, rather
+`billharbor-connector-sdk==0.1.0` and `billharbor-synthetic==0.1.0.dev0` (now
+`0.1.0.dev1`, an offline network-declaration fix; see NEXT_STEPS.md), rather
 than the BillHarbor application. The synthetic distribution depends only on the
 SDK. Both distributions require Python >=3.11; the reviewed service profile is
 Python 3.13. SDK source is maintained by BillHarbor under Apache-2.0, with the

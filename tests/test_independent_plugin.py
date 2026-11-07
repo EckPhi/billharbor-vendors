@@ -1,6 +1,7 @@
 """The reference plugin uses SDK-only values and owns its fixtures."""
 import asyncio
 import hashlib
+import tomllib
 import importlib.util
 import json
 from pathlib import Path
@@ -73,15 +74,29 @@ def test_store_generator_binds_exact_wheel_and_manifest(tmp_path):
     assert index["expires_at"] == 86500
 
 
-def test_original_published_synthetic_descriptor_identity_is_preserved(tmp_path):
+def _descriptor_sha256(tmp_path, version, manifest):
     spec = importlib.util.spec_from_file_location("build_synthetic_store", ROOT / "tools/build_synthetic_store.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    wheel = tmp_path / "billharbor_synthetic-0.1.0.dev0-py3-none-any.whl"
+    wheel = tmp_path / f"billharbor_synthetic-{version}-py3-none-any.whl"
     with zipfile.ZipFile(wheel, "w") as archive:
-        archive.writestr("billharbor_synthetic/data/vendor.toml",
-            (ROOT / "vendors/billharbor_synthetic/vendor.toml").read_bytes())
-        archive.writestr("billharbor_synthetic-0.1.0.dev0.dist-info/METADATA",
-            "Metadata-Version: 2.3\nName: billharbor-synthetic\nVersion: 0.1.0.dev0\n")
+        archive.writestr("billharbor_synthetic/data/vendor.toml", manifest)
+        archive.writestr(f"billharbor_synthetic-{version}.dist-info/METADATA",
+            f"Metadata-Version: 2.3\nName: billharbor-synthetic\nVersion: {version}\n")
     index = module.build_index(wheel, "https://example.invalid/packages", now=100, python_version="3.13")
-    assert index["releases"][0]["descriptor_sha256"] == "db788b458ff962936e30a9857382bd5223989760f45775d1aef40e83ce024e96"
+    return index["releases"][0]["descriptor_sha256"]
+
+
+def test_original_published_synthetic_descriptor_identity_is_preserved(tmp_path):
+    # Released 0.1.0.dev0 manifest, frozen from commit 218ae03 (wheel sha256 2e180075...).
+    manifest = (ROOT / "tests/fixtures/billharbor_synthetic-0.1.0.dev0-vendor.toml").read_bytes()
+    assert hashlib.sha256(manifest).hexdigest() == "546d05299fcc71ee30e0ecdca0b2b65689672b7e8cefb72af2487e1a753c41c7"
+    assert _descriptor_sha256(tmp_path, "0.1.0.dev0", manifest) == "db788b458ff962936e30a9857382bd5223989760f45775d1aef40e83ce024e96"
+
+
+def test_current_synthetic_manifest_is_installable_offline():
+    # BillHarbor refuses unresolved networking at installation: an offline package
+    # must declare no origins and nothing unresolved, and stay design-only.
+    manifest = tomllib.loads((ROOT / "vendors/billharbor_synthetic/vendor.toml").read_text())
+    assert manifest["status"] == "design_only"
+    assert manifest["network"] == {**manifest["network"], "origins": [], "redirect_origins": [], "unresolved": []}
