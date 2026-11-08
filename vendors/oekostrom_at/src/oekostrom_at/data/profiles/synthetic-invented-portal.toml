@@ -1,0 +1,29 @@
+# Reviewed invented portal mapping. Every host, path, selector and attribute
+# below describes an invented .test portal; none was observed on a real site.
+schema = "oekostrom-portal-mapping/1"
+profile_id = "synthetic-invented-portal"
+status = "synthetic"
+origin = "https://portal.oekostrom-invented.test"
+login_path = "/anmelden"
+documents_path = "/rechnungen"
+page_size = 2
+maximum_rows = 1000
+maximum_document_bytes = 20971520
+
+[selectors]
+username = "input[name=\"invented-user\"]"
+password = "input[name=\"invented-secret\"]"
+submit = "button[data-invented=\"sign-in\"]"
+ready = "#invented-account-ready"
+challenge = "#invented-challenge"
+captcha = "#invented-captcha"
+scope_rows = "li.invented-installation"
+document_rows = "tr.invented-document"
+designation = "td.invented-designation"
+download = "a.invented-original"
+next_page = "button.invented-next-page"
+
+[attributes]
+installation = "data-installation"
+issue_date = "data-issued"
+kind = "data-kind"

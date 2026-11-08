@@ -53,12 +53,14 @@ Actions are pinned to immutable release commits. uv is pinned to 0.7.19 to match
 the lock evidence. Dependency upgrades require reviewed locks and workflow
 changes in both repositories.
 
-For the 0.4.0.dev1 candidate, CI and release jobs install the exact reviewed
-browser test pins into the frozen environment, install matching Chromium, and
-require zero skipped tests in the JUnit report. Wheel-only verification also
-imports the packaged browser/identity modules and validates the separate
-synthetic browser manifest. That profile remains `design_only` and rejects live
-origins. Release sequencing is engine release first, then the reviewed committed SDK source ref,
+CI and release jobs no longer install Playwright or Chromium: the Ökostrom
+plugin drives the broker-owned `browser-rpc/1` capability and its tests use an
+in-process invented portal. Both jobs still require zero skipped tests in the
+JUnit report. Wheel-only verification imports the packaged browser/identity
+modules and validates the separate synthetic browser manifest
+(`synthetic_verified`, invented `.test` origin only; the live profile fails
+closed). A fifth independent wheel, `billharbor-oekostrom-at`, is built with the
+four fixture plugins and verified offline by `tools/verify_vendor_plugins.py`. Release sequencing is engine release first, then the reviewed committed SDK source ref,
 green catalog CI, then matching catalog prerelease tag.
 
 

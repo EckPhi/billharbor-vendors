@@ -7,7 +7,8 @@ from billharbor_vendors.synthetic import SyntheticConnector
 class Connector(SyntheticConnector):
     connector_id = "oekostrom_at"
     transport = "browser"
-    document_kinds = (DocumentKind.INVOICE, DocumentKind.CREDIT_NOTE, DocumentKind.SETTLEMENT)
+    # Operator decision 2026-11-07: invoices only, matching vendor.toml.
+    document_kinds = (DocumentKind.INVOICE,)
     supports_interaction = True
 
 

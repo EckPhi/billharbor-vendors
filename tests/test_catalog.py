@@ -34,7 +34,7 @@ def test_catalog_contains_seven_valid_design_only_manifests() -> None:
         for manifest in manifests
     )
     # Frozen catalog/manifest versions are independent of distribution releases.
-    assert {manifest["version"] for manifest in manifests} == {"0.5.0", "0.1.0"}
+    assert {manifest["version"] for manifest in manifests} == {"0.6.0", "0.5.0", "0.1.0"}
     assert catalog["version"] == "0.5.0"
 
 
