@@ -768,3 +768,13 @@ then verify published exact bytes/no redirects/content encoding and BillHarbor
 acceptance. See docs/vendor-store-pages.md. Git/publication: local implementation
 is committed locally and tagged with annotated development tag `v0.5.0.dev3`; no push, release,
 workflow dispatch, settings change or Pages deployment performed here.
+
+## PR #1 non-inline license clarification — 2026-11-08
+
+Documented the intentional license scopes for the Ökostrom browser distribution
+in `docs/dependencies.md`: wheel METADATA and installable descriptor agree on
+Proprietary; embedded vendor-definition TOML is Apache-2.0, and the separate SDK
+is Apache-2.0. This follows the already documented fixture-vendor split and does
+not relicense code or alter wheel bytes. Verification: exact source metadata and
+manifest fields inspected; documentation whitespace check passed. Committed and
+pushed on the task branch; no publication or live access.
