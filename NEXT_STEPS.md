@@ -1,3 +1,35 @@
+## PR #1 review corrections — 2026-11-08
+
+The deposit terminology is now `Kaution`; `Teilbetragsrechnung` and `Abrechnung`
+remain invoices. Aggregate Connector/LabelConnector capabilities and invented
+fixtures now match the shipped invoice-only manifest; runner tests no longer
+widen it. The browser mapping distinguishes CAPTCHA from MFA. Checkpoints bind
+query plus selected source identities/dates, excluding transient row indices;
+reordering and out-of-window insertion survive rediscovery, while in-range
+identity/date/set changes still fail closed. Rollback requires restarting pending
+acquisitions because previous snapshot hashes differ. Source identities remain
+`oekostrom-label/1`.
+
+Verified: 120 catalog tests passed, 0 skipped, using local Python 3.13.16 and the
+existing declared pytest 9.1.1 tooling; `git diff --check` passes. Regression
+coverage includes Kaution exclusion, installment/annual invoice inclusion,
+shipped-manifest runner/outbox acquisition, separate CAPTCHA before/after sign-in,
+checkpoint reorder/out-of-window insertion, and existing drift rejection.
+Updated independent plugin `billharbor_oekostrom_at-0.6.0a1-py3-none-any.whl`
+SHA-256 `7d4df02d2134ee6b250fb30df6bbb8f79ead89fce310aeee61e0c0d29bbf76ef`;
+synthetic manifest SHA-256
+`e88a6e776b196242f43d4b38ad5a9fd1c9f9e90b998293a8f4eb9982722f9fc0`.
+Built with existing Hatchling 1.32.0; no dependency adoption. Application PR #56
+records the rebuilt-wheel OCI proof and acquisition-side rejection of the
+reserved `offline_fixture` conformance option. Browser capability presence cannot
+distinguish acquisition from conformance, so the guard belongs in the application.
+
+Git/publication: these review corrections are committed and pushed to
+`kepler/12-oekostrom-browser-rpc` at handoff; no manual tag, release publication,
+live access, credential/session/document access, deployment or accounting write.
+Live profile/G1/G2 and production gates remain open. Earlier wheel hashes and
+legacy-kind widening notes below describe the superseded initial candidate.
+
 ## Reviewed engine source pin advanced — 2026-11-08
 
 CI failed because the pinned engine revision `81c4b05` predates

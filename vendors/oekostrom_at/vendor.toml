@@ -25,7 +25,8 @@ known_exclusions = [
   "Portal behavior, API availability and document identity are unverified",
   "Operator decision: invoices only; credit_note documents are excluded",
   "Operator decision: invoices only; settlement and PV feed-in settlement documents are excluded",
-  "Operator decision: invoices only; deposit (Teilbetrag) requests are excluded",
+  "Operator decision: invoices only; deposit (Kaution) rows are excluded",
+  "Installment (Teilbetragsrechnung) and annual (Abrechnung) bills are invoices and remain in scope",
 ]
 
 [transport]

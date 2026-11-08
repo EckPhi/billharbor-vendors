@@ -23,7 +23,7 @@ account_types = ["customer"]
 document_kinds = ["invoice"]
 known_exclusions = [
   "Invented .test portal only; no real Oekostrom origin, selector or identity is reviewed",
-  "deposit (Teilbetrag) rows are skipped and never downloaded",
+  "deposit (Kaution) rows are skipped and never downloaded; installment (Teilbetragsrechnung) and annual (Abrechnung) bills are invoices",
   "credit_note rows are skipped and never downloaded",
   "settlement rows are skipped and never downloaded",
   "PV feed-in settlement rows are skipped and never downloaded",

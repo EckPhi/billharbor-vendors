@@ -254,12 +254,6 @@ def test_connector_v2_bytes_reach_engine_outbox(
     connector_type: type, fixture: Path, tmp_path: Path
 ) -> None:
     manifest = tomllib.loads((fixture.parents[2] / "vendor.toml").read_text(encoding="utf-8"))
-    if connector_type is OekostromConnector:
-        # The released Ökostrom manifest is invoices-only; the unchanged legacy
-        # fixture connector advertises historical kinds and is (correctly)
-        # rejected by the runner. Widen a test-local copy for byte delivery only.
-        assert manifest["coverage"]["document_kinds"] == ["invoice"]
-        manifest["coverage"]["document_kinds"] = ["invoice", "credit_note", "settlement"]
 
     async def exercise() -> None:
         store = DurableStore(tmp_path / "state.sqlite3", tmp_path / "artifacts")
@@ -325,8 +319,8 @@ def test_d4_scoped_identity_and_document_types() -> None:
         oeko_pages = [await oeko.discover_page(context, starts_on=date(2026, 1, 1),
                       ends_on=date(2026, 12, 31), scopes=(scope,), checkpoint_id=None)
                       for scope in oeko_scopes]
-        assert {item.document_kind.value for page in oeko_pages for item in page.documents} == {
-            "invoice", "credit_note", "settlement"}
+        # Invoices only (operator decision 2026-11-07), matching the shipped manifest.
+        assert {item.document_kind.value for page in oeko_pages for item in page.documents} == {"invoice"}
         await amazon.close()
         await oeko.close()
 

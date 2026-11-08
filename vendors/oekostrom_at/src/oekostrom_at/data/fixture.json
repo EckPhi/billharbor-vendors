@@ -56,6 +56,16 @@
     "children": []
    }
   ],
+  "captcha": [
+   {
+    "tag": "div",
+    "attributes": {
+     "id": "invented-captcha"
+    },
+    "text": "Invented CAPTCHA challenge",
+    "children": []
+   }
+  ],
   "challenge": [
    {
     "tag": "div",
@@ -160,7 +170,7 @@
           "attributes": {
            "class": "invented-designation"
           },
-          "text": "Invented Teilbetrag Februar 2026",
+          "text": "Invented Kaution Februar 2026",
           "children": []
          },
          {

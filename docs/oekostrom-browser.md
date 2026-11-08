@@ -22,7 +22,7 @@ requires exactly one explicit mode; anything else (including `{}`) is rejected:
 
 | `options` | Behaviour |
 | --- | --- |
-| `{"offline_fixture": true}` | Offline, credential-free conformance against the packaged invented DOM (`data/fixture.json`) through an in-process fake of the seven operations. The resolver is discarded and never called. This is the descriptor's `conformance.options`. |
+| `{"offline_fixture": true}` | Offline, credential-free conformance against the packaged invented DOM (`data/fixture.json`) through an in-process fake of the seven operations. The resolver is discarded and never called. Acquisition must reject this reserved conformance option in the application before factory creation; both conformance and acquisition worker contexts may expose browser capabilities. This is the descriptor's `conformance.options`. |
 | `{"portal_profile": "synthetic-invented-portal"}` | Drive the worker-supplied `context.browser` with the synthetic mapping. Credentials are resolved only when the login form is present. |
 | `{"portal_profile": "oekostrom-live"}` | Always fails closed (unreviewed placeholder). |
 
@@ -46,14 +46,18 @@ live profile is reviewed, the host must end in `.test`. Selectors may not use
 
 Login only when the login form is present (credentials are type-checked, used for
 two `fill` calls and deleted; never stored or placed in messages); challenge →
-`InteractionRequest(MFA, "oekostrom_manual_challenge")`; missing ready marker →
+`InteractionRequest(MFA, "oekostrom_manual_challenge")`; a separate CAPTCHA selector →
+`InteractionRequest(CAPTCHA, "oekostrom_manual_captcha")`; missing ready marker →
 `SESSION_EXPIRED`; `list_scopes` raises the safe code on interaction. Installations
 are enumerated by count plus nth attribute. Discovery covers the combined view,
 rejects unknown installations, duplicate installations, duplicate
 `oekostrom-label/1` identities (before date filtering) and a newly appearing
 pagination control. Issue dates are filtered inclusively. Only `invoice` rows are
 read; deposit, credit-note, settlement, PV and any other kinds are skipped and
-never downloaded. Checkpoints bind the exact query and snapshot; fetch requires
+never downloaded. Kaution rows are deposits; Teilbetragsrechnung and Abrechnung are invoices.
+Checkpoints bind the exact query and selected invoice identities/dates, excluding
+transient row indices; reorderings and out-of-window insertions survive rediscovery.
+An in-range invoice set/date/identity change still requires a fresh run. Fetch requires
 rediscovery, rechecks the row's installation, kind, Bezeichnung and date, then
 checks the PDF signature and per-document byte limit on the returned bytes and
 publishes via `context.publish_artifact`.
@@ -68,10 +72,9 @@ with browser as the sole preferred/supported transport, `origins` and
 `document_kinds = ["invoice"]`. Tests mirror `browser_policy` live eligibility and
 call the application's `BrowserPolicy.validate_installation` on the built
 descriptor. The real `vendor.toml` stays `design_only` with empty origins and is
-now invoices-only by operator decision. The unchanged legacy fixture
-`Connector`/`LabelConnector` still advertise credit notes and settlements, so the
-runner rejects them against the narrowed manifest; their tests use widened
-test-local manifest copies.
+now invoices-only by operator decision. The aggregate fixture
+`Connector`/`LabelConnector` and their invented fixture also expose invoices only;
+runner integration tests exercise the shipped manifest without widening it.
 
 ## Limitations of browser-rpc observed
 
@@ -94,7 +97,8 @@ test-local `design_only` copy. They prove nothing about the real portal. Before 
 reviewed live profile: exact origins via operator-led origin-only observation,
 sanitized selectors and identity/date/pagination evidence under G1/G2, actual key
 custody (#10), and the application live-validation proof. Rollback: reinstall the
-previous plugin/catalog release; checkpoints use the unchanged
+previous plugin/catalog release and restart incomplete acquisitions (snapshot
+hashes from older wheels are rejected); checkpoints use the unchanged
 `cursor_<snapshot>_<offset>` form and `oekostrom-label/1` identities are unchanged.
 
 No new dependency is introduced.

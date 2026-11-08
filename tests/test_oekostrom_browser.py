@@ -628,3 +628,71 @@ def test_runs_through_durable_engine_with_browser_capability(tmp_path):
     assert payloads == {site.originals[key] for key in site.originals if key.startswith("invoice-")}
     assert not any(key.startswith("excluded-") for key in site.downloads)
     assert not store.audit_artifacts("synthetic_tenant").missing
+
+
+def test_captcha_is_distinct_from_mfa_and_pauses_without_credentials():
+    async def run():
+        for signed_in in (False, True):
+            site = portal(signed_in=signed_in)
+            site.captcha = True
+            calls = []
+            subject = connector(resolver_for(calls))
+            context = Context(site)
+            result = await subject.check_session(context)
+            assert result.kind is InteractionKind.CAPTCHA
+            assert result.safe_message_code == "oekostrom_manual_captcha"
+            assert calls == []
+            page = await subject.discover_page(context, scopes=(NORD,), checkpoint_id=None, **YEAR)
+            assert page.kind is InteractionKind.CAPTCHA
+            assert not context.published and not site.downloads
+            site.captcha = False
+            assert await subject.check_session(context) is SessionState.READY
+    asyncio.run(run())
+
+
+def test_checkpoint_survives_reordering_and_out_of_window_insertions():
+    async def run():
+        first = await connector().discover_page(Context(portal()), scopes=(NORD, SUED),
+                                                 checkpoint_id=None, **YEAR)
+        changed = portal()
+        rows = changed.view_root()["children"][1]["children"]
+        outside = copy.deepcopy(rows[0])
+        outside["attributes"]["data-issued"] = "2030-01-01"
+        outside["children"][0]["text"] = "Invented future invoice"
+        rows.reverse()
+        rows.insert(0, outside)
+        context = Context(changed)
+        subject = connector()
+        rest, checkpoint = [], first.checkpoint_id
+        while checkpoint:
+            page = await subject.discover_page(context, scopes=(NORD, SUED),
+                                                checkpoint_id=checkpoint, **YEAR)
+            rest.extend(page.documents)
+            for reference in page.documents:
+                await subject.fetch_document(context, reference)
+            checkpoint = page.checkpoint_id
+        all_ids = {d.source_document_id for d in first.documents + tuple(rest)}
+        assert len(all_ids) == 5 and len(rest) == 3
+        assert len(context.published) == 3
+    asyncio.run(run())
+
+
+def test_kaution_excluded_but_installment_and_annual_invoices_remain_in_scope():
+    async def run():
+        site = portal()
+        deposits = [row for row in site.rows() if row["attributes"]["data-kind"] == "deposit"]
+        assert all("Kaution" in row["children"][0]["text"] for row in deposits)
+        invoices = [row for row in site.rows() if row["attributes"]["data-kind"] == "invoice"]
+        labels = ("Invented Teilbetragsrechnung", "Invented Abrechnung")
+        for row, label in zip(invoices, labels):
+            row["children"][0]["text"] = label
+        found = await discover_all(connector(), Context(site))
+        ids = {reference.source_document_id for reference in found}
+        for row, label in zip(invoices, labels):
+            assert source_id("installation", row["attributes"]["data-installation"], "invoice", label) in ids
+        for name in ("vendor.toml", "browser-synthetic.toml"):
+            manifest = tomllib.loads((ROOT / "vendors/oekostrom_at" / name).read_text())
+            exclusions = " ".join(manifest["coverage"]["known_exclusions"])
+            assert "Kaution" in exclusions and "Teilbetragsrechnung" in exclusions and "Abrechnung" in exclusions
+            assert "deposit (Teilbetrag)" not in exclusions
+    asyncio.run(run())

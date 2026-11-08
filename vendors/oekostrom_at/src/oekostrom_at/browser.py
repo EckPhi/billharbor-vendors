@@ -40,7 +40,7 @@ PROFILES = MappingProxyType({
 MAXIMUM_ARTIFACT_BYTES = 20 * 1024 * 1024  # browser-rpc/1 wire bound
 _TOP_KEYS = {"schema", "profile_id", "status", "origin", "login_path", "documents_path",
              "page_size", "maximum_rows", "maximum_document_bytes", "selectors", "attributes"}
-_SELECTOR_KEYS = ("username", "password", "submit", "ready", "challenge", "scope_rows",
+_SELECTOR_KEYS = ("username", "password", "submit", "ready", "challenge", "captcha", "scope_rows",
                   "document_rows", "designation", "download", "next_page")
 _ATTRIBUTE_KEYS = ("installation", "issue_date", "kind")
 _HOST = re.compile(r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+")
@@ -70,6 +70,7 @@ class PortalMapping:
     submit: str
     ready: str
     challenge: str
+    captcha: str
     scope_rows: str
     document_rows: str
     designation: str
@@ -188,7 +189,13 @@ class BrowserConnector:
         await self._browser(context, "navigate", url=url)
         self._location = path
 
+    async def _challenged(self, context):
+        return (await self._count(context, self.mapping.captcha)
+                or await self._count(context, self.mapping.challenge))
+
     async def _interaction(self, context):
+        if await self._count(context, self.mapping.captcha):
+            return InteractionRequest(InteractionKind.CAPTCHA, "oekostrom_manual_captcha", context.deadline)
         if await self._count(context, self.mapping.challenge):
             return InteractionRequest(InteractionKind.MFA, "oekostrom_manual_challenge", context.deadline)
         if not await self._count(context, self.mapping.ready):
@@ -197,7 +204,7 @@ class BrowserConnector:
 
     async def check_session(self, context):
         await self._navigate(context, self.mapping.login_path)
-        if await self._count(context, self.mapping.challenge):
+        if await self._challenged(context):
             return await self._interaction(context)
         if await self._count(context, self.mapping.ready):
             return SessionState.READY
@@ -304,7 +311,10 @@ class BrowserConnector:
                 raise ValueError("Invoice original download control missing or ambiguous")
             source_id = label_source_id("installation", scope_id, kind, native)
             records[source_id] = (index, identity, issued)
-        snapshot = hashlib.sha256(json.dumps([query, sorted(records.items())]).encode()).hexdigest()
+        # Row positions are transient. Rediscovery refreshes indices for fetch,
+        # while checkpoints bind only the selected invoice identities and dates.
+        stable_records = sorted((key, identity, issued) for key, (_, identity, issued) in records.items())
+        snapshot = hashlib.sha256(json.dumps([query, stable_records]).encode()).hexdigest()
         offset = 0
         if checkpoint_id:
             prefix = f"cursor_{snapshot}_"

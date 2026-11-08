@@ -78,6 +78,7 @@ class InventedPortal:
         self.authenticated = fixture.get("session") == "authenticated"
         self.challenge = False
         self.challenge_after_sign_in = False
+        self.captcha = False
         self.credentials = credentials
         self.view = None
         self.failed = False
@@ -116,6 +117,9 @@ class InventedPortal:
         return elements[0]
 
     def _route(self, path):
+        # A CAPTCHA may interrupt either the sign-in form or an existing session.
+        if self.captcha:
+            return "captcha"
         if not self.authenticated:
             return "sign_in"
         if self.challenge:
