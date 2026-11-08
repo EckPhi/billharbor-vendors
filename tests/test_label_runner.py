@@ -33,6 +33,7 @@ def test_label_acquisition_reopen_skip_and_account_isolation(tmp_path):
     fixture_path = tmp_path / 'invented.json'
     fixture_path.write_text(json.dumps(fixture))
     manifest = tomllib.loads((ROOT / 'vendors/oekostrom_at/vendor.toml').read_text())
+    assert manifest['coverage']['document_kinds'] == ['invoice']
 
     async def exercise():
         for number, account, expected in ((1, 'account_a', 2), (2, 'account_a', 0), (3, 'account_b', 2)):

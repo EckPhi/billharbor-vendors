@@ -6,8 +6,10 @@ completing the application. Amazon Business, oekostrom.at, Drei Austria, Lidl Co
 HORNBACH Austria remain design-only real vendor targets. See [synthetic reference](vendors/billharbor_synthetic/README.md).
 
 Status: v0.3.0 synthetic connector packages are released; local 0.4 discovery
-hardening is in progress. A loopback-only browser candidate and exact-label identity policy are verified
-with invented fixtures. No live-verified connector or deployment exists yet.
+hardening is in progress. An Ökostrom browser-rpc connector (broker-owned browser,
+invented `.test` portal profile, fail-closed live profile, invoices only) and the
+exact-label identity policy are verified with invented fixtures. No live-verified
+connector or deployment exists yet.
 
 Ökostrom is the operator-selected first D6 candidate. Its package remains
 `design_only`: public pages advertise invoice PDF/CSV downloads, multiple Anlagen

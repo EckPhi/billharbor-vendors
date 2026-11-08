@@ -57,18 +57,18 @@
     {
       "native_id": "document_demo_oeko_002",
       "scope_id": "anlage_demo_graz",
-      "document_kind": "settlement",
+      "document_kind": "invoice",
       "issue_date": "2026-02-12",
       "issuer_reference": "invented_energy_supplier",
-      "filename": "synthetic-oekostrom-feed-in-settlement.pdf",
+      "filename": "synthetic-oekostrom-annual-invoice.pdf",
       "media_type": "application/pdf",
-      "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBmZWVkLWluIGZpeHR1cmUKJSVFT0YK",
+      "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBhbm51YWwgaW52b2ljZSBmaXh0dXJlCiUlRU9GCg==",
       "observed_at": "2026-02-13T08:00:00Z",
       "observations": [
         {
           "field": "gross_amount",
           "value_type": "decimal",
-          "value": "-8.90",
+          "value": "8.90",
           "source": "vendor_portal",
           "source_path": "fixture.documents[1].amount"
         },
@@ -99,12 +99,12 @@
     {
       "native_id": "document_demo_oeko_003",
       "scope_id": "anlage_demo_graz",
-      "document_kind": "credit_note",
+      "document_kind": "invoice",
       "issue_date": "2026-02-10",
       "issuer_reference": "invented_energy_supplier",
-      "filename": "synthetic-oekostrom-credit-note.pdf",
+      "filename": "synthetic-oekostrom-installment-invoice.pdf",
       "media_type": "application/pdf",
-      "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBjcmVkaXQgbm90ZQolJUVPRgo=",
+      "content_base64": "JVBERi0xLjQKJSBpbnZlbnRlZCBpbnN0YWxsbWVudCBpbnZvaWNlIGZpeHR1cmUKJSVFT0YK",
       "observed_at": "2026-02-11T08:00:00Z",
       "observations": [
         {

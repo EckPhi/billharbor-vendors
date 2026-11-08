@@ -1,3 +1,81 @@
+## PR #1 review corrections — 2026-11-08
+
+The deposit terminology is now `Kaution`; `Teilbetragsrechnung` and `Abrechnung`
+remain invoices. Aggregate Connector/LabelConnector capabilities and invented
+fixtures now match the shipped invoice-only manifest; runner tests no longer
+widen it. The browser mapping distinguishes CAPTCHA from MFA. Checkpoints bind
+query plus selected source identities/dates, excluding transient row indices;
+reordering and out-of-window insertion survive rediscovery, while in-range
+identity/date/set changes still fail closed. Rollback requires restarting pending
+acquisitions because previous snapshot hashes differ. Source identities remain
+`oekostrom-label/1`.
+
+Verified: 120 catalog tests passed, 0 skipped, using local Python 3.13.16 and the
+existing declared pytest 9.1.1 tooling; `git diff --check` passes. Regression
+coverage includes Kaution exclusion, installment/annual invoice inclusion,
+shipped-manifest runner/outbox acquisition, separate CAPTCHA before/after sign-in,
+checkpoint reorder/out-of-window insertion, and existing drift rejection.
+Updated independent plugin `billharbor_oekostrom_at-0.6.0a1-py3-none-any.whl`
+SHA-256 `7d4df02d2134ee6b250fb30df6bbb8f79ead89fce310aeee61e0c0d29bbf76ef`;
+synthetic manifest SHA-256
+`e88a6e776b196242f43d4b38ad5a9fd1c9f9e90b998293a8f4eb9982722f9fc0`.
+Built with existing Hatchling 1.32.0; no dependency adoption. Application PR #56
+records the rebuilt-wheel OCI proof and acquisition-side rejection of the
+reserved `offline_fixture` conformance option. Browser capability presence cannot
+distinguish acquisition from conformance, so the guard belongs in the application.
+
+Git/publication: these review corrections are committed and pushed to
+`kepler/12-oekostrom-browser-rpc` at handoff; no manual tag, release publication,
+live access, credential/session/document access, deployment or accounting write.
+Live profile/G1/G2 and production gates remain open. Earlier wheel hashes and
+legacy-kind widening notes below describe the superseded initial candidate.
+
+## Reviewed engine source pin advanced — 2026-11-08
+
+CI failed because the pinned engine revision `81c4b05` predates
+`billharbor.browser_policy`, which the new Ökostrom `browser-live/1` eligibility
+test imports. `.github/billharbor-sdk-ref` now pins BillHarbor `main` merge
+`381e11780827619c1272f0ae8c3569449d285920`. `packages/connector-sdk` is
+byte-identical between both revisions, so `uv.lock`, SDK `0.1.0` and plugin wheel
+bytes are unchanged. The full catalog suite passed 117/117 against that exact
+revision. Rollback: restore the previous pin (the eligibility test then fails).
+
+## Ökostrom browser-rpc port and independent plugin — 2026-11-07
+
+Issue #12 (synthetic only). `oekostrom_at.browser` now uses only the worker's
+`browser-rpc/1` `context.browser` capability; plugin-owned Playwright launch, the
+loopback mapping and the Playwright loopback tests are removed. `PortalMapping` is
+a data-only `oekostrom-portal-mapping/1` profile selected by explicit id:
+`synthetic-invented-portal` (`https://portal.oekostrom-invented.test`) or the
+`unreviewed` `oekostrom-live` placeholder, which fails closed. Factory options are
+exactly `{"offline_fixture": true}` (descriptor conformance; in-process invented
+portal, no credentials) or `{"portal_profile": "synthetic-invented-portal"}`.
+`browser-synthetic.toml` 0.6.0 is `synthetic_verified` with the exact invented
+origin as origins and redirect_origins and invoices only; real `vendor.toml` 0.6.0
+stays `design_only`, empty origins, now invoices only (operator decision). Legacy
+fixture connectors are unchanged; two runner tests use widened test-local
+manifests because the runner rejects their historical kinds. A fifth independent
+SDK-only wheel, `billharbor-oekostrom-at`, is built/verified in CI and release;
+CI/release no longer install Playwright/Chromium.
+
+Verified offline: full suite 117 passed, 0 skipped. Local wheel
+`billharbor_oekostrom_at-0.6.0a1-py3-none-any.whl` (cached Hatchling 1.32.0,
+reproducible) SHA-256 `1913383a3b2e0a6bc20bf822b09a8553850a2806083fc3ee54e9959fe6c3f707`;
+manifest SHA-256 `45dd192486ea72b45f3fd9bf6e6adb596164559de60c0d966479ae41f194bbc3`;
+descriptor SHA-256 `6fb7008be70f011f7e164e8273a1e08566d3761c805109e0d9aac6267da02998`
+(store base URL `https://store.example.test/packages`, Python 3.13). The wheel
+passed application Registry extraction, local subprocess conformance and
+`BrowserPolicy.validate_installation` (browser-live/1), and the five-wheel
+isolated `verify_vendor_plugins.py` run. Workflow YAML parses; `git diff --check`
+passes. No new dependency.
+
+Blockers: no real origins/selectors (operator-led origin-only observation, G1/G2),
+key custody #10, the app-side live-validation proof with this wheel, and
+browser-rpc limits (3xx rejected, full-view reread per page vs. 100k callbacks).
+Git/publication: committed locally on `kepler/12-oekostrom-browser-rpc`; no push,
+tag, release, store publication or deployment. No credential, session, real
+document or accounting write.
+
 ## Development handoff tag policy — 2026-10-23
 
 Updated agent guidance: commit completed work without manual development tags.
@@ -690,3 +768,13 @@ then verify published exact bytes/no redirects/content encoding and BillHarbor
 acceptance. See docs/vendor-store-pages.md. Git/publication: local implementation
 is committed locally and tagged with annotated development tag `v0.5.0.dev3`; no push, release,
 workflow dispatch, settings change or Pages deployment performed here.
+
+## PR #1 non-inline license clarification — 2026-11-08
+
+Documented the intentional license scopes for the Ökostrom browser distribution
+in `docs/dependencies.md`: wheel METADATA and installable descriptor agree on
+Proprietary; embedded vendor-definition TOML is Apache-2.0, and the separate SDK
+is Apache-2.0. This follows the already documented fixture-vendor split and does
+not relicense code or alter wheel bytes. Verification: exact source metadata and
+manifest fields inspected; documentation whitespace check passed. Committed and
+pushed on the task branch; no publication or live access.
