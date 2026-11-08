@@ -26,12 +26,14 @@ known_exclusions = ["Invented reference only; no real vendor exists"]
 [transport]
 preferred = "api"
 supported = ["api"]
-selection_rules = "Offline fixture simulation only; no network transport or live execution"
+selection_rules = "Offline fixture simulation only; no network transport or live execution. Live operation is prohibited."
 
 [network]
 origins = []
 redirect_origins = []
-unresolved = ["Offline fixture only; live operation is prohibited"]
+# Offline package: no origins and nothing left to resolve. BillHarbor refuses
+# unresolved networking at installation because it is not an offline declaration.
+unresolved = []
 methods = ["GET", "POST"]
 redirect_policy = "No redirects unless the exact origin is reviewed"
 

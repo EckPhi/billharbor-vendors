@@ -37,7 +37,7 @@ requires-dist = [{ name = "jsonschema", extras = ["format-nongpl"], specifier = 
 
 [[package]]
 name = "billharbor-synthetic"
-version = "0.1.0.dev0"
+version = "0.1.0.dev1"
 source = { directory = "vendors/billharbor_synthetic" }
 dependencies = [
     { name = "billharbor-connector-sdk" },

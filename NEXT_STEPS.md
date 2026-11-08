@@ -76,6 +76,37 @@ Git/publication: committed locally on `kepler/12-oekostrom-browser-rpc`; no push
 tag, release, store publication or deployment. No credential, session, real
 document or accounting write.
 
+## Offline synthetic plugin network declaration — 2026-11-07
+
+BillHarbor engine release-candidate verification (EckPhi/billharbor#15) found
+that the engine refuses any manifest with `network.unresolved` entries at
+installation (engine commit `a8ae883`, PR #31), because unresolved networking
+is not an offline declaration. Released `billharbor-synthetic==0.1.0.dev0`
+declared an explanatory unresolved note, so current engines refuse to install it.
+
+Changed: the synthetic manifest now declares `unresolved = []` (the
+"live operation is prohibited" wording moved to `transport.selection_rules`).
+The plugin is bumped to `0.1.0.dev1`, and the aggregate catalog pins it, so the
+released `0.1.0.dev0` artifact is never rewritten under the same version. The
+released manifest is frozen as `tests/fixtures/billharbor_synthetic-0.1.0.dev0-vendor.toml`,
+and its published descriptor identity test is retained. A new test requires the
+current manifest to stay `design_only` with no origins and nothing unresolved.
+No dependency, SDK, fixture data or connector behavior changed.
+
+Verified: `uv lock --check` and the catalog suite (66 passed, 4 platform skips)
+in a temporary sibling layout with the engine candidate; the engine's installed
+end-to-end proofs consume this commit's wheel (see the engine PR).
+
+Open: the store seed `.github/vendor-store.json` still lists only the released
+`0.1.0.dev0` wheel. Publishing `0.1.0.dev1` to a store needs a separately
+requested catalog release. The four design-only fixture vendors (drei_at,
+netcup, hornbach_at, lidl_connect_at) and other design manifests still declare
+genuinely unresolved portal origins, so current engines refuse to install them
+by design. That is tracked in the engine repository. Git/publication: branch
+`kepler/15-synthetic-offline-network` is in review as PR #2, merged with
+`develop`, and its `.github/billharbor-sdk-ref` (`381e117`) has SDK/schema
+source identical to the engine candidate. No tag, release or Pages deployment.
+
 ## Development handoff tag policy — 2026-10-23
 
 Updated agent guidance: commit completed work without manual development tags.
