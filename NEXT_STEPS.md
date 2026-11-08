@@ -1,3 +1,13 @@
+## Reviewed engine source pin advanced — 2026-11-08
+
+CI failed because the pinned engine revision `81c4b05` predates
+`billharbor.browser_policy`, which the new Ökostrom `browser-live/1` eligibility
+test imports. `.github/billharbor-sdk-ref` now pins BillHarbor `main` merge
+`381e11780827619c1272f0ae8c3569449d285920`. `packages/connector-sdk` is
+byte-identical between both revisions, so `uv.lock`, SDK `0.1.0` and plugin wheel
+bytes are unchanged. The full catalog suite passed 117/117 against that exact
+revision. Rollback: restore the previous pin (the eligibility test then fails).
+
 ## Ökostrom browser-rpc port and independent plugin — 2026-11-07
 
 Issue #12 (synthetic only). `oekostrom_at.browser` now uses only the worker's
