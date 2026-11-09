@@ -84,3 +84,36 @@ See [CI/CD](ci-cd.md) and [dependency decisions](dependencies.md).
 Official references: [custom Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages),
 [Pages visibility](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages),
 [workflow concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency?apiVersion=2022-11-28).
+
+## Interrupted release upload and exact-tag retries
+
+`tools/release_assets.py` binds a new release to its triggering commit with a
+`release-source.json` asset. It resolves lightweight and annotated tags to that
+commit, compares every requested existing asset byte-for-byte, and uploads only
+missing assets. Conflicting bytes, missing source markers and metadata access
+errors fail closed. It never uses `--clobber` or adopts older unmarked releases.
+
+A full branch rerun gets a new attempt-derived version. An explicit-tag rerun
+keeps its version, source commit timestamp and original run's sequence; it can
+resume an interrupted asset upload only when rebuilt artifacts agree exactly.
+The immutable ledger is uploaded last so reconstruction cannot select a release
+whose plugin assets have not all uploaded successfully. An interruption before
+the initial source marker is uploaded requires operator investigation; do not
+replace assets or fabricate a marker to bypass the refusal.
+
+For a Pages-only failure after all release assets succeeded, use the existing
+manual reconstruction workflow. This renews the index revision/expiry and
+requires a new independently reviewed digest; it does not replace release
+assets. A different wheel under the same version requires a new reviewed
+version, rather than retrying with replacement bytes.
+
+
+## Authorized environment policy probes — 2026-11-09
+
+The Pages environment now allows main/develop branches and v* tags, requires
+owner EckPhi review, and disables admin bypass. Self-review is allowed for this
+single-owner workflow; approval is not independent two-person review. The manual
+release-protection-probe.yml checks admission without checkout, secrets, artifact
+publication or deployment. A task-branch dispatch must fail before its fixed echo
+step. The main-only Pages reconstruction workflow remains the recovery path; it
+renews metadata while retaining exact package URLs and wheel hashes.

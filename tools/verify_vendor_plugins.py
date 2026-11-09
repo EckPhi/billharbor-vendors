@@ -1,8 +1,10 @@
 """Verify installed offline wheels in an isolated SDK-only Python environment.
 
-Run with ``python -I tools/verify_vendor_plugins.py`` after installing the SDK
-and four prebuilt wheels. This executes only invented packaged fixtures and
-rejects an environment containing application or aggregate/reference packages.
+Run with ``python -I tools/verify_vendor_plugins.py`` after installing the SDK,
+the four prebuilt fixture wheels and the Ökostrom browser-rpc wheel. This
+executes only invented packaged fixtures (the Ökostrom wheel through its
+in-process invented portal, without a browser or credentials) and rejects an
+environment containing application, aggregate/reference or Playwright packages.
 """
 from __future__ import annotations
 
@@ -11,6 +13,7 @@ from datetime import date, datetime, timedelta, timezone
 import hashlib
 import importlib
 import importlib.util
+import sys
 from importlib.resources import files
 import tomllib
 
@@ -18,6 +21,7 @@ from billharbor_sdk import ArtifactPublication, SessionState
 from billharbor_sdk.validation import validate_object
 
 VENDORS = ("drei_at", "lidl_connect_at", "netcup", "hornbach_at")
+BROWSER_VENDORS = ("oekostrom_at",)
 
 
 class FixtureContext:
@@ -47,13 +51,16 @@ def reject_credentials():
 
 
 async def verify():
-    for forbidden in ("billharbor", "billharbor_vendors", "billharbor_synthetic"):
+    for forbidden in ("billharbor", "billharbor_vendors", "billharbor_synthetic", "playwright"):
         assert importlib.util.find_spec(forbidden) is None, f"Unexpected runtime dependency: {forbidden}"
-    for vendor in VENDORS:
+    for vendor in VENDORS + BROWSER_VENDORS:
         manifest = tomllib.loads(files(vendor).joinpath("data/vendor.toml").read_text())
         validate_object(manifest)
-        assert manifest["id"] == vendor and manifest["status"] == "design_only"
-        connector = await importlib.import_module(vendor + ".connector").create_connector({}, reject_credentials)
+        browser = vendor in BROWSER_VENDORS
+        assert manifest["id"] == vendor
+        assert manifest["status"] == ("synthetic_verified" if browser else "design_only")
+        options = {"offline_fixture": True} if browser else {}
+        connector = await importlib.import_module(vendor + ".connector").create_connector(options, reject_credentials)
         context = FixtureContext()
         try:
             assert connector.capabilities().connector_id == vendor
@@ -79,9 +86,14 @@ async def verify():
                 seen_checkpoints.add(checkpoint)
             else:
                 raise AssertionError("Packaged fixture exceeded bounded page budget")
-            assert len(observed) == len(connector._fixture["documents"])
+            if browser:
+                assert len(observed) == sum(1 for item in connector._offline_browser.rows()
+                                            if item["attributes"]["data-kind"] == "invoice")
+            else:
+                assert len(observed) == len(connector._fixture["documents"])
         finally:
             await connector.close()
+        assert "playwright" not in sys.modules
         print(f"{vendor}: installed offline manifest/factory/discovery/PDF lifecycle passed")
 
 

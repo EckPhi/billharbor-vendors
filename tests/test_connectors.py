@@ -253,6 +253,8 @@ def test_page_budget_is_bounded() -> None:
 def test_connector_v2_bytes_reach_engine_outbox(
     connector_type: type, fixture: Path, tmp_path: Path
 ) -> None:
+    manifest = tomllib.loads((fixture.parents[2] / "vendor.toml").read_text(encoding="utf-8"))
+
     async def exercise() -> None:
         store = DurableStore(tmp_path / "state.sqlite3", tmp_path / "artifacts")
         now = datetime.now(timezone.utc)
@@ -268,9 +270,7 @@ def test_connector_v2_bytes_reach_engine_outbox(
                 account_binding_id="account_demo",
                 destination_binding_id="destination_demo",
                 destination_revision=1,
-                connector_manifest=tomllib.loads(
-                    (fixture.parents[2] / "vendor.toml").read_text(encoding="utf-8")
-                ),
+                connector_manifest=manifest,
                 starts_on=date(2026, 1, 1),
                 ends_on=date(2026, 12, 31),
             ),
@@ -319,8 +319,8 @@ def test_d4_scoped_identity_and_document_types() -> None:
         oeko_pages = [await oeko.discover_page(context, starts_on=date(2026, 1, 1),
                       ends_on=date(2026, 12, 31), scopes=(scope,), checkpoint_id=None)
                       for scope in oeko_scopes]
-        assert {item.document_kind.value for page in oeko_pages for item in page.documents} == {
-            "invoice", "credit_note", "settlement"}
+        # Invoices only (operator decision 2026-11-07), matching the shipped manifest.
+        assert {item.document_kind.value for page in oeko_pages for item in page.documents} == {"invoice"}
         await amazon.close()
         await oeko.close()
 

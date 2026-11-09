@@ -53,12 +53,14 @@ Actions are pinned to immutable release commits. uv is pinned to 0.7.19 to match
 the lock evidence. Dependency upgrades require reviewed locks and workflow
 changes in both repositories.
 
-For the 0.4.0.dev1 candidate, CI and release jobs install the exact reviewed
-browser test pins into the frozen environment, install matching Chromium, and
-require zero skipped tests in the JUnit report. Wheel-only verification also
-imports the packaged browser/identity modules and validates the separate
-synthetic browser manifest. That profile remains `design_only` and rejects live
-origins. Release sequencing is engine release first, then the reviewed committed SDK source ref,
+CI and release jobs no longer install Playwright or Chromium: the Ökostrom
+plugin drives the broker-owned `browser-rpc/1` capability and its tests use an
+in-process invented portal. Both jobs still require zero skipped tests in the
+JUnit report. Wheel-only verification imports the packaged browser/identity
+modules and validates the separate synthetic browser manifest
+(`synthetic_verified`, invented `.test` origin only; the live profile fails
+closed). A fifth independent wheel, `billharbor-oekostrom-at`, is built with the
+four fixture plugins and verified offline by `tools/verify_vendor_plugins.py`. Release sequencing is engine release first, then the reviewed committed SDK source ref,
 green catalog CI, then matching catalog prerelease tag.
 
 
@@ -118,3 +120,25 @@ fallback before either). A stable tag never silently switches the legacy beta
 subscription. Exact index trust approval, plugin installation, instance deployment,
 and live vendor activation remain explicit operator actions. A successful release
 does not update an instance's reviewed index digest.
+
+## Immutable release upload recovery
+
+Release assets now use the repository-owned, standard-library-only
+`tools/release_assets.py` helper. A source marker and resolved tag bind uploads
+to the exact source; existing bytes must match before any missing asset is
+uploaded. No asset is overwritten. The application repository maintains the
+same helper; keep behavioral changes and its synthetic regression tests aligned
+when updating either copy. This is release tooling, not a catalog runtime or SDK
+dependency.
+
+Explicit-tag retries preserve ledger sequence and source-commit issue time;
+branch attempts retain distinct versions/sequences. The ledger uploads after
+wheels/checksums/provenance, so incomplete releases stay outside store selection.
+See [recovery](vendor-store-pages.md#interrupted-release-upload-and-exact-tag-retries).
+
+No dependency, license, action pin or credential scope is added. Data flow is
+unchanged: source identity and public synthetic wheel/metadata bytes go to the
+existing GitHub Release service; Pages construction uses retained artifacts.
+The helper neither prints asset bytes nor reads credentials. Rollback restores
+the preceding workflow/tooling while retaining published releases and reviewed
+installation locks; it must never replace an existing artifact.

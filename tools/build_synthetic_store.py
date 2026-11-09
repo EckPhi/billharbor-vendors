@@ -31,6 +31,7 @@ def build_index(wheel, base_url, *, store_id="synthetic", revision=1, python_ver
     known = {"billharbor-synthetic": ("billharbor_synthetic", "synthetic")}
     known.update({"billharbor-" + name.replace("_", "-"): (name, name.replace("_", "-"))
                   for name in ("drei_at", "lidl_connect_at", "netcup", "hornbach_at")})
+    known["billharbor-oekostrom-at"] = ("oekostrom_at", "oekostrom-at")
     with zipfile.ZipFile(wheel) as archive:
         metadata_names = [name for name in archive.namelist() if name.endswith(".dist-info/METADATA")]
         if len(metadata_names) != 1:
@@ -44,8 +45,11 @@ def build_index(wheel, base_url, *, store_id="synthetic", revision=1, python_ver
         manifest = archive.read(manifest_path)
         import tomllib
         parsed_manifest = tomllib.loads(manifest.decode())
-        if parsed_manifest["id"] != connector_id or parsed_manifest["status"] != "design_only":
-            raise ValueError("Expected matching design-only manifest.")
+        # Only the invented-portal browser plugin is synthetic_verified; its
+        # exact .test origins still require a protected browser-live/1 policy.
+        expected_status = "synthetic_verified" if connector_id == "oekostrom_at" else "design_only"
+        if parsed_manifest["id"] != connector_id or parsed_manifest["status"] != expected_status:
+            raise ValueError("Expected matching reviewed manifest status.")
     descriptor = {
         "schema": "vendor-plugin/1", "publisher": "billharbor", "name": plugin_name,
         "version": metadata["Version"], "connector_id": connector_id,
@@ -57,11 +61,16 @@ def build_index(wheel, base_url, *, store_id="synthetic", revision=1, python_ver
         "license": "Proprietary", "maintainer": "BillHarbor catalog maintainers",
         "maintenance": ("Synthetic-only reference maintained with BillHarbor; no live vendor support."
                         if connector_id == "billharbor_synthetic" else
+                        "Invented .test portal browser-rpc plugin; live profile unreviewed and fail-closed."
+                        if connector_id == "oekostrom_at" else
                         "Offline invented fixtures maintained with BillHarbor; no live vendor support."),
         "changelog": ("First independent plugin package; unchanged invented document identities."
                       if connector_id == "billharbor_synthetic" else
+                      "Independent browser-rpc plugin; oekostrom-label/1 identities unchanged; invoices only."
+                      if connector_id == "oekostrom_at" else
                       "Independent offline plugin package; preserved invented document identities."),
-        "conformance": {"options": {}, "fixture_path": connector_id + "/data/fixture.json"},
+        "conformance": {"options": {"offline_fixture": True} if connector_id == "oekostrom_at" else {},
+                        "fixture_path": connector_id + "/data/fixture.json"},
         "rollback": {"checkpoint_compatible": True},
     }
     now = int(time.time() if now is None else now)

@@ -24,7 +24,7 @@ do not change existing reference identities or erase retained originals/deliveri
 
 ## Independent package
 
-Build this directory as `billharbor-synthetic==0.1.0.dev0`. Its only runtime
+Build this directory as `billharbor-synthetic==0.1.0.dev1`. Its only runtime
 dependency is `billharbor-connector-sdk==0.1.0`; neither the application nor
 `billharbor-vendors` is required. The asynchronous factory is
 `billharbor_synthetic.connector:create_connector(options, resolver)`. Empty
@@ -34,7 +34,7 @@ From the catalog root, generate a reviewable local store index after building:
 
 ```console
 uv build --wheel --out-dir /tmp/billharbor-dists vendors/billharbor_synthetic
-python tools/build_synthetic_store.py /tmp/billharbor-dists/billharbor_synthetic-0.1.0.dev0-py3-none-any.whl /tmp/billharbor-dists/index.json --base-url http://127.0.0.1:8123 --python 3.13
+python tools/build_synthetic_store.py /tmp/billharbor-dists/billharbor_synthetic-0.1.0.dev1-py3-none-any.whl /tmp/billharbor-dists/index.json --base-url http://127.0.0.1:8123 --python 3.13
 ```
 
 The index expiry is one day; the printed SHA-256 must be explicitly reviewed by

@@ -1,76 +1,107 @@
-# Ökostrom browser implementation candidate
+# Ökostrom browser-rpc connector (synthetic)
 
-The catalog now contains `oekostrom_at.browser.BrowserConnector`, implementing
-SDK v2, and `async create_browser_connector(mapping, credential_resolver=None)`.
-The worker injects a `PortalMapping` and a synchronous, execution-bound resolver
-returning `{"username": ..., "password": ...}`. The factory starts a fresh,
-headless Chromium context with service workers blocked and no retained profile,
-recording or screenshots. `close()` disposes the context, browser and driver.
-Credentials are resolved only when a login form is needed, never stored on the
-connector or included in diagnostic messages. The engine must adapt its private
-credential bundle at the worker boundary.
+`oekostrom_at.browser.BrowserConnector` implements SDK v2 over the application's
+broker-owned `browser-rpc/1` capability (BillHarbor issue #11,
+`docs/operations/gated-live-validation.md`). The plugin never imports, launches or
+initializes a browser; there is no Playwright import anywhere in the package and
+no plugin dependency beyond `billharbor-connector-sdk==0.1.0`. Every interaction
+is `await context.browser(operation, **arguments)` with only `navigate`, `fill`,
+`click`, `text`, `attribute`, `count` and `download`. The worker performs
+`initialize`; the gateway enforces HTTPS:443, the exact reviewed origin set and
+rejects every 3xx. The connector additionally navigates only to
+`mapping.origin + login_path` and `mapping.origin + documents_path`.
 
-**No live profile exists.** Mapping construction permits only explicit HTTP
-127.0.0.1 origins and `synthetic=True`. Selectors in tests belong solely to the
-invented portal. The released catalog manifest and default connector entrypoint
-remain unchanged and `design_only`. A separate packaged `oekostrom_browser_synthetic.toml`
-profile declares invoice-only invented-portal behavior for SDK/engine integration
-tests; it also remains `design_only`. This separate implementation cannot be
-selected for real Ökostrom access simply by supplying a production URL.
+The previous plugin-owned Chromium path (`create_browser_connector`, loopback
+`http://127.0.0.1` mappings, request routing) was removed together with its
+Playwright loopback tests; browser-rpc forbids plugin-owned launch.
 
-The browser implementation supports explicit installation enumeration,
-inclusive issue-date filtering (invented fixture semantics), exact Bezeichnung hashes scoped by installation and kind (account scoping is engine-owned), bounded combined-view snapshots and snapshot/query-bound continuation.
-It rejects duplicate identities, undiscovered fetches, changed row identities,
-unknown installations and newly appearing pagination controls. Only invoice rows
-are supported; unsupported credit/PV/deposit kinds are excluded. A session/challenge
-state returns a manual interaction request without retrying authentication.
-Session failure during scope enumeration raises a safe code because SDK v2 does
-not permit interaction results from that method.
+## Factory and options contract
 
-All routed requests, including redirected requests and subresources, consume
-engine request budget and must match the configured exact origin. WebSockets are
-closed. The guard complements, but does not replace, worker/container network
-isolation: browser process traffic is not an OS security boundary. The worker
-must impose filesystem/tmpfs and process limits. Original downloads are checked
-against the configured maximum size **after browser download completion**, before
-reading bytes into memory, checked for the PDF signature, published through the
-engine context, and deleted from browser download storage in a finally block.
-A malicious oversized response can therefore fill temporary storage up to the
-worker's disk quota; this implementation does not promise streaming byte limits.
+Descriptor entrypoint `oekostrom_at.connector:create_connector(options, resolver)`
+requires exactly one explicit mode; anything else (including `{}`) is rejected:
 
-## Validation
+| `options` | Behaviour |
+| --- | --- |
+| `{"offline_fixture": true}` | Offline, credential-free conformance against the packaged invented DOM (`data/fixture.json`) through an in-process fake of the seven operations. The resolver is discarded and never called. Acquisition must reject this reserved conformance option in the application before factory creation; both conformance and acquisition worker contexts may expose browser capabilities. This is the descriptor's `conformance.options`. |
+| `{"portal_profile": "synthetic-invented-portal"}` | Drive the worker-supplied `context.browser` with the synthetic mapping. Credentials are resolved only when the login form is present. |
+| `{"portal_profile": "oekostrom-live"}` | Always fails closed (unreviewed placeholder). |
 
-Actual Chromium tests use a threaded invented loopback portal. One test also
-runs the candidate through the durable engine, retaining two original PDFs and
-pending outbox deliveries. They cover login,
-installation enumeration, scope identity, exact original byte publication,
-query-bound checkpoints, restart continuation, terminal empty ranges, changed
-filters, duplicate identities, unsupported reference kinds, malformed originals,
-manual challenges, unsupported pagination, foreign subresources and byte limits.
-Tests skip when the optional Playwright Python module is absent; a browser-enabled
-release lane must run them explicitly and must not interpret skipped tests as
-browser verification. With Playwright installed, absent browser binaries fail.
+## Mapping profiles
 
-Example in a browser-enabled environment:
+`PortalMapping` is a data-only profile (schema `oekostrom-portal-mapping/1`)
+loaded from reviewed package data under `data/profiles/` by an explicit id from a
+fixed table; ids are never paths. The loader requires exact keys, the matching
+`profile_id` and `status = "synthetic"`. Origins must be exactly
+`https://<lowercase-host>` (no port, path, query or userinfo) and, because no
+live profile is reviewed, the host must end in `.test`. Selectors may not use
+`js=`/`javascript=` engines or `>>`; the connector composes only
+`<rows> >> nth=<i> >> <child>`. Paths are plain absolute paths.
 
-```sh
-python -m pytest -q tests/test_oekostrom_browser.py
-```
+- `synthetic-invented-portal`: `https://portal.oekostrom-invented.test`,
+  `/anmelden` and `/rechnungen`, invented selectors, page size 2.
+- `oekostrom-live`: `status = "unreviewed"`, empty origin/selectors; loading
+  raises. Supplying a URL or other options cannot select a live portal.
 
-## Remaining live acceptance
+## Behaviour retained
 
-A separately authorized session must establish the chosen exact Bezeichnung policy across
-sessions/revisions, the meaning of `Datum`, completeness of combined installation
-results, pagination/late-document behavior, actual login/challenge flow, original
-PDF controls, exact redirects and permitted automation. Real selectors must come
-from sanitized authorized evidence, not the invented fixture. Review a versioned
-live mapping and implement its distinct extraction semantics before removing the
-loopback restriction. No boolean operator setting substitutes for this review.
-Then validate interrupted/repeated runs through the durable engine using the
-approved account, kinds, budgets and destinations. Credit notes and PV settlements
-remain unsupported until separately established. The synthetic tests do not close
-D6 or authorize live access, callbacks, recurring automation or deployment.
+Login only when the login form is present (credentials are type-checked, used for
+two `fill` calls and deleted; never stored or placed in messages); challenge →
+`InteractionRequest(MFA, "oekostrom_manual_challenge")`; a separate CAPTCHA selector →
+`InteractionRequest(CAPTCHA, "oekostrom_manual_captcha")`; missing ready marker →
+`SESSION_EXPIRED`; `list_scopes` raises the safe code on interaction. Installations
+are enumerated by count plus nth attribute. Discovery covers the combined view,
+rejects unknown installations, duplicate installations, duplicate
+`oekostrom-label/1` identities (before date filtering) and a newly appearing
+pagination control. Issue dates are filtered inclusively. Only `invoice` rows are
+read; deposit, credit-note, settlement, PV and any other kinds are skipped and
+never downloaded. Kaution rows are deposits; Teilbetragsrechnung and Abrechnung are invoices.
+Checkpoints bind the exact query and selected invoice identities/dates, excluding
+transient row indices; reorderings and out-of-window insertions survive rediscovery.
+An in-range invoice set/date/identity change still requires a fresh run. Fetch requires
+rediscovery, rechecks the row's installation, kind, Bezeichnung and date, then
+checks the PDF signature and per-document byte limit on the returned bytes and
+publishes via `context.publish_artifact`.
 
+## Manifests
+
+`browser-synthetic.toml` (packaged in the plugin wheel as
+`oekostrom_at/data/vendor.toml`, and in the aggregate wheel as
+`billharbor_vendors/data/oekostrom_browser_synthetic.toml`) is `synthetic_verified`
+with browser as the sole preferred/supported transport, `origins` and
+`redirect_origins` exactly the invented origin, no unresolved dependencies and
+`document_kinds = ["invoice"]`. Tests mirror `browser_policy` live eligibility and
+call the application's `BrowserPolicy.validate_installation` on the built
+descriptor. The real `vendor.toml` stays `design_only` with empty origins and is
+now invoices-only by operator decision. The aggregate fixture
+`Connector`/`LabelConnector` and their invented fixture also expose invoices only;
+runner integration tests exercise the shipped manifest without widening it.
+
+## Limitations of browser-rpc observed
+
+- Gateway rejects every 3xx and non-2xx response; a real login that redirects
+  after POST cannot work without a reviewed redirect-free flow.
+- Single-element operations are strict and any broker failure closes the browser
+  for the execution, so the connector always counts before `text`/`attribute`.
+- Each `discover_page` rereads the whole combined view (about six RPC calls per
+  row); the remote proxy caps 100,000 callbacks per connector, so a live profile
+  needs a large page size (the observed 222-document view at page size 1 would
+  exceed it).
+- `download` buffers whole files up to 20 MiB; the byte limit is checked after
+  transfer, but the broker wire limit bounds it.
+
+## Verification and remaining live gates
+
+Tests use the in-process invented portal only (`tests/test_oekostrom_browser.py`,
+`tests/test_vendor_plugin_build.py`), including a durable runner/outbox run with a
+test-local `design_only` copy. They prove nothing about the real portal. Before a
+reviewed live profile: exact origins via operator-led origin-only observation,
+sanitized selectors and identity/date/pagination evidence under G1/G2, actual key
+custody (#10), and the application live-validation proof. Rollback: reinstall the
+previous plugin/catalog release and restart incomplete acquisitions (snapshot
+hashes from older wheels are rejected); checkpoints use the unchanged
+`cursor_<snapshot>_<offset>` form and `oekostrom-label/1` identities are unchanged.
+
+No new dependency is introduced.
 
 ## Exact Bezeichnung policy — 2026-10-08
 
@@ -82,12 +113,3 @@ keys in the selected installation snapshot fail before date filtering or output;
 renamed labels create different keys and require operator reconciliation. The
 `oekostrom_label_v1_` prefix separates this policy from historical synthetic and
 native-ID identities; no automatic migration or aliasing is provided.
-
-The default legacy fixture connector stays unchanged. `LabelConnector` accepts
-only explicit `oekostrom-label-synthetic/1` fixtures with an invented `designation`.
-The imported browser candidate now reads a configured designation locator and
-rechecks its exact text before clicking the original download control. These
-selectors are solely invented and live origins remain rejected. The browser
-foundation was imported from recorded commit
-`58b7af2fc22b5a6bdbcfd0a68c48e7ac3f4b99ed`, without switching checkout or adopting
-new dependencies. This local candidate is not a published catalog release.

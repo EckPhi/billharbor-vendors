@@ -11,7 +11,7 @@ from urllib.parse import urlsplit
 from build_synthetic_store import build_index, canonical
 
 
-def ledger(tag, channel, sequence, wheels):
+def ledger(tag, channel, sequence, wheels, issued_at=None):
     if channel not in ('alpha', 'beta', 'stable') or sequence < 1:
         raise ValueError('Invalid channel/sequence')
     entries = []
@@ -21,7 +21,10 @@ def ledger(tag, channel, sequence, wheels):
         entries.append(dict(filename=wheel.name, sha256=hashlib.sha256(wheel.read_bytes()).hexdigest()))
     if not entries:
         raise ValueError('No plugin wheels')
-    return dict(tag=tag, channel=channel, sequence=sequence, issued_at=int(time.time()), wheels=entries)
+    issued_at = int(time.time()) if issued_at is None else issued_at
+    if type(issued_at) is not int or issued_at < 1:
+        raise ValueError('Positive issue time required')
+    return dict(tag=tag, channel=channel, sequence=sequence, issued_at=issued_at, wheels=entries)
 
 
 def build(ledgers, wheels, output, base_url, seed, revision=None):
@@ -127,12 +130,13 @@ if __name__ == '__main__':
     for name in ('tag', 'channel', 'wheels', 'output'):
         create.add_argument('--' + name, required=True)
     create.add_argument('--sequence', type=int, required=True)
+    create.add_argument('--issued-at', type=int)
     site = sub.add_parser('site')
     for name in ('repository', 'wheels', 'output', 'base-url'):
         site.add_argument('--' + name, required=True)
     a = p.parse_args()
     if a.command == 'ledger':
-        Path(a.output).write_bytes(canonical(ledger(a.tag, a.channel, a.sequence, a.wheels)))
+        Path(a.output).write_bytes(canonical(ledger(a.tag, a.channel, a.sequence, a.wheels, a.issued_at)))
     else:
         pages = json.loads(gh('api', '--paginate', '--slurp', f'repos/{a.repository}/releases?per_page=100'))
         ledgers = []

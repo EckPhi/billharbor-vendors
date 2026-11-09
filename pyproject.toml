@@ -9,7 +9,7 @@ description = "Reviewed vendor connector catalog for BillHarbor"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Proprietary" }
-dependencies = ["billharbor-connector-sdk==0.1.0", "billharbor-synthetic==0.1.0.dev0"]
+dependencies = ["billharbor-connector-sdk==0.1.0", "billharbor-synthetic==0.1.0.dev1"]
 
 [dependency-groups]
 test = ["pytest==9.1.1"]
