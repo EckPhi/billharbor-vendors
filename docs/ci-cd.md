@@ -120,3 +120,25 @@ fallback before either). A stable tag never silently switches the legacy beta
 subscription. Exact index trust approval, plugin installation, instance deployment,
 and live vendor activation remain explicit operator actions. A successful release
 does not update an instance's reviewed index digest.
+
+## Immutable release upload recovery
+
+Release assets now use the repository-owned, standard-library-only
+`tools/release_assets.py` helper. A source marker and resolved tag bind uploads
+to the exact source; existing bytes must match before any missing asset is
+uploaded. No asset is overwritten. The application repository maintains the
+same helper; keep behavioral changes and its synthetic regression tests aligned
+when updating either copy. This is release tooling, not a catalog runtime or SDK
+dependency.
+
+Explicit-tag retries preserve ledger sequence and source-commit issue time;
+branch attempts retain distinct versions/sequences. The ledger uploads after
+wheels/checksums/provenance, so incomplete releases stay outside store selection.
+See [recovery](vendor-store-pages.md#interrupted-release-upload-and-exact-tag-retries).
+
+No dependency, license, action pin or credential scope is added. Data flow is
+unchanged: source identity and public synthetic wheel/metadata bytes go to the
+existing GitHub Release service; Pages construction uses retained artifacts.
+The helper neither prints asset bytes nor reads credentials. Rollback restores
+the preceding workflow/tooling while retaining published releases and reviewed
+installation locks; it must never replace an existing artifact.

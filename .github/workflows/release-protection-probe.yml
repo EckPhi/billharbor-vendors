@@ -1,0 +1,16 @@
+name: Release environment protection probe
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  policy:
+    name: Synthetic Pages policy probe
+    runs-on: ubuntu-latest
+    environment: github-pages
+    timeout-minutes: 2
+    steps:
+      - name: Confirm environment admitted this ref
+        run: echo 'Synthetic policy probe admitted; no credentials or deployment used.'
