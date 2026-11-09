@@ -13,7 +13,7 @@ run sequence across attempts; branch attempts remain separately versioned.
 Ledgers publish last, after all referenced wheels. Pages-only recovery continues
 to reconstruct retained releases without replacing assets.
 
-Local verification: 8 release-asset tests, 6 channel-release tests and 4 Pages
+Local verification: 11 release-asset tests, 6 channel-release tests and 4 Pages
 store tests passed using Python's standard library. Tests use fake API responses
 and invented wheel bytes, not credentials or real release assets. Existing
 coverage retains historical wheel hashes/URLs, rejects altered bytes before

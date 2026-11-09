@@ -41,6 +41,10 @@ class ReleaseAssetsTests(unittest.TestCase):
                 return None
             return {"id": 1, "tag_name": TAG, "draft": False}
         if endpoint.startswith("git/ref/"):
+            if self.tag_target is None:
+                if missing:
+                    return None
+                raise RuntimeError("Missing tag")
             return {"object": self.tag_target}
         if endpoint.startswith("git/tags/"):
             return {"object": {"type": "commit", "sha": SHA}}
@@ -54,6 +58,8 @@ class ReleaseAssetsTests(unittest.TestCase):
             return self.remote[args[1].rsplit("/", 1)[1]]
         if args[:2] == ("release", "create"):
             self.exists = True
+            if self.tag_target is None:
+                self.tag_target = {"type": "commit", "sha": SHA}
         elif args[:2] == ("release", "upload"):
             path = Path(args[3])
             self.remote[path.name] = path.read_bytes()
@@ -137,3 +143,29 @@ class ReleaseAssetsTests(unittest.TestCase):
         with patch.object(self.publisher, "command", side_effect=original):
             self.publisher.publish([self.wheel])
         self.assertEqual(self.remote[self.wheel.name], self.wheel.read_bytes())
+
+    def test_branch_existing_foreign_tag_prevents_release_creation(self):
+        self.exists = False
+        self.publisher.ref = "refs/heads/develop"
+        self.tag_target = {"type": "commit", "sha": "b" * 40}
+        with self.assertRaisesRegex(ValueError, "triggering source"):
+            self.publisher.publish([self.wheel], create=True)
+        self.assertEqual(self.mutations(), [])
+
+    def test_branch_missing_tag_allows_creation_targeting_source(self):
+        self.exists = False
+        self.publisher.ref = "refs/heads/develop"
+        self.tag_target = None
+        self.publisher.publish([self.wheel], create=True)
+        create, upload = self.mutations()
+        self.assertIn("--target", create)
+        self.assertEqual(create[create.index("--target") + 1], SHA)
+        self.assertNotIn("--verify-tag", create)
+        self.assertEqual(self.tag_target, {"type": "commit", "sha": SHA})
+
+    def test_explicit_missing_tag_prevents_release_creation(self):
+        self.exists = False
+        self.tag_target = None
+        with self.assertRaisesRegex(RuntimeError, "Missing tag"):
+            self.publisher.publish([self.wheel], create=True)
+        self.assertEqual(self.mutations(), [])

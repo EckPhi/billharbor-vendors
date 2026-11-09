@@ -42,8 +42,11 @@ class Publisher:
             raise RuntimeError("GitHub metadata request failed")
         return json.loads(body)
 
-    def verify_tag(self):
-        target = self.api(f"git/ref/tags/{quote(self.tag, safe='')}")["object"]
+    def verify_tag(self, *, missing: bool = False):
+        reference = self.api(f"git/ref/tags/{quote(self.tag, safe='')}", missing=missing)
+        if reference is None:
+            return
+        target = reference["object"]
         seen = set()
         while target["type"] == "tag":
             if target["sha"] in seen or len(seen) >= 16:
@@ -66,9 +69,9 @@ class Publisher:
         if release is None:
             if not create:
                 raise ValueError("Release does not exist")
-            # Explicit tags must already exist and point to the exact source.
-            if self.ref.startswith("refs/tags/"):
-                self.verify_tag()
+            # A branch-generated tag may be absent, but an existing tag must
+            # agree before creating any visible release or uploading a marker.
+            self.verify_tag(missing=not self.ref.startswith("refs/tags/"))
             with tempfile.TemporaryDirectory() as directory:
                 marker_path = Path(directory) / "release-source.json"
                 marker_path.write_bytes(marker)
