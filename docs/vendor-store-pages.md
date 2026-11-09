@@ -106,3 +106,14 @@ manual reconstruction workflow. This renews the index revision/expiry and
 requires a new independently reviewed digest; it does not replace release
 assets. A different wheel under the same version requires a new reviewed
 version, rather than retrying with replacement bytes.
+
+
+## Authorized environment policy probes — 2026-11-09
+
+The Pages environment now allows main/develop branches and v* tags, requires
+owner EckPhi review, and disables admin bypass. Self-review is allowed for this
+single-owner workflow; approval is not independent two-person review. The manual
+release-protection-probe.yml checks admission without checkout, secrets, artifact
+publication or deployment. A task-branch dispatch must fail before its fixed echo
+step. The main-only Pages reconstruction workflow remains the recovery path; it
+renews metadata while retaining exact package URLs and wheel hashes.
