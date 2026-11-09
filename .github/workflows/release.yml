@@ -173,16 +173,17 @@ jobs:
           DIST_DIR: ${{ runner.temp }}/dists
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
           CHANNEL: ${{ steps.release.outputs.channel }}
-          PRERELEASE: ${{ steps.release.outputs.prerelease }}
           RELEASE_SHA: ${{ github.sha }}
           PUSH_REF: ${{ github.ref }}
         run: |
-          SEQUENCE=$((GITHUB_RUN_ID * 1000 + GITHUB_RUN_ATTEMPT))
-          RELEASE_FLAGS=(--generate-notes --target "$RELEASE_SHA")
-          if [[ "$PUSH_REF" == refs/tags/* ]]; then RELEASE_FLAGS+=(--verify-tag); fi
-          if [[ "$PRERELEASE" == true ]]; then RELEASE_FLAGS+=(--prerelease --latest=false); else RELEASE_FLAGS+=(--latest); fi
-          python3 tools/channel_store.py ledger --tag "$RELEASE_TAG" --channel "$CHANNEL" --sequence "$SEQUENCE" --wheels "$DIST_DIR" --output "$DIST_DIR/store-release.json"
-          gh release create "$RELEASE_TAG" "$DIST_DIR"/*.whl "$DIST_DIR"/SHA256SUMS "$DIST_DIR"/BILLHARBOR-SDK "$DIST_DIR"/store-release.json "${RELEASE_FLAGS[@]}"
+          # Explicit-tag reruns retain their original ledger identity. Branch
+          # attempts have distinct versions and therefore distinct ledger sequences.
+          ATTEMPT=$GITHUB_RUN_ATTEMPT
+          if [[ "$PUSH_REF" == refs/tags/* ]]; then ATTEMPT=1; fi
+          SEQUENCE=$((GITHUB_RUN_ID * 1000 + ATTEMPT))
+          ISSUED_AT=$(git show -s --format=%ct "$RELEASE_SHA")
+          python3 tools/channel_store.py ledger --tag "$RELEASE_TAG" --channel "$CHANNEL" --sequence "$SEQUENCE" --issued-at "$ISSUED_AT" --wheels "$DIST_DIR" --output "$DIST_DIR/store-release.json"
+          python3 tools/release_assets.py --create "$DIST_DIR"/*.whl "$DIST_DIR"/SHA256SUMS "$DIST_DIR"/BILLHARBOR-SDK "$DIST_DIR"/store-release.json
 
       - name: Reconstruct all retained channel stores from release ledgers
         working-directory: billharbor-vendors

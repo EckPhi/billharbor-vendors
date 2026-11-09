@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 from release_context import resolve
-from channel_store import build, validate_ledgers
+from channel_store import build, canonical, ledger, validate_ledgers
 
 class ReleaseTests(unittest.TestCase):
     def test_branch_identity_and_final(self):
@@ -59,6 +59,33 @@ class ReleaseTests(unittest.TestCase):
             item = dict(filename='plugin.whl', sha256='a'*64); item[key] = bad
             with self.assertRaises(ValueError):
                 validate_ledgers([dict(tag='v1.2.3', channel='beta', sequence=1, issued_at=1, wheels=[item])])
+
+    def test_retry_ledger_has_identical_bytes_and_excludes_nonplugins(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / 'billharbor_synthetic-1.0.0-py3-none-any.whl').write_bytes(b'invented-plugin')
+            (root / 'billharbor_connector_sdk-0.1.0-py3-none-any.whl').write_bytes(b'invented-sdk')
+            (root / 'billharbor_vendors-1.0.0-py3-none-any.whl').write_bytes(b'invented-aggregate')
+            first = ledger('v1.0.0', 'stable', 42001, root, issued_at=1700000000)
+            with patch('channel_store.time.time', return_value=1800000000):
+                retry = ledger('v1.0.0', 'stable', 42001, root, issued_at=1700000000)
+            self.assertEqual(canonical(first), canonical(retry))
+            self.assertEqual(len(first['wheels']), 1)
+            for invalid in (0, -1, True):
+                with self.assertRaises(ValueError):
+                    ledger('v1.0.0', 'stable', 42001, root, issued_at=invalid)
+
+    def test_release_upload_is_missing_only_and_ledger_is_last(self):
+        root = Path(__file__).resolve().parents[1]
+        source = (root / '.github/workflows/release.yml').read_text()
+        publication = source.split('      - name: Publish immutable GitHub release assets', 1)[1]
+        publication = publication.split('      - name: Reconstruct', 1)[0]
+        self.assertIn('python3 tools/release_assets.py --create', publication)
+        self.assertNotIn('gh release create', publication)
+        self.assertNotIn('--clobber', source)
+        self.assertIn('if [[ "$PUSH_REF" == refs/tags/* ]]; then ATTEMPT=1; fi', publication)
+        self.assertIn('ISSUED_AT=$(git show -s --format=%ct "$RELEASE_SHA")', publication)
+        self.assertTrue(publication.rstrip().endswith('"$DIST_DIR"/store-release.json'))
 
     def test_publication_queue_retains_pending_pushes(self):
         root = Path(__file__).resolve().parents[1]
