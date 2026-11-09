@@ -5,8 +5,9 @@ Reference vendor: `billharbor_synthetic`, an entirely invented offline source fo
 completing the application. Amazon Business, oekostrom.at, Drei Austria, Lidl Connect Austria, netcup and
 HORNBACH Austria remain design-only real vendor targets. See [synthetic reference](vendors/billharbor_synthetic/README.md).
 
-Status: v0.3.0 synthetic connector packages are released; local 0.4 discovery
-hardening is in progress. An Ökostrom browser-rpc connector (broker-owned browser,
+Status: **v0.5.0 synthetic catalog packages and alpha/beta/stable stores are
+published**; [remote verification](docs/evidence/issue16-publication-2026-11-09.md)
+records exact release, policy and recovery results. An Ökostrom browser-rpc connector (broker-owned browser,
 invented `.test` portal profile, fail-closed live profile, invoices only) and the
 exact-label identity policy are verified with invented fixtures. No live-verified
 connector or deployment exists yet.
@@ -54,7 +55,8 @@ Release builds prepare and publish alpha/beta/stable plugin stores on GitHub
 Pages; a manual recovery workflow reconstructs retained releases. See
 [Pages setup and BillHarbor registration](docs/vendor-store-pages.md) for GitHub
 settings, reviewed release prerequisites, public distribution, renewal and rollback.
-No site has been published by this local implementation.
+All three feeds are published; operators must independently review exact index
+digests before trust approval. Publication does not install or activate a plugin.
 
 ## Additional design-only targets — 2026-10-23
 
